@@ -1,0 +1,16 @@
+[
+{
+  "modid": "advancedcommands",
+  "name": "AdvancedCommands",
+  "description": "More commands for Minecraft.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "https://github.com/yushijinhun/AdvancedCommands",
+  "updateUrl": "",
+  "authorList": ["yushijinhun"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
