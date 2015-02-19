@@ -12,10 +12,10 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
-@Mod(modid = AdvancedCommands.ID, name = AdvancedCommands.NAME, version = "0.1.x", useMetadata = true, guiFactory = "yushijinhun.advancedcommands.client.GuiFactory", acceptedMinecraftVersions = "[1.8,)")
+@Mod(modid = AdvancedCommands.ID, name = AdvancedCommands.NAME, version = "${VERSION}", useMetadata = true, guiFactory = "yushijinhun.advancedcommands.client.gui.GuiFactory", acceptedMinecraftVersions = "[1.8,)")
 public final class AdvancedCommands {
 
-	public static final String ID = "";
+	public static final String ID = "advancedcommands";
 	public static final String NAME = "AdvancedCommands";
 
 	@Instance(value = AdvancedCommands.ID)
