@@ -1,9 +1,9 @@
 package yushijinhun.advancedcommands.common.command.var;
 
-import com.google.common.base.Objects;
+import net.minecraft.nbt.NBTTagCompound;
 import yushijinhun.advancedcommands.common.command.var.datatype.DataType;
 import yushijinhun.advancedcommands.common.command.var.datatype.DataTypeHelper;
-import net.minecraft.nbt.NBTTagCompound;
+import com.google.common.base.Objects;
 
 public class Var {
 
@@ -30,22 +30,25 @@ public class Var {
 		DataType type = DataTypeHelper.types.get(nbt.getString("type"));
 		return new Var(type, type.readFromNBT(nbt.getCompoundTag("data")));
 	}
-	
-	public String toString(){
-		return type+"@"+value;
+
+	@Override
+	public String toString() {
+		return type + "@" + value;
 	}
-	
-	public int hashCode(){
-		return type.hashCode()^value.hashCode();
+
+	@Override
+	public int hashCode() {
+		return type.hashCode() ^ value.hashCode();
 	}
-	
-	public boolean equals(Object obj){
-		if (obj==this){
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) {
 			return true;
 		}
-		if (obj instanceof Var){
-			Var var=(Var) obj;
-			return type.equals(type)&&Objects.equal(value, var.value);
+		if (obj instanceof Var) {
+			Var var = (Var) obj;
+			return type.equals(type) && Objects.equal(value, var.value);
 		}
 		return false;
 	}
