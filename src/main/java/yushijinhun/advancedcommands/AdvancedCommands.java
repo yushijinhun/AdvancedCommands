@@ -1,9 +1,5 @@
 package yushijinhun.advancedcommands;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import yushijinhun.advancedcommands.common.CommonProxy;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -11,6 +7,11 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import yushijinhun.advancedcommands.common.CommonProxy;
+import yushijinhun.advancedcommands.common.command.CommandVar;
 
 @Mod(modid = AdvancedCommands.ID, name = AdvancedCommands.NAME, version = "${VERSION}", useMetadata = true, guiFactory = "yushijinhun.advancedcommands.client.gui.GuiFactory", acceptedMinecraftVersions = "[1.8,)")
 public final class AdvancedCommands {
@@ -21,8 +22,8 @@ public final class AdvancedCommands {
 	@Instance(value = AdvancedCommands.ID)
 	public static AdvancedCommands INSTANCE;
 
-    @SidedProxy(clientSide = "yushijinhun.advancedcommands.client.ClientProxy", serverSide = "yushijinhun.advancedcommands.common.CommonProxy")
-    public static CommonProxy PROXY;
+	@SidedProxy(clientSide = "yushijinhun.advancedcommands.client.ClientProxy", serverSide = "yushijinhun.advancedcommands.common.CommonProxy")
+	public static CommonProxy PROXY;
 
 	public static Logger logger=LogManager.getFormatterLogger(AdvancedCommands.ID);
 
@@ -39,5 +40,10 @@ public final class AdvancedCommands {
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 
+	}
+
+	@EventHandler
+	public void serverStarting(FMLServerStartingEvent event) {
+		event.registerServerCommand(new CommandVar());
 	}
 }
