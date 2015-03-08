@@ -1,8 +1,9 @@
-package yushijinhun.advancedcommands.common.command;
+package yushijinhun.advancedcommands.common.command.var;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import yushijinhun.advancedcommands.common.command.BasicCommand;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.BlockPos;

@@ -11,7 +11,7 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import yushijinhun.advancedcommands.common.CommonProxy;
-import yushijinhun.advancedcommands.common.command.CommandVar;
+import yushijinhun.advancedcommands.common.command.var.CommandVar;
 
 @Mod(modid = AdvancedCommands.ID, name = AdvancedCommands.NAME, version = "${VERSION}", useMetadata = true, guiFactory = "yushijinhun.advancedcommands.client.gui.GuiFactory", acceptedMinecraftVersions = "[1.8,)")
 public final class AdvancedCommands {
