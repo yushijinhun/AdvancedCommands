@@ -16,4 +16,8 @@ public abstract class DataType {
 
 	public abstract Object readFromNBT(NBTTagCompound nbt);
 
+	@Override
+	public String toString() {
+		return name;
+	}
 }
