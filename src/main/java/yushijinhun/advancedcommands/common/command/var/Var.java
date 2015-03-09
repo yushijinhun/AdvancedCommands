@@ -2,7 +2,6 @@ package yushijinhun.advancedcommands.common.command.var;
 
 import net.minecraft.nbt.NBTTagCompound;
 import yushijinhun.advancedcommands.common.command.var.datatype.DataType;
-import yushijinhun.advancedcommands.common.command.var.datatype.DataTypeHelper;
 import com.google.common.base.Objects;
 
 public class Var {
@@ -27,7 +26,7 @@ public class Var {
 	}
 
 	public static Var parseFromNBT(NBTTagCompound nbt) {
-		DataType type = DataTypeHelper.types.get(nbt.getString("type"));
+		DataType type = DataType.types.get(nbt.getString("type"));
 		return new Var(type, type.readFromNBT(nbt.getCompoundTag("data")));
 	}
 
