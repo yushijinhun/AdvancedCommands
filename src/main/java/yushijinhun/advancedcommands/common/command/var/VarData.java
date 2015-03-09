@@ -7,6 +7,8 @@ import java.util.Set;
 
 public class VarData {
 
+	public static VarData theVarData = null;
+
 	private final Map<String, Var> vars = new LinkedHashMap<String, Var>();
 
 	public Var getVar(String name) {
