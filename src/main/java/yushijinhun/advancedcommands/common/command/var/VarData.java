@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import yushijinhun.advancedcommands.common.command.var.datatype.DataTypeHelper;
 
 public class VarData {
 
@@ -29,11 +30,19 @@ public class VarData {
 	public void setVar(String name, Var var) {
 		Objects.requireNonNull(name);
 		Objects.requireNonNull(var);
-		vars.put(name, var);
+		Var old = vars.get(name);
+		if (old == null) {
+			throw new IllegalArgumentException("Var " + name + " not exists");
+		}
+		vars.put(name, DataTypeHelper.cast(var, old.type));
 		markDirty();
 	}
 
 	public void removeVar(String name) {
+		Objects.requireNonNull(name);
+		if (!vars.containsKey(name)) {
+			throw new IllegalArgumentException("Var " + name + " not exists");
+		}
 		vars.remove(name);
 		markDirty();
 	}
