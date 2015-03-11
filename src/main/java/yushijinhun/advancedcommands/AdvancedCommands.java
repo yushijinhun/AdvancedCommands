@@ -9,13 +9,15 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
 import net.minecraftforge.fml.common.network.NetworkCheckHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import yushijinhun.advancedcommands.common.CommonProxy;
 import yushijinhun.advancedcommands.common.command.var.CommandVar;
+import yushijinhun.advancedcommands.common.command.var.VarData;
+import yushijinhun.advancedcommands.common.command.var.VarSavedData;
 
 @Mod(modid = AdvancedCommands.ID, name = AdvancedCommands.NAME, version = "${VERSION}", useMetadata = true, guiFactory = "yushijinhun.advancedcommands.client.gui.GuiFactory", acceptedMinecraftVersions = "[1.8,)")
 public final class AdvancedCommands {
@@ -49,11 +51,16 @@ public final class AdvancedCommands {
 	@EventHandler
 	public void serverStarting(FMLServerStartingEvent event) {
 		event.registerServerCommand(new CommandVar());
+		
+		event.getServer().worldServers[0].getMapStorage().loadData(VarSavedData.class, "ac-vars");
+		if (VarData.theVarData==null){
+			VarData.theVarData=new VarData();
+		}
 	}
 
 	@EventHandler
-	public void serverStopping(FMLServerStoppingEvent event) {
-
+	public void serverStopped(FMLServerStoppedEvent event) {
+		VarData.theVarData=null;
 	}
 
 	@NetworkCheckHandler
