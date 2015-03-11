@@ -2,12 +2,20 @@ package yushijinhun.advancedcommands.common.command.var;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.world.WorldSavedData;
 import net.minecraftforge.common.util.Constants.NBT;
 
-public class VarDataSavingHandler {
+public class VarSavedData extends WorldSavedData {
 
-	public static final VarDataSavingHandler handler = new VarDataSavingHandler();
+	public VarSavedData(String name) {
+		super(name);
+	}
 
+	public VarSavedData() {
+		this("ac-vars");
+	}
+
+	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
 		VarData data = new VarData();
 		NBTTagList vars = nbt.getTagList("vars", NBT.TAG_COMPOUND);
@@ -18,6 +26,7 @@ public class VarDataSavingHandler {
 		VarData.theVarData = data;
 	}
 
+	@Override
 	public void writeToNBT(NBTTagCompound nbt) {
 		VarData data = VarData.theVarData;
 		NBTTagList vars = new NBTTagList();
