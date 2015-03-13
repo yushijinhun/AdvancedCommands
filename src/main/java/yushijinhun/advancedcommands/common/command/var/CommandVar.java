@@ -1,5 +1,7 @@
 package yushijinhun.advancedcommands.common.command.var;
 
+import java.io.CharArrayWriter;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.List;
 import net.minecraft.command.CommandException;
@@ -8,6 +10,8 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
+import yushijinhun.advancedcommands.AdvancedCommands;
+import yushijinhun.advancedcommands.Config;
 import yushijinhun.advancedcommands.common.command.BasicCommand;
 import yushijinhun.advancedcommands.common.command.var.datatype.DataType;
 
@@ -38,6 +42,15 @@ public class CommandVar extends BasicCommand {
 		try {
 			doExecute(sender, args);
 		} catch (Throwable e) {
+			if (Config.printErrorMessageToConsole) {
+				AdvancedCommands.logger.info("Executing command var with " + Arrays.toString(args) + " failed", e);
+			}
+
+			if (Config.sendErrorMessageToOps) {
+				CharArrayWriter out = new CharArrayWriter();
+				e.printStackTrace(new PrintWriter(out));
+				notifyOperators(sender, this, "Executing command var with " + args + " failed\n" + out.toString());
+			}
 			throw new CommandException(e.getMessage(), new Object[0]);
 		}
 	}
