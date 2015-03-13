@@ -88,7 +88,9 @@ public class CommandVar extends BasicCommand {
 			sb.append(var.value);
 			sb.append('\n');
 		}
-		sb.deleteCharAt(sb.length() - 1);
+		if (sb.length() > 0) {
+			sb.deleteCharAt(sb.length() - 1);
+		}
 		sender.addChatMessage(new ChatComponentText(sb.toString()));
 	}
 
