@@ -23,4 +23,15 @@ public class DataTypeBoolean extends DataType {
 		return nbt.getBoolean("value");
 	}
 
+	@Override
+	public Object cast(Object src, DataType srcType) {
+		if (src instanceof Boolean) {
+			return src;
+		} else if (src instanceof String) {
+			return Boolean.valueOf((String) src);
+		}
+
+		throw new ClassCastException();
+	}
+
 }

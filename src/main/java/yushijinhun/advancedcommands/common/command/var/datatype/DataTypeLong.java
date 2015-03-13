@@ -23,4 +23,15 @@ public class DataTypeLong extends DataType {
 		return nbt.getLong("value");
 	}
 
+	@Override
+	public Object cast(Object src, DataType srcType) {
+		if (src instanceof Number) {
+			return ((Number) src).longValue();
+		} else if (src instanceof String) {
+			return Long.valueOf((String) src);
+		}
+
+		throw new ClassCastException();
+	}
+
 }

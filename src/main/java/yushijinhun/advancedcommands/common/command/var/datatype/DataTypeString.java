@@ -23,4 +23,9 @@ public class DataTypeString extends DataType {
 		return nbt.getString("value");
 	}
 
+	@Override
+	public Object cast(Object src, DataType srcType) {
+		return String.valueOf(src);
+	}
+
 }

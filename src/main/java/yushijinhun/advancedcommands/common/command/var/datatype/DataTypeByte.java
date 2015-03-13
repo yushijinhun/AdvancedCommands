@@ -23,4 +23,15 @@ public class DataTypeByte extends DataType {
 		return nbt.getByte("value");
 	}
 
+	@Override
+	public Object cast(Object src, DataType srcType) {
+		if (src instanceof Number) {
+			return ((Number) src).byteValue();
+		} else if (src instanceof String) {
+			return Byte.valueOf((String) src);
+		}
+
+		throw new ClassCastException();
+	}
+
 }

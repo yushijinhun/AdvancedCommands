@@ -23,4 +23,15 @@ public class DataTypeInt extends DataType {
 		return nbt.getInteger("value");
 	}
 
+	@Override
+	public Object cast(Object src, DataType srcType) {
+		if (src instanceof Number) {
+			return ((Number) src).intValue();
+		} else if (src instanceof String) {
+			return Integer.valueOf((String) src);
+		}
+
+		throw new ClassCastException();
+	}
+
 }

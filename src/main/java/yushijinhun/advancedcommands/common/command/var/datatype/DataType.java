@@ -34,6 +34,8 @@ public abstract class DataType {
 
 	public abstract Object readFromNBT(NBTTagCompound nbt);
 
+	public abstract Object cast(Object src, DataType srcType);
+
 	@Override
 	public String toString() {
 		return name;

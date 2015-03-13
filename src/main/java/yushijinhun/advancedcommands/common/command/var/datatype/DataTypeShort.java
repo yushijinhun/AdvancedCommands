@@ -23,4 +23,15 @@ public class DataTypeShort extends DataType {
 		return nbt.getShort("value");
 	}
 
+	@Override
+	public Object cast(Object src, DataType srcType) {
+		if (src instanceof Number) {
+			return ((Number) src).shortValue();
+		} else if (src instanceof String) {
+			return Short.valueOf((String) src);
+		}
+
+		throw new ClassCastException();
+	}
+
 }

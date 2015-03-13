@@ -23,4 +23,15 @@ public class DataTypeFloat extends DataType {
 		return nbt.getFloat("value");
 	}
 
+	@Override
+	public Object cast(Object src, DataType srcType) {
+		if (src instanceof Number) {
+			return ((Number) src).floatValue();
+		} else if (src instanceof String) {
+			return Float.valueOf((String) src);
+		}
+
+		throw new ClassCastException();
+	}
+
 }
