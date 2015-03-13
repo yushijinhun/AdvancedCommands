@@ -1,6 +1,7 @@
 package yushijinhun.advancedcommands;
 
 import java.util.Map;
+import net.minecraft.world.storage.MapStorage;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -51,10 +52,13 @@ public final class AdvancedCommands {
 	@EventHandler
 	public void serverStarting(FMLServerStartingEvent event) {
 		event.registerServerCommand(new CommandVar());
-		
-		event.getServer().worldServers[0].getMapStorage().loadData(VarSavedData.class, "ac-vars");
-		if (VarData.theVarData==null){
-			VarData.theVarData=new VarData();
+
+		MapStorage mapStorage = event.getServer().worldServers[0].getMapStorage();
+		VarData.theVarData = new VarData();
+		VarData.theVarData.savedData = (VarSavedData) mapStorage.loadData(VarSavedData.class, "ac-vars");
+		if (VarData.theVarData.savedData == null) {
+			VarData.theVarData.savedData = new VarSavedData();
+			mapStorage.setData("ac-vars", VarData.theVarData.savedData);
 		}
 	}
 

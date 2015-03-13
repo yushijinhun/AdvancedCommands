@@ -11,7 +11,7 @@ public class VarData {
 	public static VarData theVarData = null;
 
 	protected final Map<String, Var> vars = new LinkedHashMap<String, Var>();
-	protected VarSavedData savedData;
+	public VarSavedData savedData;
 
 	public Var getVar(String name) {
 		return vars.get(name);
@@ -60,6 +60,9 @@ public class VarData {
 	}
 
 	protected void markDirty() {
+		if (savedData == null) {
+			return;
+		}
 		savedData.markDirty();
 	}
 }
