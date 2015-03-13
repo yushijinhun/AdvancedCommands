@@ -43,21 +43,36 @@ public class CommandVar extends BasicCommand {
 	}
 
 	public void doExecute(ICommandSender sender, String[] args) throws Throwable {
+		if (args.length == 0) {
+			throw new IllegalArgumentException("Argument length is too short");
+		}
+
 		if (args[0].equals("create")) {
+			if (args.length != 3) {
+				throw new IllegalArgumentException("Argument length is invalid");
+			}
 			String type = args[1];
 			String var = args[2];
 			create(type, var, sender);
 		} else if (args[0].equals("delete")) {
+			if (args.length != 2) {
+				throw new IllegalArgumentException("Argument length is invalid");
+			}
 			String var = args[1];
 			delete(var, sender);
 		} else if (args[0].equals("compute")) {
 			StringBuilder sb = new StringBuilder();
-			for (String s : args) {
-				sb.append(s);
+			for (int i = 1; i < args.length; i++) {
+				sb.append(args[i]);
 			}
 			compute(sb.toString(), sender);
 		} else if (args[0].equals("list")) {
+			if (args.length != 1) {
+				throw new IllegalArgumentException("Argument length is invalid");
+			}
 			list(sender);
+		} else {
+			throw new IllegalArgumentException(args[0] + " is not a valid sub command");
 		}
 	}
 
