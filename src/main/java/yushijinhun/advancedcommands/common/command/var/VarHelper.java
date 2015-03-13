@@ -1,6 +1,7 @@
 package yushijinhun.advancedcommands.common.command.var;
 
 import yushijinhun.advancedcommands.common.command.var.datatype.DataType;
+import yushijinhun.advancedcommands.util.LocalizationHelper;
 
 public final class VarHelper {
 
@@ -8,7 +9,8 @@ public final class VarHelper {
 		try {
 			return new Var(dest, dest.cast(src.value, src.type));
 		} catch (ClassCastException e) {
-			throw new IllegalArgumentException(src + " cannot cast to " + dest, e);
+			throw new IllegalArgumentException(LocalizationHelper.localizeString(
+					"advancedcommands.command.datatype.cast.failed", src, dest), e);
 		}
 	}
 

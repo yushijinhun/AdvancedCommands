@@ -37,6 +37,8 @@ public final class AdvancedCommands {
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		INSTANCE = this;
+
+		Config.loadConfig(event.getSuggestedConfigurationFile());
 	}
 
 	@EventHandler

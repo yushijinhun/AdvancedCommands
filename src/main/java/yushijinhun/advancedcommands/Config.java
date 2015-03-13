@@ -29,20 +29,27 @@ public final class Config {
 		// Config.<name>);
 		// prop.comment =
 		// StatCollector.translateToLocal("config.<name>.description");
+		// prop.setLanguageKey("config.<name>");
 		// <name> = prop.getBoolean();
 		// configList.add(prop.getName());
 
 		prop = config.get(Configuration.CATEGORY_GENERAL, "sendErrorMessageToOps",
 				Config.sendErrorMessageToOps);
 		prop.comment = StatCollector.translateToLocal("config.sendErrorMessageToOps.description");
+		prop.setLanguageKey("config.sendErrorMessageToOps");
 		sendErrorMessageToOps = prop.getBoolean();
 		configList.add(prop.getName());
 
 		prop = config.get(Configuration.CATEGORY_GENERAL, "printErrorMessageToConsole",
 				Config.printErrorMessageToConsole);
 		prop.comment = StatCollector.translateToLocal("config.printErrorMessageToConsole.description");
+		prop.setLanguageKey("config.printErrorMessageToConsole");
 		printErrorMessageToConsole = prop.getBoolean();
 		configList.add(prop.getName());
+
+		if (config.hasChanged()) {
+			config.save();
+		}
 
 		afterLoadConfig();
 	}

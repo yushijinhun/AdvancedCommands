@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import yushijinhun.advancedcommands.util.LocalizationHelper;
 
 public class VarData {
 
@@ -20,7 +21,8 @@ public class VarData {
 		Objects.requireNonNull(name);
 		Objects.requireNonNull(var);
 		if (vars.containsKey(name)) {
-			throw new IllegalArgumentException("Var " + name + " already exists");
+			throw new IllegalArgumentException(LocalizationHelper.localizeString("advancedcommands.command.var.exists",
+					name));
 		}
 		vars.put(name, var);
 		markDirty();
@@ -31,7 +33,8 @@ public class VarData {
 		Objects.requireNonNull(var);
 		Var old = vars.get(name);
 		if (old == null) {
-			throw new IllegalArgumentException("Var " + name + " not exists");
+			throw new IllegalArgumentException(LocalizationHelper.localizeString(
+					"advancedcommands.command.var.notexists", name));
 		}
 		vars.put(name, VarHelper.cast(var, old.type));
 		markDirty();
@@ -40,7 +43,8 @@ public class VarData {
 	public void removeVar(String name) {
 		Objects.requireNonNull(name);
 		if (!vars.containsKey(name)) {
-			throw new IllegalArgumentException("Var " + name + " not exists");
+			throw new IllegalArgumentException(LocalizationHelper.localizeString(
+					"advancedcommands.command.var.notexists", name));
 		}
 		vars.remove(name);
 		markDirty();
