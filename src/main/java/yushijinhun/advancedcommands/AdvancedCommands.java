@@ -20,7 +20,7 @@ import yushijinhun.advancedcommands.common.command.var.CommandVar;
 import yushijinhun.advancedcommands.common.command.var.VarData;
 import yushijinhun.advancedcommands.common.command.var.VarSavedData;
 
-@Mod(modid = AdvancedCommands.ID, name = AdvancedCommands.NAME, version = "${VERSION}", useMetadata = true, guiFactory = "yushijinhun.advancedcommands.client.gui.GuiFactory", acceptedMinecraftVersions = "[1.8,)")
+@Mod(modid = AdvancedCommands.ID, name = AdvancedCommands.NAME, version = "${VERSION}", useMetadata = true, guiFactory = "yushijinhun.advancedcommands.client.gui.GuiFactory")
 public final class AdvancedCommands {
 
 	public static final String ID = "advancedcommands";
