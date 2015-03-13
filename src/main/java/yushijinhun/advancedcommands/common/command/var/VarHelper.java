@@ -11,4 +11,30 @@ public final class VarHelper {
 			throw new IllegalArgumentException(src + " cannot cast to " + dest, e);
 		}
 	}
+
+	public static boolean isValidIdentifier(String name) {
+		if (name == null || name.length() == 0) {
+			return false;
+		}
+
+		for (int i = 0; i < name.length(); i++) {
+			char c = name.charAt(i);
+			if (i == 0) {
+				if (!Character.isJavaIdentifierStart(c)) {
+					return false;
+				}
+			}
+			if (!Character.isJavaIdentifierPart(c)) {
+				return false;
+			}
+		}
+
+		for (String s : DataType.types.keySet()) {
+			if (s.equals(name)) {
+				return false;
+			}
+		}
+
+		return true;
+	}
 }

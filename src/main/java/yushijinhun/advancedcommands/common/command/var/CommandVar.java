@@ -67,6 +67,10 @@ public class CommandVar extends BasicCommand {
 			throw new IllegalArgumentException("DataType " + type + " not exists");
 		}
 
+		if (!VarHelper.isValidIdentifier(var)) {
+			throw new IllegalArgumentException(var + " is not a valid identifier");
+		}
+
 		VarData.theVarData.addVar(var, new Var(datatype));
 	}
 
