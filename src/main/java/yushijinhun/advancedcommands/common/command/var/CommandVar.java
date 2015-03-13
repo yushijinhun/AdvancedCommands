@@ -6,12 +6,13 @@ import java.util.List;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.ChatComponentText;
 import yushijinhun.advancedcommands.common.command.BasicCommand;
 import yushijinhun.advancedcommands.common.command.var.datatype.DataType;
 
 public class CommandVar extends BasicCommand {
 
-	private static final List<String> arg1 = Arrays.asList(new String[] { "create", "delete", "compute" });
+	private static final List<String> arg1 = Arrays.asList(new String[] { "create", "delete", "compute", "list" });
 
 	@Override
 	public int getRequiredPermissionLevel() {
@@ -27,7 +28,8 @@ public class CommandVar extends BasicCommand {
 	public String getCommandUsage(ICommandSender sender) {
 		return "/var create <type> <var>\n" +
 				"/var delete <var>\n" +
-				"/var compute <var>=<exp>";
+				"/var compute <var>=<exp>\n" +
+				"/var list";
 	}
 
 	@Override
@@ -43,20 +45,22 @@ public class CommandVar extends BasicCommand {
 		if (args[0].equals("create")) {
 			String type = args[1];
 			String var = args[2];
-			create(type, var);
+			create(type, var, sender);
 		} else if (args[0].equals("delete")) {
 			String var = args[1];
-			delete(var);
+			delete(var, sender);
 		} else if (args[0].equals("compute")) {
 			StringBuilder sb = new StringBuilder();
 			for (String s : args) {
 				sb.append(s);
 			}
-			compute(sb.toString());
+			compute(sb.toString(), sender);
+		} else if (args[0].equals("list")) {
+			list(sender);
 		}
 	}
 
-	private void create(String type, String var) {
+	private void create(String type, String var, ICommandSender sender) {
 		DataType datatype = DataType.types.get(type);
 		if (datatype == null) {
 			throw new IllegalArgumentException("DataType " + type + " not exists");
@@ -65,12 +69,27 @@ public class CommandVar extends BasicCommand {
 		VarData.theVarData.addVar(var, new Var(datatype));
 	}
 
-	private void delete(String type) {
+	private void delete(String type, ICommandSender sender) {
 		VarData.theVarData.removeVar(type);
 	}
 
-	private void compute(String equ) {
+	private void compute(String equ, ICommandSender sender) {
 		// TODO
+	}
+
+	private void list(ICommandSender sender) {
+		StringBuilder sb = new StringBuilder();
+		for (String name : VarData.theVarData.getVarNames()) {
+			Var var = VarData.theVarData.getVar(name);
+			sb.append(var.type);
+			sb.append(' ');
+			sb.append(name);
+			sb.append(" = ");
+			sb.append(var.value);
+			sb.append('\n');
+		}
+		sb.deleteCharAt(sb.length() - 1);
+		sender.addChatMessage(new ChatComponentText(sb.toString()));
 	}
 
 	@Override
