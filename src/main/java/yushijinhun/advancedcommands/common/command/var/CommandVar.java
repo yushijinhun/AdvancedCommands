@@ -1,6 +1,5 @@
 package yushijinhun.advancedcommands.common.command.var;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import net.minecraft.command.CommandException;
@@ -110,22 +109,22 @@ public class CommandVar extends BasicCommand {
 
 		if (args.length >= 2) {
 
-			if (args[1].equals("create")) {
+			if (args[0].equals("create")) {
 				if (args.length == 2) {
-					return new ArrayList<String>(DataType.types.keySet());
+					return getStringsStartWith(args[1], DataType.types.keySet());
 				}
 				if (args.length == 3) {
-					return new ArrayList<String>(VarData.theVarData.getVarNames());
+					return getStringsStartWith(args[2], VarData.theVarData.getVarNames());
 				}
 			}
 
-			if (args[1].equals("delete")) {
+			if (args[0].equals("delete")) {
 				if (args.length == 2) {
-					return new ArrayList<String>(VarData.theVarData.getVarNames());
+					return getStringsStartWith(args[1], VarData.theVarData.getVarNames());
 				}
 			}
 
-			if (args[1].equals("compute")) {
+			if (args[0].equals("compute")) {
 				// TODO
 			}
 		}

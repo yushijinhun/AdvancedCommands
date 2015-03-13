@@ -7,6 +7,8 @@ import yushijinhun.advancedcommands.AdvancedCommands;
 
 public abstract class DataType {
 
+	public static final Map<String, DataType> types = new LinkedHashMap<String, DataType>();
+
 	static {
 		new DataTypeBoolean();
 		new DataTypeByte();
@@ -17,8 +19,6 @@ public abstract class DataType {
 		new DataTypeDouble();
 		new DataTypeString();
 	}
-
-	public static final Map<String, DataType> types = new LinkedHashMap<String, DataType>();
 
 	public final String name;
 
