@@ -4,7 +4,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import yushijinhun.advancedcommands.common.command.var.datatype.DataTypeHelper;
 
 public class VarData {
 
@@ -34,7 +33,7 @@ public class VarData {
 		if (old == null) {
 			throw new IllegalArgumentException("Var " + name + " not exists");
 		}
-		vars.put(name, DataTypeHelper.cast(var, old.type));
+		vars.put(name, VarHelper.cast(var, old.type));
 		markDirty();
 	}
 

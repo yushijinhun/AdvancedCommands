@@ -1,8 +1,8 @@
-package yushijinhun.advancedcommands.common.command.var.datatype;
+package yushijinhun.advancedcommands.common.command.var;
 
-import yushijinhun.advancedcommands.common.command.var.Var;
+import yushijinhun.advancedcommands.common.command.var.datatype.DataType;
 
-public final class DataTypeHelper {
+public final class VarHelper {
 
 	public static Var cast(Var src, DataType dest) {
 		try {
