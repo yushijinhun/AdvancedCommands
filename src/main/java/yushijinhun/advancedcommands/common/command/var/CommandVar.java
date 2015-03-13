@@ -7,6 +7,8 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.IChatComponent;
 import yushijinhun.advancedcommands.common.command.BasicCommand;
 import yushijinhun.advancedcommands.common.command.var.datatype.DataType;
 
@@ -90,6 +92,12 @@ public class CommandVar extends BasicCommand {
 		}
 		if (sb.length() > 0) {
 			sb.deleteCharAt(sb.length() - 1);
+		}
+		if (sb.length() == 0) {
+			IChatComponent msg = new ChatComponentText("Var list is empty");
+			msg.getChatStyle().setColor(EnumChatFormatting.RED);
+			sender.addChatMessage(msg);
+			return;
 		}
 		sender.addChatMessage(new ChatComponentText(sb.toString()));
 	}
