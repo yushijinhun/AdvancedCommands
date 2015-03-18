@@ -469,11 +469,23 @@ public final class ExpressionHandler {
 	}
 
 	public static Var opEquals(Var arg1, Var arg2) {
-		return new Var(DataType.types.get("boolean"), arg1.value.equals(arg2.value));
+		DataType type = getPrecisest(arg1.type, arg2.type);
+		Object var1;
+		Object var2;
+		if (type == null) {
+			var1 = arg1.value;
+			var2 = arg2.value;
+		} else {
+			var1 = type.cast(arg1.value, arg1.type);
+			var2 = type.cast(arg2.value, arg2.type);
+		}
+		return new Var(DataType.types.get("boolean"), var1.equals(var2));
 	}
 
 	public static Var opNotEquals(Var arg1, Var arg2) {
-		return new Var(DataType.types.get("boolean"), !arg1.value.equals(arg2.value));
+		Var result = opEquals(arg1, arg2);
+		result.value = !(Boolean) result.value;
+		return result;
 	}
 
 	public static Var opAnd(Var arg1, Var arg2) {
