@@ -127,6 +127,7 @@ public class CommandVar extends BasicCommand {
 		StringBuilder sb = new StringBuilder();
 		for (String name : VarData.theVarData.getVarNames()) {
 			Var var = VarData.theVarData.getVar(name);
+			sb.append(var.type);
 			sb.append(' ');
 			sb.append(name);
 			sb.append(" = ");
