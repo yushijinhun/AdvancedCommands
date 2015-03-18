@@ -1,0 +1,15 @@
+advancedcommands.command.execute.failed=Executing command %s with %s failed
+advancedcommands.command.argument.short=Argument length is too short
+advancedcommands.command.argument.invalid=Argument length is invalid
+advancedcommands.command.subcommand.invalid=%s is not a valid sub command
+advancedcommands.command.datatype.notexists=Data type %s not exists
+advancedcommands.command.datatype.cast.failed=%s cannot cast to %s
+advancedcommands.command.identifier.invalid=%s is not a valid identifier
+advancedcommands.command.list.empty=Var list is empty
+advancedcommands.command.var.exists=Var %s already exists
+advancedcommands.command.var.notexists=Var %s not exists
+
+config.sendErrorMessageToOps=Send error messages to ops
+config.sendErrorMessageToOps.description=Send command error messages to ops
+config.printErrorMessageToConsole=Print error messages to console
+config.printErrorMessageToConsole.description=Print command error messages to console
