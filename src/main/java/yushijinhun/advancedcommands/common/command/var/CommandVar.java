@@ -41,6 +41,7 @@ public class CommandVar extends BasicCommand {
 	public void execute(ICommandSender sender, String[] args) throws CommandException {
 		try {
 			doExecute(sender, args);
+			notifyOperators(sender, this, "Command var executed " + Arrays.toString(args));
 		} catch (Throwable e) {
 			if (Config.printErrorMessageToConsole) {
 				AdvancedCommands.logger.info(
@@ -118,14 +119,14 @@ public class CommandVar extends BasicCommand {
 	}
 
 	private void compute(String equ, ICommandSender sender) {
-		// TODO
+		String[] spilted = equ.split("=", 2);
+		VarData.theVarData.setVar(spilted[0], ExpressionHandler.handleExpression(spilted[1]));
 	}
 
 	private void list(ICommandSender sender) {
 		StringBuilder sb = new StringBuilder();
 		for (String name : VarData.theVarData.getVarNames()) {
 			Var var = VarData.theVarData.getVar(name);
-			sb.append(var.type);
 			sb.append(' ');
 			sb.append(name);
 			sb.append(" = ");
@@ -169,7 +170,7 @@ public class CommandVar extends BasicCommand {
 			}
 
 			if (args[0].equals("compute")) {
-				// TODO
+				return getStringsStartWith(args[1], VarData.theVarData.getVarNames());
 			}
 		}
 
