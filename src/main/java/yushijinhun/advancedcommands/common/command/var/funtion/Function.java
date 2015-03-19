@@ -7,11 +7,15 @@ import yushijinhun.advancedcommands.common.command.var.Var;
 
 public abstract class Function {
 
-	static {
-
-	}
-
 	public static final Map<String, Function> functions = new LinkedHashMap<String, Function>();
+
+	static {
+		new FunctionSin();
+		new FunctionTan();
+		new FunctionCos();
+		new FunctionSqr();
+		new FunctionSqrt();
+	}
 
 	public final String name;
 
@@ -22,6 +26,8 @@ public abstract class Function {
 	}
 
 	public abstract Var call(Var[] args);
+
+	public abstract int getArguments();
 
 	@Override
 	public String toString() {
