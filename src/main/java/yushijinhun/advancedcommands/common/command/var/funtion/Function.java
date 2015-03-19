@@ -15,6 +15,8 @@ public abstract class Function {
 		new FunctionCos();
 		new FunctionSqr();
 		new FunctionSqrt();
+		new FunctionMax();
+		new FunctionMin();
 	}
 
 	public final String name;
