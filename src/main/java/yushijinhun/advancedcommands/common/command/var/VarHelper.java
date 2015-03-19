@@ -1,6 +1,7 @@
 package yushijinhun.advancedcommands.common.command.var;
 
 import yushijinhun.advancedcommands.common.command.var.datatype.DataType;
+import yushijinhun.advancedcommands.common.command.var.funtion.Function;
 import yushijinhun.advancedcommands.util.LocalizationHelper;
 
 public final class VarHelper {
@@ -32,6 +33,12 @@ public final class VarHelper {
 		}
 
 		for (String s : DataType.types.keySet()) {
+			if (s.equals(name)) {
+				return false;
+			}
+		}
+
+		for (String s : Function.functions.keySet()) {
 			if (s.equals(name)) {
 				return false;
 			}

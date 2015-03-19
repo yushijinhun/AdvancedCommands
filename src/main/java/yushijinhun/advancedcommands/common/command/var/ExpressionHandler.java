@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 import yushijinhun.advancedcommands.common.command.var.datatype.DataType;
+import yushijinhun.advancedcommands.common.command.var.funtion.Function;
 
 public final class ExpressionHandler {
 
@@ -19,6 +20,7 @@ public final class ExpressionHandler {
 	static {
 		priority.put("(", Integer.MIN_VALUE);
 		priority.put(")", Integer.MIN_VALUE);
+		priority.put(",", Integer.MIN_VALUE);
 		priority.put("!", -1);
 		priority.put("+.", -1);
 		priority.put("-.", -1);
@@ -72,6 +74,7 @@ public final class ExpressionHandler {
 		opChar.add('&');
 		opChar.add('|');
 		opChar.add('^');
+		opChar.add(',');
 
 		precision.put(DataType.types.get("byte"), 1);
 		precision.put(DataType.types.get("short"), 2);
@@ -88,55 +91,68 @@ public final class ExpressionHandler {
 				stack.push((Var) o);
 			} else {
 				String op = (String) o;
-				Var arg1 = stack.pop();
-				if (op.equals("!")) {
-					stack.push(opNot(arg1));
-				} else if (op.equals("+.")) {
-					stack.push(opUp(arg1));
-				} else if (op.equals("-.")) {
-					stack.push(opDown(arg1));
-				} else if (op.equals("*")) {
-					stack.push(opMultiply(stack.pop(), arg1));
-				} else if (op.equals("/")) {
-					stack.push(opDiv(stack.pop(), arg1));
-				} else if (op.equals("%")) {
-					stack.push(opMod(stack.pop(), arg1));
-				} else if (op.equals("+")) {
-					stack.push(opPlus(stack.pop(), arg1));
-				} else if (op.equals("-")) {
-					stack.push(opMinus(stack.pop(), arg1));
-				} else if (op.equals("<<")) {
-					stack.push(opLShift(stack.pop(), arg1));
-				} else if (op.equals(">>")) {
-					stack.push(opRShift(stack.pop(), arg1));
-				} else if (op.equals(">>>")) {
-					stack.push(opNRShift(stack.pop(), arg1));
-				} else if (op.equals("<")) {
-					stack.push(opLess(stack.pop(), arg1));
-				} else if (op.equals(">")) {
-					stack.push(opLarger(stack.pop(), arg1));
-				} else if (op.equals(">=")) {
-					stack.push(opLargerEquals(stack.pop(), arg1));
-				} else if (op.equals("<=")) {
-					stack.push(opLessEquals(stack.pop(), arg1));
-				} else if (op.equals("==")) {
-					stack.push(opEquals(stack.pop(), arg1));
-				} else if (op.equals("!=")) {
-					stack.push(opNotEquals(stack.pop(), arg1));
-				} else if (op.equals("&")) {
-					stack.push(opAnd(stack.pop(), arg1));
-				} else if (op.equals("|")) {
-					stack.push(opOr(stack.pop(), arg1));
-				} else if (op.equals("^")) {
-					stack.push(opXor(stack.pop(), arg1));
-				} else if (op.startsWith("(")) {
-					if (op.endsWith(")")) {
-						stack.push(opCast(arg1, op.substring(1, op.length() - 1)));
-					} else {
-						throw new IllegalArgumentException("un-matched (");
+				if (op.startsWith("()")) {
+					Function function = Function.functions.get(op.substring(2));
+					int argLength = function.getArguments();
+					Var[] args = new Var[argLength];
+					for (int i = argLength - 1; i > -1; i--) {
+						args[i] = stack.pop();
+					}
+					Var result = function.call(args);
+					if (result != null) {
+						stack.push(result);
 					}
 				} else {
-					throw new IllegalArgumentException("un-matched op");
+					Var arg1 = stack.pop();
+					if (op.equals("!")) {
+						stack.push(opNot(arg1));
+					} else if (op.equals("+.")) {
+						stack.push(opUp(arg1));
+					} else if (op.equals("-.")) {
+						stack.push(opDown(arg1));
+					} else if (op.equals("*")) {
+						stack.push(opMultiply(stack.pop(), arg1));
+					} else if (op.equals("/")) {
+						stack.push(opDiv(stack.pop(), arg1));
+					} else if (op.equals("%")) {
+						stack.push(opMod(stack.pop(), arg1));
+					} else if (op.equals("+")) {
+						stack.push(opPlus(stack.pop(), arg1));
+					} else if (op.equals("-")) {
+						stack.push(opMinus(stack.pop(), arg1));
+					} else if (op.equals("<<")) {
+						stack.push(opLShift(stack.pop(), arg1));
+					} else if (op.equals(">>")) {
+						stack.push(opRShift(stack.pop(), arg1));
+					} else if (op.equals(">>>")) {
+						stack.push(opNRShift(stack.pop(), arg1));
+					} else if (op.equals("<")) {
+						stack.push(opLess(stack.pop(), arg1));
+					} else if (op.equals(">")) {
+						stack.push(opLarger(stack.pop(), arg1));
+					} else if (op.equals(">=")) {
+						stack.push(opLargerEquals(stack.pop(), arg1));
+					} else if (op.equals("<=")) {
+						stack.push(opLessEquals(stack.pop(), arg1));
+					} else if (op.equals("==")) {
+						stack.push(opEquals(stack.pop(), arg1));
+					} else if (op.equals("!=")) {
+						stack.push(opNotEquals(stack.pop(), arg1));
+					} else if (op.equals("&")) {
+						stack.push(opAnd(stack.pop(), arg1));
+					} else if (op.equals("|")) {
+						stack.push(opOr(stack.pop(), arg1));
+					} else if (op.equals("^")) {
+						stack.push(opXor(stack.pop(), arg1));
+					} else if (op.startsWith("(")) {
+						if (op.endsWith(")")) {
+							stack.push(opCast(arg1, op.substring(1, op.length() - 1)));
+						} else {
+							throw new IllegalArgumentException("un-matched (");
+						}
+					} else {
+						throw new IllegalArgumentException("un-matched op");
+					}
 				}
 			}
 		}
@@ -583,6 +599,10 @@ public final class ExpressionHandler {
 			if (isOp(str)) {
 				if (str.equals("(")) {
 					stack.push(str);
+				} else if (str.equals(",")) {
+					while (!stack.isEmpty() && !stack.peek().equals("(")) {
+						result.add(stack.pop());
+					}
 				} else if (str.equals(")")) {
 					while (!stack.isEmpty()) {
 						String str2 = stack.pop();
@@ -617,35 +637,40 @@ public final class ExpressionHandler {
 				} else {
 					Var var = VarData.theVarData.getVar(str);
 					if (var == null) {
-						char end = str.charAt(str.length() - 1);
-						String spilted = str.length() > 1 ? str.substring(0, str.length() - 1) : null;
-						switch (end) {
-						case 'b':
-						case 'B':
-							result.add(new Var(DataType.types.get("byte"), Byte.valueOf(spilted)));
-							break;
-						case 's':
-						case 'S':
-							result.add(new Var(DataType.types.get("short"), Short.valueOf(spilted)));
-							break;
-						case 'l':
-						case 'L':
-							result.add(new Var(DataType.types.get("long"), Long.valueOf(spilted)));
-							break;
-						case 'f':
-						case 'F':
-							result.add(new Var(DataType.types.get("float"), Float.valueOf(spilted)));
-							break;
-						case 'd':
-						case 'D':
-							result.add(new Var(DataType.types.get("double"), Double.valueOf(spilted)));
-							break;
-						default:
-							if (str.contains(".")) {
-								result.add(new Var(DataType.types.get("double"), Double.valueOf(str)));
-							} else {
-								result.add(new Var(DataType.types.get("int"), Integer.valueOf(str)));
+						Function function = Function.functions.get(str);
+						if (function == null) {
+							char end = str.charAt(str.length() - 1);
+							String spilted = str.length() > 1 ? str.substring(0, str.length() - 1) : null;
+							switch (end) {
+							case 'b':
+							case 'B':
+								result.add(new Var(DataType.types.get("byte"), Byte.valueOf(spilted)));
+								break;
+							case 's':
+							case 'S':
+								result.add(new Var(DataType.types.get("short"), Short.valueOf(spilted)));
+								break;
+							case 'l':
+							case 'L':
+								result.add(new Var(DataType.types.get("long"), Long.valueOf(spilted)));
+								break;
+							case 'f':
+							case 'F':
+								result.add(new Var(DataType.types.get("float"), Float.valueOf(spilted)));
+								break;
+							case 'd':
+							case 'D':
+								result.add(new Var(DataType.types.get("double"), Double.valueOf(spilted)));
+								break;
+							default:
+								if (str.contains(".")) {
+									result.add(new Var(DataType.types.get("double"), Double.valueOf(str)));
+								} else {
+									result.add(new Var(DataType.types.get("int"), Integer.valueOf(str)));
+								}
 							}
+						} else {
+							stack.push("()" + str);
 						}
 					} else {
 						result.add(var);
@@ -745,6 +770,8 @@ public final class ExpressionHandler {
 				result.add("|");
 			} else if (ch == '^') {
 				result.add("^");
+			} else if (ch == ',') {
+				result.add(",");
 			} else {
 				StringBuilder id = new StringBuilder();
 				int l;
@@ -771,6 +798,9 @@ public final class ExpressionHandler {
 	}
 
 	public static int getPriority(String op) {
+		if (op.startsWith("()")) {
+			return 0;
+		}
 		if (op.startsWith("(") && op.endsWith(")")) {
 			return 1;
 		}
