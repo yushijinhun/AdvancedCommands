@@ -630,12 +630,8 @@ public final class ExpressionHandler {
 					} else {
 						throw new IllegalArgumentException("un-matched \"");
 					}
-				} else if (str.equals("true")) {
-					result.add(new Var(DataType.types.get("boolean"), Boolean.TRUE));
-				} else if (str.equals("false")) {
-					result.add(new Var(DataType.types.get("boolean"), Boolean.FALSE));
 				} else {
-					Var var = VarData.theVarData.getVar(str);
+					Var var = VarData.theVarData.get(str);
 					if (var == null) {
 						Function function = Function.functions.get(str);
 						if (function == null) {

@@ -21,7 +21,7 @@ public class VarSavedData extends WorldSavedData {
 		NBTTagList vars = nbt.getTagList("vars", NBT.TAG_COMPOUND);
 		for (int i = 0; i < vars.tagCount(); i++) {
 			NBTTagCompound var = vars.getCompoundTagAt(i);
-			data.addVar(var.getString("name"), Var.parseFromNBT(var));
+			data.add(var.getString("name"), Var.parseFromNBT(var));
 		}
 		VarData.theVarData = data;
 	}
@@ -30,10 +30,10 @@ public class VarSavedData extends WorldSavedData {
 	public void writeToNBT(NBTTagCompound nbt) {
 		VarData data = VarData.theVarData;
 		NBTTagList vars = new NBTTagList();
-		for (String name : data.getVarNames()) {
+		for (String name : data.varNamesSet()) {
 			NBTTagCompound var = new NBTTagCompound();
 			var.setString("name", name);
-			data.getVar(name).writeToNBT(var);
+			data.get(name).writeToNBT(var);
 			vars.appendTag(var);
 		}
 		nbt.setTag("vars", vars);

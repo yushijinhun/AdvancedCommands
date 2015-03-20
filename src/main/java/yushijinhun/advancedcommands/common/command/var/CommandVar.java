@@ -18,6 +18,7 @@ import yushijinhun.advancedcommands.util.LocalizationHelper;
 public class CommandVar extends BasicCommand {
 
 	private static final List<String> arg1 = Arrays.asList(new String[] { "create", "delete", "compute", "list" });
+	private static final List<String> arg2List = Arrays.asList(new String[] { "hidefinal", "showfinal" });
 
 	@Override
 	public int getRequiredPermissionLevel() {
@@ -88,11 +89,11 @@ public class CommandVar extends BasicCommand {
 			}
 			compute(sb.toString(), sender);
 		} else if (args[0].equals("list")) {
-			if (args.length != 1) {
+			if (args.length > 2) {
 				throw new IllegalArgumentException(
 						LocalizationHelper.localizeString("advancedcommands.command.argument.invalid"));
 			}
-			list(sender);
+			list(sender, args.length == 2 ? args[1] : "hidefinal");
 		} else {
 			throw new IllegalArgumentException(LocalizationHelper.localizeString(
 					"advancedcommands.command.subcommand.invalid", args[0]));
@@ -111,22 +112,33 @@ public class CommandVar extends BasicCommand {
 					"advancedcommands.command.identifier.invalid", var));
 		}
 
-		VarData.theVarData.addVar(var, new Var(datatype));
+		VarData.theVarData.add(var, new Var(datatype));
 	}
 
 	private void delete(String type, ICommandSender sender) {
-		VarData.theVarData.removeVar(type);
+		VarData.theVarData.remove(type);
 	}
 
 	private void compute(String equ, ICommandSender sender) {
 		String[] spilted = equ.split("=", 2);
-		VarData.theVarData.setVar(spilted[0], ExpressionHandler.handleExpression(spilted[1]));
+		VarData.theVarData.set(spilted[0], ExpressionHandler.handleExpression(spilted[1]));
 	}
 
-	private void list(ICommandSender sender) {
+	private void list(ICommandSender sender, String mode) {
+		boolean hidefinal;
+		if (mode.equals("hidefinal")) {
+			hidefinal = true;
+		} else if (mode.equals("showfinal")) {
+			hidefinal = false;
+		} else {
+			throw new IllegalArgumentException("Unknow argument");
+		}
 		StringBuilder sb = new StringBuilder();
-		for (String name : VarData.theVarData.getVarNames()) {
-			Var var = VarData.theVarData.getVar(name);
+		for (String name : hidefinal ? VarData.theVarData.varNamesSet() : VarData.theVarData.namesSet()) {
+			Var var = VarData.theVarData.get(name);
+			if (!hidefinal && VarData.theVarData.isConstant(name)) {
+				sb.append("final ");
+			}
 			sb.append(var.type);
 			sb.append(' ');
 			sb.append(name);
@@ -160,18 +172,22 @@ public class CommandVar extends BasicCommand {
 					return getStringsStartWith(args[1], DataType.types.keySet());
 				}
 				if (args.length == 3) {
-					return getStringsStartWith(args[2], VarData.theVarData.getVarNames());
+					return getStringsStartWith(args[2], VarData.theVarData.namesSet());
 				}
 			}
 
 			if (args[0].equals("delete")) {
 				if (args.length == 2) {
-					return getStringsStartWith(args[1], VarData.theVarData.getVarNames());
+					return getStringsStartWith(args[1], VarData.theVarData.namesSet());
 				}
 			}
 
 			if (args[0].equals("compute")) {
-				return getStringsStartWith(args[1], VarData.theVarData.getVarNames());
+				return getStringsStartWith(args[1], VarData.theVarData.namesSet());
+			}
+
+			if (args[0].equals("list")) {
+				return getStringsStartWith(args[1], arg2List);
 			}
 		}
 
