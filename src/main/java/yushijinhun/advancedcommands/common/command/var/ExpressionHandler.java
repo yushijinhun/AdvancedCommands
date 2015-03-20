@@ -209,6 +209,9 @@ public final class ExpressionHandler {
 	}
 
 	public static Var opPlus(Var arg1, Var arg2) {
+		if (arg1.type.name.equals("string") && arg2.type.name.equals("string")) {
+			return new Var(DataType.types.get("string"), (String) arg1.value + (String) arg2.value);
+		}
 		DataType type = getPrecisest(arg1.type, arg2.type);
 		if (type == null) {
 			throw new UnsupportedOperationException(arg1 + " + " + arg2 + " unsupported");
