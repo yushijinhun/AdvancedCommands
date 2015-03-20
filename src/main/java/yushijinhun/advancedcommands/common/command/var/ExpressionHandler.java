@@ -13,7 +13,7 @@ import yushijinhun.advancedcommands.common.command.var.funtion.Function;
 public final class ExpressionHandler {
 
 	public static final Map<String, Integer> priority = new HashMap<String, Integer>();
-	public static final Map<DataType,Integer> precision=new HashMap<DataType, Integer>();
+	public static final Map<DataType, Integer> precision = new HashMap<DataType, Integer>();
 	public static final Set<String> leftAssoc = new HashSet<String>();
 	public static final Set<Character> opChar = new HashSet<Character>();
 
@@ -196,131 +196,131 @@ public final class ExpressionHandler {
 	public static Var opNot(Var arg1) {
 		if (arg1.value instanceof Boolean) {
 			return new Var(DataType.types.get("boolean"), !((Boolean) arg1.value));
-		}else if (arg1.value instanceof Byte){
+		} else if (arg1.value instanceof Byte) {
 			return new Var(DataType.types.get("byte"), ~((Byte) arg1.value));
-		}else if (arg1.value instanceof Short){
+		} else if (arg1.value instanceof Short) {
 			return new Var(DataType.types.get("short"), ~((Short) arg1.value));
-		}else if (arg1.value instanceof Integer){
+		} else if (arg1.value instanceof Integer) {
 			return new Var(DataType.types.get("int"), ~((Integer) arg1.value));
-		}else if (arg1.value instanceof Long){
+		} else if (arg1.value instanceof Long) {
 			return new Var(DataType.types.get("long"), ~((Long) arg1.value));
 		}
-		throw new UnsupportedOperationException("! "+arg1+" unsupported");
+		throw new UnsupportedOperationException("! " + arg1 + " unsupported");
 	}
 
 	public static Var opPlus(Var arg1, Var arg2) {
-		DataType type=getPrecisest(arg1.type,arg2.type);
+		DataType type = getPrecisest(arg1.type, arg2.type);
 		if (type == null) {
 			throw new UnsupportedOperationException(arg1 + " + " + arg2 + " unsupported");
 		}
-		Object var1=type.cast(arg1.value, arg1.type);
-		Object var2=type.cast(arg2.value, arg2.type);
-		if (type.name.equals("byte")){
+		Object var1 = type.cast(arg1.value, arg1.type);
+		Object var2 = type.cast(arg2.value, arg2.type);
+		if (type.name.equals("byte")) {
 			return new Var(DataType.types.get("int"), (Byte) var1 + (Byte) var2);
-		}else if (type.name.equals("short")){
+		} else if (type.name.equals("short")) {
 			return new Var(DataType.types.get("int"), (Short) var1 + (Short) var2);
-		}else if (type.name.equals("int")){
-			return new Var(DataType.types.get("int"), (Integer)var1+(Integer)var2);
-		}else if (type.name.equals("long")){
-			return new Var(DataType.types.get("long"), (Long)var1+(Long)var2);
-		}else if (type.name.equals("float")){
-			return new Var(DataType.types.get("float"), (Float)var1+(Float)var2);
-		}else if (type.name.equals("double")){
-			return new Var(DataType.types.get("double"), (Double)var1+(Double)var2);
+		} else if (type.name.equals("int")) {
+			return new Var(DataType.types.get("int"), (Integer) var1 + (Integer) var2);
+		} else if (type.name.equals("long")) {
+			return new Var(DataType.types.get("long"), (Long) var1 + (Long) var2);
+		} else if (type.name.equals("float")) {
+			return new Var(DataType.types.get("float"), (Float) var1 + (Float) var2);
+		} else if (type.name.equals("double")) {
+			return new Var(DataType.types.get("double"), (Double) var1 + (Double) var2);
 		}
-		throw new UnsupportedOperationException(arg1+" + "+arg2+" unsupported");
+		throw new UnsupportedOperationException(arg1 + " + " + arg2 + " unsupported");
 	}
 
 	public static Var opMinus(Var arg1, Var arg2) {
-		DataType type=getPrecisest(arg1.type,arg2.type);
+		DataType type = getPrecisest(arg1.type, arg2.type);
 		if (type == null) {
 			throw new UnsupportedOperationException(arg1 + " - " + arg2 + " unsupported");
 		}
-		Object var1=type.cast(arg1.value, arg1.type);
-		Object var2=type.cast(arg2.value, arg2.type);
-		if (type.name.equals("byte")){
+		Object var1 = type.cast(arg1.value, arg1.type);
+		Object var2 = type.cast(arg2.value, arg2.type);
+		if (type.name.equals("byte")) {
 			return new Var(DataType.types.get("int"), (Byte) var1 - (Byte) var2);
-		}else if (type.name.equals("short")){
+		} else if (type.name.equals("short")) {
 			return new Var(DataType.types.get("int"), (Short) var1 - (Short) var2);
-		}else if (type.name.equals("int")){
-			return new Var(DataType.types.get("int"), (Integer)var1-(Integer)var2);
-		}else if (type.name.equals("long")){
-			return new Var(DataType.types.get("long"), (Long)var1-(Long)var2);
-		}else if (type.name.equals("float")){
-			return new Var(DataType.types.get("float"), (Float)var1-(Float)var2);
-		}else if (type.name.equals("double")){
-			return new Var(DataType.types.get("double"), (Double)var1-(Double)var2);
+		} else if (type.name.equals("int")) {
+			return new Var(DataType.types.get("int"), (Integer) var1 - (Integer) var2);
+		} else if (type.name.equals("long")) {
+			return new Var(DataType.types.get("long"), (Long) var1 - (Long) var2);
+		} else if (type.name.equals("float")) {
+			return new Var(DataType.types.get("float"), (Float) var1 - (Float) var2);
+		} else if (type.name.equals("double")) {
+			return new Var(DataType.types.get("double"), (Double) var1 - (Double) var2);
 		}
-		throw new UnsupportedOperationException(arg1+" - "+arg2+" unsupported");
+		throw new UnsupportedOperationException(arg1 + " - " + arg2 + " unsupported");
 	}
 
 	public static Var opMultiply(Var arg1, Var arg2) {
-		DataType type=getPrecisest(arg1.type,arg2.type);
+		DataType type = getPrecisest(arg1.type, arg2.type);
 		if (type == null) {
 			throw new UnsupportedOperationException(arg1 + " * " + arg2 + " unsupported");
 		}
-		Object var1=type.cast(arg1.value, arg1.type);
-		Object var2=type.cast(arg2.value, arg2.type);
-		if (type.name.equals("byte")){
+		Object var1 = type.cast(arg1.value, arg1.type);
+		Object var2 = type.cast(arg2.value, arg2.type);
+		if (type.name.equals("byte")) {
 			return new Var(DataType.types.get("int"), (Byte) var1 * (Byte) var2);
-		}else if (type.name.equals("short")){
+		} else if (type.name.equals("short")) {
 			return new Var(DataType.types.get("int"), (Short) var1 * (Short) var2);
-		}else if (type.name.equals("int")){
-			return new Var(DataType.types.get("int"), (Integer)var1*(Integer)var2);
-		}else if (type.name.equals("long")){
-			return new Var(DataType.types.get("long"), (Long)var1*(Long)var2);
-		}else if (type.name.equals("float")){
-			return new Var(DataType.types.get("float"), (Float)var1*(Float)var2);
-		}else if (type.name.equals("double")){
-			return new Var(DataType.types.get("double"), (Double)var1*(Double)var2);
+		} else if (type.name.equals("int")) {
+			return new Var(DataType.types.get("int"), (Integer) var1 * (Integer) var2);
+		} else if (type.name.equals("long")) {
+			return new Var(DataType.types.get("long"), (Long) var1 * (Long) var2);
+		} else if (type.name.equals("float")) {
+			return new Var(DataType.types.get("float"), (Float) var1 * (Float) var2);
+		} else if (type.name.equals("double")) {
+			return new Var(DataType.types.get("double"), (Double) var1 * (Double) var2);
 		}
-		throw new UnsupportedOperationException(arg1+" * "+arg2+" unsupported");
+		throw new UnsupportedOperationException(arg1 + " * " + arg2 + " unsupported");
 	}
 
 	public static Var opDiv(Var arg1, Var arg2) {
-		DataType type=getPrecisest(arg1.type,arg2.type);
+		DataType type = getPrecisest(arg1.type, arg2.type);
 		if (type == null) {
 			throw new UnsupportedOperationException(arg1 + " / " + arg2 + " unsupported");
 		}
-		Object var1=type.cast(arg1.value, arg1.type);
-		Object var2=type.cast(arg2.value, arg2.type);
-		if (type.name.equals("byte")){
+		Object var1 = type.cast(arg1.value, arg1.type);
+		Object var2 = type.cast(arg2.value, arg2.type);
+		if (type.name.equals("byte")) {
 			return new Var(DataType.types.get("int"), (Byte) var1 / (Byte) var2);
-		}else if (type.name.equals("short")){
+		} else if (type.name.equals("short")) {
 			return new Var(DataType.types.get("int"), (Short) var1 / (Short) var2);
-		}else if (type.name.equals("int")){
-			return new Var(DataType.types.get("int"), (Integer)var1/(Integer)var2);
-		}else if (type.name.equals("long")){
-			return new Var(DataType.types.get("long"), (Long)var1/(Long)var2);
-		}else if (type.name.equals("float")){
-			return new Var(DataType.types.get("float"), (Float)var1/(Float)var2);
-		}else if (type.name.equals("double")){
-			return new Var(DataType.types.get("double"), (Double)var1/(Double)var2);
+		} else if (type.name.equals("int")) {
+			return new Var(DataType.types.get("int"), (Integer) var1 / (Integer) var2);
+		} else if (type.name.equals("long")) {
+			return new Var(DataType.types.get("long"), (Long) var1 / (Long) var2);
+		} else if (type.name.equals("float")) {
+			return new Var(DataType.types.get("float"), (Float) var1 / (Float) var2);
+		} else if (type.name.equals("double")) {
+			return new Var(DataType.types.get("double"), (Double) var1 / (Double) var2);
 		}
-		throw new UnsupportedOperationException(arg1+" / "+arg2+" unsupported");
+		throw new UnsupportedOperationException(arg1 + " / " + arg2 + " unsupported");
 	}
 
 	public static Var opMod(Var arg1, Var arg2) {
-		DataType type=getPrecisest(arg1.type,arg2.type);
+		DataType type = getPrecisest(arg1.type, arg2.type);
 		if (type == null) {
 			throw new UnsupportedOperationException(arg1 + " % " + arg2 + " unsupported");
 		}
-		Object var1=type.cast(arg1.value, arg1.type);
-		Object var2=type.cast(arg2.value, arg2.type);
-		if (type.name.equals("byte")){
+		Object var1 = type.cast(arg1.value, arg1.type);
+		Object var2 = type.cast(arg2.value, arg2.type);
+		if (type.name.equals("byte")) {
 			return new Var(DataType.types.get("int"), (Byte) var1 % (Byte) var2);
-		}else if (type.name.equals("short")){
+		} else if (type.name.equals("short")) {
 			return new Var(DataType.types.get("int"), (Short) var1 % (Short) var2);
-		}else if (type.name.equals("int")){
-			return new Var(DataType.types.get("int"), (Integer)var1%(Integer)var2);
-		}else if (type.name.equals("long")){
-			return new Var(DataType.types.get("long"), (Long)var1%(Long)var2);
-		}else if (type.name.equals("float")){
-			return new Var(DataType.types.get("float"), (Float)var1%(Float)var2);
-		}else if (type.name.equals("double")){
-			return new Var(DataType.types.get("double"), (Double)var1%(Double)var2);
+		} else if (type.name.equals("int")) {
+			return new Var(DataType.types.get("int"), (Integer) var1 % (Integer) var2);
+		} else if (type.name.equals("long")) {
+			return new Var(DataType.types.get("long"), (Long) var1 % (Long) var2);
+		} else if (type.name.equals("float")) {
+			return new Var(DataType.types.get("float"), (Float) var1 % (Float) var2);
+		} else if (type.name.equals("double")) {
+			return new Var(DataType.types.get("double"), (Double) var1 % (Double) var2);
 		}
-		throw new UnsupportedOperationException(arg1+" % "+arg2+" unsupported");
+		throw new UnsupportedOperationException(arg1 + " % " + arg2 + " unsupported");
 	}
 
 	public static Var opLShift(Var arg1, Var arg2) {
@@ -381,105 +381,105 @@ public final class ExpressionHandler {
 	}
 
 	public static Var opLess(Var arg1, Var arg2) {
-		DataType type=getPrecisest(arg1.type,arg2.type);
+		DataType type = getPrecisest(arg1.type, arg2.type);
 		if (type == null) {
 			throw new UnsupportedOperationException(arg1 + " < " + arg2 + " unsupported");
 		}
-		Object var1=type.cast(arg1.value, arg1.type);
-		Object var2=type.cast(arg2.value, arg2.type);
+		Object var1 = type.cast(arg1.value, arg1.type);
+		Object var2 = type.cast(arg2.value, arg2.type);
 		boolean result;
-		if (type.name.equals("byte")){
-			result=(Byte)var1<(Byte)var2;
-		}else if (type.name.equals("short")){
-			result=(Short)var1<(Short)var2;
-		}else if (type.name.equals("int")){
-			result=(Integer)var1<(Integer)var2;
-		}else if (type.name.equals("long")){
-			result=(Long)var1<(Long)var2;
-		}else if (type.name.equals("float")){
-			result=(Float)var1<(Float)var2;
-		}else if (type.name.equals("double")){
-			result=(Double)var1<(Double)var2;
-		}else{
-			throw new UnsupportedOperationException(arg1+" < "+arg2+" unsupported");
+		if (type.name.equals("byte")) {
+			result = (Byte) var1 < (Byte) var2;
+		} else if (type.name.equals("short")) {
+			result = (Short) var1 < (Short) var2;
+		} else if (type.name.equals("int")) {
+			result = (Integer) var1 < (Integer) var2;
+		} else if (type.name.equals("long")) {
+			result = (Long) var1 < (Long) var2;
+		} else if (type.name.equals("float")) {
+			result = (Float) var1 < (Float) var2;
+		} else if (type.name.equals("double")) {
+			result = (Double) var1 < (Double) var2;
+		} else {
+			throw new UnsupportedOperationException(arg1 + " < " + arg2 + " unsupported");
 		}
 		return new Var(DataType.types.get("boolean"), result);
 	}
 
 	public static Var opLarger(Var arg1, Var arg2) {
-		DataType type=getPrecisest(arg1.type,arg2.type);
+		DataType type = getPrecisest(arg1.type, arg2.type);
 		if (type == null) {
 			throw new UnsupportedOperationException(arg1 + " > " + arg2 + " unsupported");
 		}
-		Object var1=type.cast(arg1.value, arg1.type);
-		Object var2=type.cast(arg2.value, arg2.type);
+		Object var1 = type.cast(arg1.value, arg1.type);
+		Object var2 = type.cast(arg2.value, arg2.type);
 		boolean result;
-		if (type.name.equals("byte")){
-			result=(Byte)var1>(Byte)var2;
-		}else if (type.name.equals("short")){
-			result=(Short)var1>(Short)var2;
-		}else if (type.name.equals("int")){
-			result=(Integer)var1>(Integer)var2;
-		}else if (type.name.equals("long")){
-			result=(Long)var1>(Long)var2;
-		}else if (type.name.equals("float")){
-			result=(Float)var1>(Float)var2;
-		}else if (type.name.equals("double")){
-			result=(Double)var1>(Double)var2;
-		}else{
-			throw new UnsupportedOperationException(arg1+" > "+arg2+" unsupported");
+		if (type.name.equals("byte")) {
+			result = (Byte) var1 > (Byte) var2;
+		} else if (type.name.equals("short")) {
+			result = (Short) var1 > (Short) var2;
+		} else if (type.name.equals("int")) {
+			result = (Integer) var1 > (Integer) var2;
+		} else if (type.name.equals("long")) {
+			result = (Long) var1 > (Long) var2;
+		} else if (type.name.equals("float")) {
+			result = (Float) var1 > (Float) var2;
+		} else if (type.name.equals("double")) {
+			result = (Double) var1 > (Double) var2;
+		} else {
+			throw new UnsupportedOperationException(arg1 + " > " + arg2 + " unsupported");
 		}
 		return new Var(DataType.types.get("boolean"), result);
 	}
 
 	public static Var opLessEquals(Var arg1, Var arg2) {
-		DataType type=getPrecisest(arg1.type,arg2.type);
+		DataType type = getPrecisest(arg1.type, arg2.type);
 		if (type == null) {
 			throw new UnsupportedOperationException(arg1 + " <= " + arg2 + " unsupported");
 		}
-		Object var1=type.cast(arg1.value, arg1.type);
-		Object var2=type.cast(arg2.value, arg2.type);
+		Object var1 = type.cast(arg1.value, arg1.type);
+		Object var2 = type.cast(arg2.value, arg2.type);
 		boolean result;
-		if (type.name.equals("byte")){
-			result=(Byte)var1<=(Byte)var2;
-		}else if (type.name.equals("short")){
-			result=(Short)var1<=(Short)var2;
-		}else if (type.name.equals("int")){
-			result=(Integer)var1<=(Integer)var2;
-		}else if (type.name.equals("long")){
-			result=(Long)var1<=(Long)var2;
-		}else if (type.name.equals("float")){
-			result=(Float)var1<=(Float)var2;
-		}else if (type.name.equals("double")){
-			result=(Double)var1<=(Double)var2;
-		}else{
-			throw new UnsupportedOperationException(arg1+" <= "+arg2+" unsupported");
+		if (type.name.equals("byte")) {
+			result = (Byte) var1 <= (Byte) var2;
+		} else if (type.name.equals("short")) {
+			result = (Short) var1 <= (Short) var2;
+		} else if (type.name.equals("int")) {
+			result = (Integer) var1 <= (Integer) var2;
+		} else if (type.name.equals("long")) {
+			result = (Long) var1 <= (Long) var2;
+		} else if (type.name.equals("float")) {
+			result = (Float) var1 <= (Float) var2;
+		} else if (type.name.equals("double")) {
+			result = (Double) var1 <= (Double) var2;
+		} else {
+			throw new UnsupportedOperationException(arg1 + " <= " + arg2 + " unsupported");
 		}
 		return new Var(DataType.types.get("boolean"), result);
 	}
 
 	public static Var opLargerEquals(Var arg1, Var arg2) {
-		DataType type=getPrecisest(arg1.type,arg2.type);
+		DataType type = getPrecisest(arg1.type, arg2.type);
 		if (type == null) {
 			throw new UnsupportedOperationException(arg1 + " >= " + arg2 + " unsupported");
 		}
-		Object var1=type.cast(arg1.value, arg1.type);
-		Object var2=type.cast(arg2.value, arg2.type);
+		Object var1 = type.cast(arg1.value, arg1.type);
+		Object var2 = type.cast(arg2.value, arg2.type);
 		boolean result;
-		if (type.name.equals("byte")){
-			result=(Byte)var1>=(Byte)var2;
-		}else if (type.name.equals("short")){
-			result=(Short)var1>=(Short)var2;
-		}else if (type.name.equals("int")){
-			result=(Integer)var1>=(Integer)var2;
-		}else if (type.name.equals("long")){
-			result=(Long)var1>=(Long)var2;
-		}else if (type.name.equals("float")){
-			result=(Float)var1>=(Float)var2;
-		}else if (type.name.equals("double")){
-			result=(Double)var1>=(Double)var2;
-		}else{
-			throw new UnsupportedOperationException(arg1+" >= "+arg2+" unsupported");
+		if (type.name.equals("byte")) {
+			result = (Byte) var1 >= (Byte) var2;
+		} else if (type.name.equals("short")) {
+			result = (Short) var1 >= (Short) var2;
+		} else if (type.name.equals("int")) {
+			result = (Integer) var1 >= (Integer) var2;
+		} else if (type.name.equals("long")) {
+			result = (Long) var1 >= (Long) var2;
+		} else if (type.name.equals("float")) {
+			result = (Float) var1 >= (Float) var2;
+		} else if (type.name.equals("double")) {
+			result = (Double) var1 >= (Double) var2;
+		} else {
+			throw new UnsupportedOperationException(arg1 + " >= " + arg2 + " unsupported");
 		}
 		return new Var(DataType.types.get("boolean"), result);
 	}
@@ -575,17 +575,17 @@ public final class ExpressionHandler {
 		return VarHelper.cast(arg1, dest);
 	}
 
-	public static DataType getPrecisest(DataType... types){
-		int maxPrecision=0;
-		DataType precisestType=null;
-		for (DataType type:types){
+	public static DataType getPrecisest(DataType... types) {
+		int maxPrecision = 0;
+		DataType precisestType = null;
+		for (DataType type : types) {
 			Integer thePriority = precision.get(type);
-			if (thePriority==null){
+			if (thePriority == null) {
 				return null;
 			}
-			if (thePriority>maxPrecision){
-				maxPrecision=thePriority;
-				precisestType=type;
+			if (thePriority > maxPrecision) {
+				maxPrecision = thePriority;
+				precisestType = type;
 			}
 		}
 		return precisestType;
@@ -635,35 +635,40 @@ public final class ExpressionHandler {
 					if (var == null) {
 						Function function = Function.functions.get(str);
 						if (function == null) {
-							char end = str.charAt(str.length() - 1);
-							String spilted = str.length() > 1 ? str.substring(0, str.length() - 1) : null;
-							switch (end) {
-							case 'b':
-							case 'B':
-								result.add(new Var(DataType.types.get("byte"), Byte.valueOf(spilted)));
-								break;
-							case 's':
-							case 'S':
-								result.add(new Var(DataType.types.get("short"), Short.valueOf(spilted)));
-								break;
-							case 'l':
-							case 'L':
-								result.add(new Var(DataType.types.get("long"), Long.valueOf(spilted)));
-								break;
-							case 'f':
-							case 'F':
-								result.add(new Var(DataType.types.get("float"), Float.valueOf(spilted)));
-								break;
-							case 'd':
-							case 'D':
-								result.add(new Var(DataType.types.get("double"), Double.valueOf(spilted)));
-								break;
-							default:
-								if (str.contains(".")) {
-									result.add(new Var(DataType.types.get("double"), Double.valueOf(str)));
-								} else {
-									result.add(new Var(DataType.types.get("int"), Integer.valueOf(str)));
+							int radix = 10;
+							if (str.startsWith("0") && str.length() > 1) {
+								switch (str.charAt(1)) {
+								case 'b':
+								case 'B':
+									radix = 2;
+									str = str.substring(2);
+									break;
+								case 'x':
+								case 'X':
+									radix = 16;
+									str = str.substring(2);
+									break;
+								default:
+									radix = 8;
+									str = str.substring(1);
+									break;
 								}
+							}
+							String spilted = str.substring(0, str.length() - 1);
+							if (str.endsWith("b") || str.endsWith("B")) {
+								result.add(new Var(DataType.types.get("byte"), Byte.valueOf(spilted, radix)));
+							} else if (str.endsWith("s") || str.endsWith("S")) {
+								result.add(new Var(DataType.types.get("short"), Short.valueOf(spilted, radix)));
+							} else if (str.endsWith("l") || str.endsWith("L")) {
+								result.add(new Var(DataType.types.get("long"), Long.valueOf(spilted, radix)));
+							} else if (radix == 10 && (str.endsWith("f") || str.endsWith("F"))) {
+								result.add(new Var(DataType.types.get("float"), Float.valueOf(spilted)));
+							} else if (radix == 10 && (str.endsWith("d") || str.endsWith("D"))) {
+								result.add(new Var(DataType.types.get("double"), Double.valueOf(spilted)));
+							} else if (str.contains(".")) {
+								result.add(new Var(DataType.types.get("double"), Double.valueOf(str)));
+							} else {
+								result.add(new Var(DataType.types.get("int"), Integer.valueOf(str, radix)));
 							}
 						} else {
 							stack.push("()" + str);
