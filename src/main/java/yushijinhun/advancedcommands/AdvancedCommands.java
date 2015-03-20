@@ -16,7 +16,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import yushijinhun.advancedcommands.common.CommonProxy;
-import yushijinhun.advancedcommands.common.command.var.CommandVar;
+import yushijinhun.advancedcommands.common.command.CommandVar;
 import yushijinhun.advancedcommands.common.command.var.VarData;
 import yushijinhun.advancedcommands.common.command.var.VarSavedData;
 

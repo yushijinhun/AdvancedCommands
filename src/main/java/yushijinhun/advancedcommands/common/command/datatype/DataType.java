@@ -1,4 +1,4 @@
-package yushijinhun.advancedcommands.common.command.var.datatype;
+package yushijinhun.advancedcommands.common.command.datatype;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -9,16 +9,14 @@ public abstract class DataType {
 
 	public static final Map<String, DataType> types = new LinkedHashMap<String, DataType>();
 
-	static {
-		new DataTypeBoolean();
-		new DataTypeByte();
-		new DataTypeShort();
-		new DataTypeInt();
-		new DataTypeLong();
-		new DataTypeFloat();
-		new DataTypeDouble();
-		new DataTypeString();
-	}
+	public static final DataTypeBoolean TYPE_BOOLEAN = new DataTypeBoolean();
+	public static final DataTypeByte TYPE_BYTE = new DataTypeByte();
+	public static final DataTypeShort TYPE_SHORT = new DataTypeShort();
+	public static final DataTypeInt TYPE_INT = new DataTypeInt();
+	public static final DataTypeLong TYPE_LONG = new DataTypeLong();
+	public static final DataTypeFloat TYPE_FLOAT = new DataTypeFloat();
+	public static final DataTypeDouble TYPE_DOUBLE = new DataTypeDouble();
+	public static final DataTypeString TYPE_STRING = new DataTypeString();
 
 	public final String name;
 

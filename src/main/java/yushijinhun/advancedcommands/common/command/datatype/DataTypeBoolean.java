@@ -1,34 +1,34 @@
-package yushijinhun.advancedcommands.common.command.var.datatype;
+package yushijinhun.advancedcommands.common.command.datatype;
 
 import net.minecraft.nbt.NBTTagCompound;
 
-public class DataTypeByte extends DataType {
+public class DataTypeBoolean extends DataType {
 
-	public DataTypeByte() {
-		super("byte");
+	public DataTypeBoolean() {
+		super("boolean");
 	}
 
 	@Override
 	public Object getDefaultValue() {
-		return Byte.valueOf((byte) 0);
+		return Boolean.FALSE;
 	}
 
 	@Override
 	public void writeToNBT(Object value, NBTTagCompound nbt) {
-		nbt.setByte("value", (Byte) value);
+		nbt.setBoolean("value", (Boolean) value);
 	}
 
 	@Override
 	public Object readFromNBT(NBTTagCompound nbt) {
-		return nbt.getByte("value");
+		return nbt.getBoolean("value");
 	}
 
 	@Override
 	public Object cast(Object src, DataType srcType) {
-		if (src instanceof Number) {
-			return ((Number) src).byteValue();
+		if (src instanceof Boolean) {
+			return src;
 		} else if (src instanceof String) {
-			return Byte.valueOf((String) src);
+			return Boolean.valueOf((String) src);
 		}
 
 		throw new ClassCastException();

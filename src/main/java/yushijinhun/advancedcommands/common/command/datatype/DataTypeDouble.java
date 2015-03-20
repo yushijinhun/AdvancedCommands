@@ -1,34 +1,34 @@
-package yushijinhun.advancedcommands.common.command.var.datatype;
+package yushijinhun.advancedcommands.common.command.datatype;
 
 import net.minecraft.nbt.NBTTagCompound;
 
-public class DataTypeFloat extends DataType {
+public class DataTypeDouble extends DataType {
 
-	public DataTypeFloat() {
-		super("float");
+	public DataTypeDouble() {
+		super("double");
 	}
 
 	@Override
 	public Object getDefaultValue() {
-		return 0f;
+		return 0d;
 	}
 
 	@Override
 	public void writeToNBT(Object value, NBTTagCompound nbt) {
-		nbt.setFloat("value", (Float) value);
+		nbt.setDouble("value", (Double) value);
 	}
 
 	@Override
 	public Object readFromNBT(NBTTagCompound nbt) {
-		return nbt.getFloat("value");
+		return nbt.getDouble("value");
 	}
 
 	@Override
 	public Object cast(Object src, DataType srcType) {
 		if (src instanceof Number) {
-			return ((Number) src).floatValue();
+			return ((Number) src).doubleValue();
 		} else if (src instanceof String) {
-			return Float.valueOf((String) src);
+			return Double.valueOf((String) src);
 		}
 
 		throw new ClassCastException();

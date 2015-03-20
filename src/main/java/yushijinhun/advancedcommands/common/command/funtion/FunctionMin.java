@@ -1,8 +1,8 @@
-package yushijinhun.advancedcommands.common.command.var.funtion;
+package yushijinhun.advancedcommands.common.command.funtion;
 
+import yushijinhun.advancedcommands.common.command.datatype.DataType;
 import yushijinhun.advancedcommands.common.command.var.ExpressionHandler;
 import yushijinhun.advancedcommands.common.command.var.Var;
-import yushijinhun.advancedcommands.common.command.var.datatype.DataType;
 
 public class FunctionMin extends Function {
 

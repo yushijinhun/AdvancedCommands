@@ -1,4 +1,4 @@
-package yushijinhun.advancedcommands.common.command.var;
+package yushijinhun.advancedcommands.common.command;
 
 import java.util.Arrays;
 import java.util.List;
@@ -10,8 +10,11 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 import yushijinhun.advancedcommands.AdvancedCommands;
 import yushijinhun.advancedcommands.Config;
-import yushijinhun.advancedcommands.common.command.BasicCommand;
-import yushijinhun.advancedcommands.common.command.var.datatype.DataType;
+import yushijinhun.advancedcommands.common.command.datatype.DataType;
+import yushijinhun.advancedcommands.common.command.var.ExpressionHandler;
+import yushijinhun.advancedcommands.common.command.var.Var;
+import yushijinhun.advancedcommands.common.command.var.VarData;
+import yushijinhun.advancedcommands.common.command.var.VarHelper;
 import yushijinhun.advancedcommands.util.ExceptionHelper;
 import yushijinhun.advancedcommands.util.LocalizationHelper;
 

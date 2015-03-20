@@ -5,7 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import yushijinhun.advancedcommands.common.command.var.datatype.DataType;
+import yushijinhun.advancedcommands.common.command.datatype.DataType;
 import yushijinhun.advancedcommands.util.LocalizationHelper;
 
 public class VarData {
@@ -19,28 +19,28 @@ public class VarData {
 	public VarSavedData savedData;
 
 	public VarData() {
-		putConstant("true", new Var(DataType.types.get("boolean"), Boolean.TRUE));
-		putConstant("false", new Var(DataType.types.get("boolean"), Boolean.FALSE));
-		putConstant("PI", new Var(DataType.types.get("double"), Math.PI));
-		putConstant("E", new Var(DataType.types.get("double"), Math.E));
-		putConstant("MAX_BYTE", new Var(DataType.types.get("byte"), Byte.MAX_VALUE));
-		putConstant("MIN_BYTE", new Var(DataType.types.get("byte"), Byte.MIN_VALUE));
-		putConstant("MAX_SHORT", new Var(DataType.types.get("short"), Short.MAX_VALUE));
-		putConstant("MIN_SHORT", new Var(DataType.types.get("short"), Short.MIN_VALUE));
-		putConstant("MAX_INT", new Var(DataType.types.get("int"), Integer.MAX_VALUE));
-		putConstant("MIN_INT", new Var(DataType.types.get("int"), Integer.MIN_VALUE));
-		putConstant("MAX_LONG", new Var(DataType.types.get("long"), Long.MAX_VALUE));
-		putConstant("MIN_LONG", new Var(DataType.types.get("long"), Long.MIN_VALUE));
-		putConstant("MAX_FLOAT", new Var(DataType.types.get("float"), Float.MAX_VALUE));
-		putConstant("MIN_FLOAT", new Var(DataType.types.get("float"), Float.MIN_VALUE));
-		putConstant("NaN_FLOAT", new Var(DataType.types.get("float"), Float.NaN));
-		putConstant("NEGATIVE_INFINITY_FLOAT", new Var(DataType.types.get("float"), Float.NEGATIVE_INFINITY));
-		putConstant("POSITIVE_INFINITY_FLOAT", new Var(DataType.types.get("float"), Float.POSITIVE_INFINITY));
-		putConstant("MAX_DOUBLE", new Var(DataType.types.get("double"), Double.MAX_VALUE));
-		putConstant("MIN_DOUBLE", new Var(DataType.types.get("double"), Double.MIN_VALUE));
-		putConstant("NaN_DOUBLE", new Var(DataType.types.get("double"), Double.NaN));
-		putConstant("NEGATIVE_INFINITY_DOUBLE", new Var(DataType.types.get("double"), Double.NEGATIVE_INFINITY));
-		putConstant("POSITIVE_INFINITY_DOUBLE", new Var(DataType.types.get("double"), Double.POSITIVE_INFINITY));
+		putConstant("true", new Var(DataType.TYPE_BOOLEAN, Boolean.TRUE));
+		putConstant("false", new Var(DataType.TYPE_BOOLEAN, Boolean.FALSE));
+		putConstant("PI", new Var(DataType.TYPE_DOUBLE, Math.PI));
+		putConstant("E", new Var(DataType.TYPE_DOUBLE, Math.E));
+		putConstant("MAX_BYTE", new Var(DataType.TYPE_BYTE, Byte.MAX_VALUE));
+		putConstant("MIN_BYTE", new Var(DataType.TYPE_BYTE, Byte.MIN_VALUE));
+		putConstant("MAX_SHORT", new Var(DataType.TYPE_SHORT, Short.MAX_VALUE));
+		putConstant("MIN_SHORT", new Var(DataType.TYPE_SHORT, Short.MIN_VALUE));
+		putConstant("MAX_INT", new Var(DataType.TYPE_INT, Integer.MAX_VALUE));
+		putConstant("MIN_INT", new Var(DataType.TYPE_INT, Integer.MIN_VALUE));
+		putConstant("MAX_LONG", new Var(DataType.TYPE_LONG, Long.MAX_VALUE));
+		putConstant("MIN_LONG", new Var(DataType.TYPE_LONG, Long.MIN_VALUE));
+		putConstant("MAX_FLOAT", new Var(DataType.TYPE_FLOAT, Float.MAX_VALUE));
+		putConstant("MIN_FLOAT", new Var(DataType.TYPE_FLOAT, Float.MIN_VALUE));
+		putConstant("NaN_FLOAT", new Var(DataType.TYPE_FLOAT, Float.NaN));
+		putConstant("NEGATIVE_INFINITY_FLOAT", new Var(DataType.TYPE_FLOAT, Float.NEGATIVE_INFINITY));
+		putConstant("POSITIVE_INFINITY_FLOAT", new Var(DataType.TYPE_FLOAT, Float.POSITIVE_INFINITY));
+		putConstant("MAX_DOUBLE", new Var(DataType.TYPE_DOUBLE, Double.MAX_VALUE));
+		putConstant("MIN_DOUBLE", new Var(DataType.TYPE_DOUBLE, Double.MIN_VALUE));
+		putConstant("NaN_DOUBLE", new Var(DataType.TYPE_DOUBLE, Double.NaN));
+		putConstant("NEGATIVE_INFINITY_DOUBLE", new Var(DataType.TYPE_DOUBLE, Double.NEGATIVE_INFINITY));
+		putConstant("POSITIVE_INFINITY_DOUBLE", new Var(DataType.TYPE_DOUBLE, Double.POSITIVE_INFINITY));
 	}
 
 	public Var get(String name) {

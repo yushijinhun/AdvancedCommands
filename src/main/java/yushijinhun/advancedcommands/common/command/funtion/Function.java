@@ -1,4 +1,4 @@
-package yushijinhun.advancedcommands.common.command.var.funtion;
+package yushijinhun.advancedcommands.common.command.funtion;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

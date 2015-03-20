@@ -1,7 +1,7 @@
-package yushijinhun.advancedcommands.common.command.var.funtion;
+package yushijinhun.advancedcommands.common.command.funtion;
 
+import yushijinhun.advancedcommands.common.command.datatype.DataType;
 import yushijinhun.advancedcommands.common.command.var.Var;
-import yushijinhun.advancedcommands.common.command.var.datatype.DataType;
 
 public class FunctionTan extends Function {
 
@@ -13,7 +13,7 @@ public class FunctionTan extends Function {
 	public Var call(Var[] args) {
 		Object val = args[0].value;
 		if (val instanceof Number) {
-			return new Var(DataType.types.get("double"), Math.tan(((Number) val).doubleValue()));
+			return new Var(DataType.TYPE_DOUBLE, Math.tan(((Number) val).doubleValue()));
 		}
 
 		throw new IllegalArgumentException("Argument must be a number");

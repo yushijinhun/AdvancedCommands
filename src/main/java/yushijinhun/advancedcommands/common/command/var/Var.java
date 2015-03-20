@@ -1,7 +1,7 @@
 package yushijinhun.advancedcommands.common.command.var;
 
 import net.minecraft.nbt.NBTTagCompound;
-import yushijinhun.advancedcommands.common.command.var.datatype.DataType;
+import yushijinhun.advancedcommands.common.command.datatype.DataType;
 import com.google.common.base.Objects;
 
 public class Var {
