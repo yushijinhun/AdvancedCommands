@@ -86,6 +86,9 @@ public class CommandVar extends BasicCommand {
 			StringBuilder sb = new StringBuilder();
 			for (int i = 1; i < args.length; i++) {
 				sb.append(args[i]);
+				if (i != args.length - 1) {
+					sb.append(' ');
+				}
 			}
 			compute(sb.toString(), sender);
 		} else if (args[0].equals("list")) {

@@ -596,6 +596,7 @@ public final class ExpressionHandler {
 		Stack<String> stack = new Stack<String>();
 		for (int i = 0; i < exps.length; i++) {
 			String str = exps[i];
+			str = str.trim();
 			if (isOp(str)) {
 				if (str.equals("(")) {
 					stack.push(str);
