@@ -1,12 +1,14 @@
 package yushijinhun.advancedcommands.common.command.var;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.TreeSet;
 import yushijinhun.advancedcommands.common.command.datatype.DataType;
 import yushijinhun.advancedcommands.common.command.funtion.Function;
 
@@ -16,66 +18,56 @@ public final class ExpressionHandler {
 	public static final Map<DataType, Integer> precision = new HashMap<DataType, Integer>();
 	public static final Set<String> leftAssoc = new HashSet<String>();
 	public static final Set<Character> opChar = new HashSet<Character>();
+	public static final Set<String> ops = new TreeSet<String>(new Comparator<String>() {
+
+		@Override
+		public int compare(String o1, String o2) {
+			if (o1.equals(o2)) {
+				return 0;
+			}
+			if (o1.length() > o2.length()) {
+				return -1;
+			}
+			return 1;
+		}
+	});
 
 	static {
-		priority.put("(", Integer.MIN_VALUE);
-		priority.put(")", Integer.MIN_VALUE);
-		priority.put(",", Integer.MIN_VALUE);
-		priority.put("!", -1);
-		priority.put("+.", -1);
-		priority.put("-.", -1);
-		priority.put("*", -2);
-		priority.put("/", -2);
-		priority.put("%", -2);
-		priority.put("+", -3);
-		priority.put("-", -3);
-		priority.put("<<", -4);
-		priority.put(">>", -4);
-		priority.put(">>>", -4);
-		priority.put("<", -5);
-		priority.put(">", -5);
-		priority.put("<=", -5);
-		priority.put(">=", -5);
-		priority.put("==", -6);
-		priority.put("!=", -6);
-		priority.put("&", -7);
-		priority.put("|", -8);
-		priority.put("^", -9);
-		priority.put("=", -10);
-
-		leftAssoc.add("+");
-		leftAssoc.add("-");
-		leftAssoc.add("*");
-		leftAssoc.add("/");
-		leftAssoc.add("%");
-		leftAssoc.add("<<");
-		leftAssoc.add(">>");
-		leftAssoc.add(">>>");
-		leftAssoc.add("<");
-		leftAssoc.add(">");
-		leftAssoc.add("<=");
-		leftAssoc.add(">=");
-		leftAssoc.add("==");
-		leftAssoc.add("!=");
-		leftAssoc.add("&");
-		leftAssoc.add("|");
-		leftAssoc.add("^");
-
-		opChar.add('(');
-		opChar.add(')');
-		opChar.add('!');
-		opChar.add('*');
-		opChar.add('/');
-		opChar.add('%');
-		opChar.add('+');
-		opChar.add('-');
-		opChar.add('<');
-		opChar.add('>');
-		opChar.add('=');
-		opChar.add('&');
-		opChar.add('|');
-		opChar.add('^');
-		opChar.add(',');
+		registerOp("(", Integer.MIN_VALUE, false);
+		registerOp(")", Integer.MIN_VALUE, false);
+		registerOp(",", Integer.MIN_VALUE, false);
+		registerOp("!", -1, false);
+		registerOp("+.", -1, false);
+		registerOp("-.", -1, false);
+		registerOp("*", -2, true);
+		registerOp("/", -2, true);
+		registerOp("%", -2, true);
+		registerOp("+", -3, true);
+		registerOp("-", -3, true);
+		registerOp("<<", -4, true);
+		registerOp(">>", -4, true);
+		registerOp(">>>", -4, true);
+		registerOp("<", -5, true);
+		registerOp(">", -5, true);
+		registerOp("<=", -5, true);
+		registerOp(">=", -5, true);
+		registerOp("==", -6, true);
+		registerOp("!=", -6, true);
+		registerOp("&", -7, true);
+		registerOp("|", -8, true);
+		registerOp("^", -9, true);
+		registerOp("=", -10, false);
+		registerOp("+=", -10, false);
+		registerOp("-=", -10, false);
+		registerOp("*=", -10, false);
+		registerOp("/=", -10, false);
+		registerOp("%=", -10, false);
+		registerOp("<<=", -10, false);
+		registerOp(">>=", -10, false);
+		registerOp(">>>=", -10, false);
+		registerOp("&=", -10, false);
+		registerOp("|=", -10, false);
+		registerOp("^=", -10, false);
 
 		precision.put(DataType.TYPE_BYTE, 1);
 		precision.put(DataType.TYPE_SHORT, 2);
@@ -83,6 +75,15 @@ public final class ExpressionHandler {
 		precision.put(DataType.TYPE_LONG, 4);
 		precision.put(DataType.TYPE_FLOAT, 5);
 		precision.put(DataType.TYPE_DOUBLE, 6);
+	}
+
+	public static void registerOp(String op, int priority, boolean leftAssoc) {
+		opChar.add(op.charAt(0));
+		ops.add(op);
+		ExpressionHandler.priority.put(op, priority);
+		if (leftAssoc) {
+			ExpressionHandler.leftAssoc.add(op);
+		}
 	}
 
 	public static Var computeRPN(Object[] rpn) {
@@ -147,6 +148,28 @@ public final class ExpressionHandler {
 						stack.push(opXor(stack.pop(), arg1));
 					} else if (op.equals("=")) {
 						stack.push(opSet(stack.pop(), arg1));
+					} else if (op.equals("+=")) {
+						stack.push(opSetPlus(stack.pop(), arg1));
+					} else if (op.equals("-=")) {
+						stack.push(opSetMinus(stack.pop(), arg1));
+					} else if (op.equals("*=")) {
+						stack.push(opSetMultiply(stack.pop(), arg1));
+					} else if (op.equals("/=")) {
+						stack.push(opSetDiv(stack.pop(), arg1));
+					} else if (op.equals("%=")) {
+						stack.push(opSetMod(stack.pop(), arg1));
+					} else if (op.equals("<<=")) {
+						stack.push(opSetLShift(stack.pop(), arg1));
+					} else if (op.equals(">>=")) {
+						stack.push(opSetRShift(stack.pop(), arg1));
+					} else if (op.equals(">>>=")) {
+						stack.push(opSetNRShift(stack.pop(), arg1));
+					} else if (op.equals("&=")) {
+						stack.push(opSetAnd(stack.pop(), arg1));
+					} else if (op.equals("|=")) {
+						stack.push(opSetOr(stack.pop(), arg1));
+					} else if (op.equals("^=")) {
+						stack.push(opSetXor(stack.pop(), arg1));
 					} else if (op.startsWith("(")) {
 						if (op.endsWith(")")) {
 							stack.push(opCast(arg1, op.substring(1, op.length() - 1)));
@@ -160,6 +183,50 @@ public final class ExpressionHandler {
 			}
 		}
 		return stack.pop();
+	}
+
+	public static Var opSetXor(Var arg1, Var arg2) {
+		return opSet(arg1, opXor(arg1, arg2));
+	}
+
+	public static Var opSetOr(Var arg1, Var arg2) {
+		return opSet(arg1, opOr(arg1, arg2));
+	}
+
+	public static Var opSetAnd(Var arg1, Var arg2) {
+		return opSet(arg1, opAnd(arg1, arg2));
+	}
+
+	public static Var opSetNRShift(Var arg1, Var arg2) {
+		return opSet(arg1, opNRShift(arg1, arg2));
+	}
+
+	public static Var opSetRShift(Var arg1, Var arg2) {
+		return opSet(arg1, opRShift(arg1, arg2));
+	}
+
+	public static Var opSetLShift(Var arg1, Var arg2) {
+		return opSet(arg1, opLShift(arg1, arg2));
+	}
+
+	public static Var opSetMod(Var arg1, Var arg2) {
+		return opSet(arg1, opMod(arg1, arg2));
+	}
+
+	public static Var opSetDiv(Var arg1, Var arg2) {
+		return opSet(arg1, opDiv(arg1, arg2));
+	}
+
+	public static Var opSetMultiply(Var arg1, Var arg2) {
+		return opSet(arg1, opMultiply(arg1, arg2));
+	}
+
+	public static Var opSetMinus(Var arg1, Var arg2) {
+		return opSet(arg1, opMinus(arg1, arg2));
+	}
+
+	public static Var opSetPlus(Var arg1, Var arg2) {
+		return opSet(arg1, opPlus(arg1, arg2));
 	}
 
 	public static Var opSet(Var arg1, Var arg2) {
@@ -726,82 +793,32 @@ public final class ExpressionHandler {
 				} else {
 					result.add("(");
 				}
-			} else if (ch == ')') {
-				result.add(")");
-			} else if (ch == '!') {
-				char next = exp.charAt(i + 1);
-				if (next == '=') {
-					result.add("!=");
-					i++;
-				} else {
-					result.add("!");
-				}
-			} else if (ch == '/') {
-				result.add("/");
-			} else if (ch == '*') {
-				result.add("*");
-			} else if (ch == '%') {
-				result.add("%");
-			} else if (ch == '+') {
-				result.add("+");
-			} else if (ch == '-') {
-				result.add("-");
-			} else if (ch == '<') {
-				char next = exp.charAt(i + 1);
-				if (next == '<') {
-					result.add("<<");
-					i++;
-				} else if (next == '=') {
-					result.add("<=");
-					i++;
-				} else {
-					result.add("<");
-				}
-			} else if (ch == '>') {
-				char next = exp.charAt(i + 1);
-				if (next == '>') {
-					char next2 = exp.charAt(i + 2);
-					if (next2 == '>') {
-						result.add(">>>");
-						i += 2;
-					} else {
-						result.add(">>");
-						i++;
-					}
-				} else if (next == '=') {
-					result.add(">=");
-					i++;
-				} else {
-					result.add(">");
-				}
-			} else if (ch == '=') {
-				char next = exp.charAt(i + 1);
-				if (next == '=') {
-					result.add("==");
-					i++;
-				} else {
-					result.add("=");
-				}
-			} else if (ch == '&') {
-				result.add("&");
-			} else if (ch == '|') {
-				result.add("|");
-			} else if (ch == '^') {
-				result.add("^");
-			} else if (ch == ',') {
-				result.add(",");
 			} else {
-				StringBuilder id = new StringBuilder();
-				int l;
-				for (l = i; l < exp.length(); l++) {
-					char ch2 = exp.charAt(l);
-					if (isOpChar(ch2)) {
+				boolean found = false;
+				for (String op : ops) {
+					if (i + op.length() > exp.length()) {
+						continue;
+					}
+					if (exp.substring(i, i + op.length()).equals(op)) {
+						result.add(op);
+						i += op.length() - 1;
+						found = true;
 						break;
 					}
-					id.append(ch2);
 				}
-				result.add(id.toString());
-				i = l - 1;
+				if (!found) {
+					StringBuilder id = new StringBuilder();
+					int l;
+					for (l = i; l < exp.length(); l++) {
+						char ch2 = exp.charAt(l);
+						if (isOpChar(ch2)) {
+							break;
+						}
+						id.append(ch2);
+					}
+					result.add(id.toString());
+					i = l - 1;
+				}
 			}
 		}
 		return result.toArray(new String[result.size()]);
