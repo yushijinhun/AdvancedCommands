@@ -17,6 +17,8 @@ public abstract class Function {
 		new FunctionSqrt();
 		new FunctionMax();
 		new FunctionMin();
+		new FunctionGetNBT();
+		new FunctionSetNBT();
 	}
 
 	public final String name;
