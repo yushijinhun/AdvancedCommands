@@ -41,6 +41,7 @@ public final class ExpressionHandler {
 		priority.put("&", -7);
 		priority.put("|", -8);
 		priority.put("^", -9);
+		priority.put("=", -10);
 
 		leftAssoc.add("+");
 		leftAssoc.add("-");
@@ -144,6 +145,8 @@ public final class ExpressionHandler {
 						stack.push(opOr(stack.pop(), arg1));
 					} else if (op.equals("^")) {
 						stack.push(opXor(stack.pop(), arg1));
+					} else if (op.equals("=")) {
+						stack.push(opSet(stack.pop(), arg1));
 					} else if (op.startsWith("(")) {
 						if (op.endsWith(")")) {
 							stack.push(opCast(arg1, op.substring(1, op.length() - 1)));
@@ -157,6 +160,16 @@ public final class ExpressionHandler {
 			}
 		}
 		return stack.pop();
+	}
+
+	public static Var opSet(Var arg1, Var arg2) {
+		for (String s : VarData.theVarData.varNamesSet()) {
+			if (VarData.theVarData.get(s) == arg1) {
+				VarData.theVarData.set(s, arg2.clone());
+				return arg2;
+			}
+		}
+		throw new IllegalArgumentException("Cannot set var");
 	}
 
 	public static Var opDown(Var arg1) {
@@ -767,7 +780,7 @@ public final class ExpressionHandler {
 					result.add("==");
 					i++;
 				} else {
-					throw new IllegalArgumentException("un-matched =");
+					result.add("=");
 				}
 			} else if (ch == '&') {
 				result.add("&");

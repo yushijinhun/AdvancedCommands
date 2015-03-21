@@ -125,9 +125,8 @@ public class CommandVar extends BasicCommand {
 		VarData.theVarData.remove(type);
 	}
 
-	private void compute(String equ, ICommandSender sender) {
-		String[] spilted = equ.split("=", 2);
-		VarData.theVarData.set(spilted[0], ExpressionHandler.handleExpression(spilted[1]));
+	private void compute(String exp, ICommandSender sender) {
+		ExpressionHandler.handleExpression(exp);
 	}
 
 	private void list(ICommandSender sender, String mode) {

@@ -4,7 +4,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import yushijinhun.advancedcommands.common.command.datatype.DataType;
 import com.google.common.base.Objects;
 
-public class Var {
+public class Var implements Cloneable {
 
 	public final DataType type;
 	public Object value;
@@ -50,5 +50,10 @@ public class Var {
 			return type.equals(type) && Objects.equal(value, var.value);
 		}
 		return false;
+	}
+
+	@Override
+	public Var clone() {
+		return new Var(type, value);
 	}
 }
