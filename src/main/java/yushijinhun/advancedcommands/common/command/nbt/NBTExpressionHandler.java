@@ -61,6 +61,20 @@ public final class NBTExpressionHandler {
 		return tag;
 	}
 
+	public static NBTBase locate(NBTBase tag, String location) {
+		String[] elements = location.split("\\.");
+		for (String tolocate : elements) {
+			if (tag instanceof NBTTagCompound) {
+				tag = ((NBTTagCompound) tag).getTag(tolocate);
+			} else if (tag instanceof NBTTagList) {
+				tag = ((NBTTagList) tag).get(Integer.parseInt(tolocate));
+			} else {
+				throw new IllegalArgumentException("Cannot failled to locate " + tolocate);
+			}
+		}
+		return tag;
+	}
+
 	public static Var toVar(NBTBase nbt) {
 		if (nbt instanceof NBTTagByte) {
 			return new Var(DataType.TYPE_BYTE, ((NBTTagByte) nbt).getByte());
@@ -113,7 +127,7 @@ public final class NBTExpressionHandler {
 		return new NBTLocation(spilted[0], source, spilted2[1]);
 	}
 
-	public static Var getFromNBT(String locationStr) {
+	public static Var getNBT(String locationStr) {
 		NBTLocation location = parseLocation(locationStr);
 		int index = -1;
 		if (location.locationString.endsWith("]")) {
@@ -144,5 +158,44 @@ public final class NBTExpressionHandler {
 			}
 		}
 		return toVar(nbt);
+	}
+
+	public static void setNBT(String locationStr, Var var) {
+		NBTLocation location = parseLocation(locationStr);
+		int index = -1;
+		if (location.locationString.endsWith("]")) {
+			for (int i = location.locationString.length() - 1; i > -1; i--) {
+				if (location.locationString.charAt(i) == '[') {
+					String token = location.locationString.substring(i + 1, location.locationString.length() - 1);
+					index = Integer.parseInt(token);
+					location = new NBTLocation(location.locationString.substring(0, i), location.source,
+							location.sourceString);
+					break;
+				}
+			}
+		}
+		NBTTagCompound nbtroot = location.getRoot();
+		NBTBase nbt = locate(nbtroot, location.locationString);
+		if (index != -1) {
+			if (nbt instanceof NBTTagByteArray) {
+				((NBTTagByteArray) nbt).getByteArray()[index] = (Byte) var.value;
+			} else if (nbt instanceof NBTTagIntArray) {
+				((NBTTagIntArray) nbt).getIntArray()[index] = (Integer) var.value;
+			} else {
+				throw new IllegalArgumentException("Useless index token");
+			}
+		} else {
+			NBTBase parent = locate(nbtroot, location.getParent().locationString);
+			NBTBase toset = toNBT(var);
+			String name = location.locationString.substring(location.locationString.lastIndexOf('.') + 1);
+			if (parent instanceof NBTTagCompound) {
+				((NBTTagCompound) parent).setTag(name, toset);
+			} else if (parent instanceof NBTTagList) {
+				((NBTTagList) parent).set(Integer.parseInt(name), toset);
+			} else {
+				throw new IllegalArgumentException("Unknow parent node " + idToName.get((int) parent.getId()));
+			}
+		}
+		location.source.set(location.sourceString, nbtroot);
 	}
 }

@@ -18,6 +18,7 @@ public abstract class Function {
 		new FunctionMax();
 		new FunctionMin();
 		new FunctionGetNBT();
+		new FunctionSetNBT();
 	}
 
 	public final String name;

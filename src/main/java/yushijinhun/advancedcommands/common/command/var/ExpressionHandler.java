@@ -88,7 +88,11 @@ public final class ExpressionHandler {
 
 	public static Var computeRPN(Object[] rpn) {
 		Stack<Var> stack = new Stack<Var>();
+		boolean stopped = false;
 		for (Object o : rpn) {
+			if (stopped) {
+				throw new IllegalArgumentException("A function returned void, expression handing stopped");
+			}
 			if (o instanceof Var) {
 				stack.push((Var) o);
 			} else {
@@ -103,6 +107,8 @@ public final class ExpressionHandler {
 					Var result = function.call(args);
 					if (result != null) {
 						stack.push(result);
+					} else {
+						stopped = true;
 					}
 				} else {
 					Var arg1 = stack.pop();
@@ -181,6 +187,9 @@ public final class ExpressionHandler {
 					}
 				}
 			}
+		}
+		if (stopped) {
+			return null;
 		}
 		return stack.pop();
 	}

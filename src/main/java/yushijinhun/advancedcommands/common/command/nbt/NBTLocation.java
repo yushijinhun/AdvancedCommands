@@ -1,6 +1,7 @@
 package yushijinhun.advancedcommands.common.command.nbt;
 
 import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
 
 public class NBTLocation {
 
@@ -21,5 +22,13 @@ public class NBTLocation {
 	@Override
 	public String toString() {
 		return "[" + locationString + "@<" + source + ">" + sourceString + "]";
+	}
+
+	public NBTLocation getParent() {
+		return new NBTLocation(locationString.substring(0, locationString.lastIndexOf('.')), source, sourceString);
+	}
+
+	public NBTTagCompound getRoot() {
+		return source.get(sourceString);
 	}
 }
