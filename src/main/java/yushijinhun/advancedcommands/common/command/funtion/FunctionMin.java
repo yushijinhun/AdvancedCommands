@@ -16,17 +16,17 @@ public class FunctionMin extends Function {
 		DataType type = ExpressionHandler.getPrecisest(args[0].type, args[1].type);
 		Object var1 = type.cast(args[0].value, args[0].type);
 		Object var2 = type.cast(args[1].value, args[1].type);
-		if (type.name.equals("byte")) {
+		if (type == DataType.TYPE_BYTE) {
 			larger = (Byte) var1 > (Byte) var2;
-		} else if (type.name.equals("short")) {
+		} else if (type == DataType.TYPE_SHORT) {
 			larger = (Short) var1 > (Short) var2;
-		} else if (type.name.equals("int")) {
+		} else if (type == DataType.TYPE_INT) {
 			larger = (Integer) var1 > (Integer) var2;
-		} else if (type.name.equals("long")) {
+		} else if (type == DataType.TYPE_LONG) {
 			larger = (Long) var1 > (Long) var2;
-		} else if (type.name.equals("float")) {
+		} else if (type == DataType.TYPE_FLOAT) {
 			larger = (Float) var1 > (Float) var2;
-		} else if (type.name.equals("double")) {
+		} else if (type == DataType.TYPE_DOUBLE) {
 			larger = (Double) var1 > (Double) var2;
 		} else {
 			throw new IllegalArgumentException("Argument must be a number");
