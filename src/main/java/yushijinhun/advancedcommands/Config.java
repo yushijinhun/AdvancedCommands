@@ -14,6 +14,7 @@ public final class Config {
 	public static Configuration config;
 
 	public static boolean sendErrorMessageToOps = false;
+	public static boolean sendExecutedMessageToOps = false;
 	public static boolean printErrorMessageToConsole = false;
 
 	public static void loadConfig(File file) {
@@ -45,6 +46,14 @@ public final class Config {
 		prop.comment = StatCollector.translateToLocal("config.printErrorMessageToConsole.description");
 		prop.setLanguageKey("config.printErrorMessageToConsole");
 		printErrorMessageToConsole = prop.getBoolean();
+		configList.add(prop.getName());
+
+		prop = config.get(Configuration.CATEGORY_GENERAL, "sendExecutedMessageToOps",
+				Config.sendExecutedMessageToOps);
+		prop.comment =
+				StatCollector.translateToLocal("config.sendExecutedMessageToOps.description");
+		prop.setLanguageKey("config.sendExecutedMessageToOps");
+		sendExecutedMessageToOps = prop.getBoolean();
 		configList.add(prop.getName());
 
 		if (config.hasChanged()) {

@@ -45,7 +45,9 @@ public class CommandVar extends BasicCommand {
 	public void execute(ICommandSender sender, String[] args) throws CommandException {
 		try {
 			doExecute(sender, args);
-			notifyOperators(sender, this, "Command var executed " + Arrays.toString(args));
+			if (Config.sendExecutedMessageToOps) {
+				notifyOperators(sender, this, "Command var executed " + Arrays.toString(args));
+			}
 		} catch (Throwable e) {
 			if (Config.printErrorMessageToConsole) {
 				AdvancedCommands.logger.info(
@@ -126,7 +128,9 @@ public class CommandVar extends BasicCommand {
 	}
 
 	private void compute(String exp, ICommandSender sender) {
-		ExpressionHandler.handleExpression(exp);
+		Var result = ExpressionHandler.handleExpression(exp);
+		IChatComponent msg = new ChatComponentText("Result: " + result);
+		sender.addChatMessage(msg);
 	}
 
 	private void list(ICommandSender sender, String mode) {
