@@ -3,8 +3,17 @@ package yushijinhun.advancedcommands.common.command.nbt;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagByte;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagDouble;
+import net.minecraft.nbt.NBTTagFloat;
+import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagLong;
+import net.minecraft.nbt.NBTTagShort;
+import net.minecraft.nbt.NBTTagString;
+import yushijinhun.advancedcommands.common.command.datatype.DataType;
+import yushijinhun.advancedcommands.common.command.var.Var;
 
 public final class NBTExpressionHandler {
 
@@ -44,5 +53,43 @@ public final class NBTExpressionHandler {
 			}
 		}
 		return tag;
+	}
+
+	public static Var toVar(NBTBase nbt) {
+		if (nbt instanceof NBTTagByte) {
+			return new Var(DataType.TYPE_BYTE, ((NBTTagByte) nbt).getByte());
+		} else if (nbt instanceof NBTTagShort) {
+			return new Var(DataType.TYPE_SHORT, ((NBTTagShort) nbt).getShort());
+		} else if (nbt instanceof NBTTagInt) {
+			return new Var(DataType.TYPE_INT, ((NBTTagInt) nbt).getInt());
+		} else if (nbt instanceof NBTTagLong) {
+			return new Var(DataType.TYPE_LONG, ((NBTTagLong) nbt).getLong());
+		} else if (nbt instanceof NBTTagFloat) {
+			return new Var(DataType.TYPE_FLOAT, ((NBTTagFloat) nbt).getFloat());
+		} else if (nbt instanceof NBTTagDouble) {
+			return new Var(DataType.TYPE_DOUBLE, ((NBTTagDouble) nbt).getDouble());
+		} else if (nbt instanceof NBTTagString) {
+			return new Var(DataType.TYPE_STRING, ((NBTTagString) nbt).getString());
+		}
+		throw new IllegalArgumentException(idToName.get(nbt.getId()) + " unsupported");
+	}
+
+	public static NBTBase toNBT(Var var) {
+		if (var.type == DataType.TYPE_BOOLEAN) {
+			return new NBTTagByte((Boolean) var.value ? (byte) 1 : (byte) 0);
+		} else if (var.type == DataType.TYPE_BYTE) {
+			return new NBTTagByte((Byte) var.value);
+		} else if (var.type == DataType.TYPE_SHORT) {
+			return new NBTTagShort((Short) var.value);
+		} else if (var.type == DataType.TYPE_INT) {
+			return new NBTTagInt((Integer) var.value);
+		} else if (var.type == DataType.TYPE_LONG) {
+			return new NBTTagLong((Long) var.value);
+		} else if (var.type == DataType.TYPE_FLOAT) {
+			return new NBTTagFloat((Float) var.value);
+		} else if (var.type == DataType.TYPE_DOUBLE) {
+			return new NBTTagDouble((Double) var.value);
+		}
+		throw new IllegalArgumentException(var.type + " unsupported");
 	}
 }
