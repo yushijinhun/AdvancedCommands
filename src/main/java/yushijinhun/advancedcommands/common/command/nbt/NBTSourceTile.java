@@ -30,4 +30,9 @@ public class NBTSourceTile implements NBTSource {
 				.getServer().worldServers[0];
 		return world.getTileEntity(new BlockPos(x, y, z));
 	}
+
+	@Override
+	public String toString() {
+		return "tile";
+	}
 }

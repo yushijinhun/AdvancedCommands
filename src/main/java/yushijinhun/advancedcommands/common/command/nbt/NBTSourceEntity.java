@@ -18,4 +18,8 @@ public class NBTSourceEntity implements NBTSource {
 		MinecraftServer.getServer().getEntityFromUuid(UUID.fromString(id)).readFromNBT(nbt);
 	}
 
+	@Override
+	public String toString() {
+		return "entity";
+	}
 }
