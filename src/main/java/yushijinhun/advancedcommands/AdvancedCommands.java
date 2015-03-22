@@ -16,7 +16,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import yushijinhun.advancedcommands.common.CommonProxy;
-import yushijinhun.advancedcommands.common.command.CommandVar;
+import yushijinhun.advancedcommands.common.command.CommandExp;
 import yushijinhun.advancedcommands.common.command.var.VarData;
 import yushijinhun.advancedcommands.common.command.var.VarSavedData;
 
@@ -53,7 +53,7 @@ public final class AdvancedCommands {
 
 	@EventHandler
 	public void serverStarting(FMLServerStartingEvent event) {
-		event.registerServerCommand(new CommandVar());
+		event.registerServerCommand(new CommandExp());
 
 		MapStorage mapStorage = event.getServer().worldServers[0].getMapStorage();
 		VarData.theVarData = new VarData();

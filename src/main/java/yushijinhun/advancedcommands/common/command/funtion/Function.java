@@ -19,6 +19,9 @@ public abstract class Function {
 		new FunctionMin();
 		new FunctionGetNBT();
 		new FunctionSetNBT();
+		new FunctionCreate();
+		new FunctionDelete();
+		new FunctionListVar();
 	}
 
 	public final String name;
