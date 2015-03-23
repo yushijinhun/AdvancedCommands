@@ -23,6 +23,7 @@ public abstract class Function {
 		new FunctionCreate();
 		new FunctionDelete();
 		new FunctionListVar();
+		new FunctionSubString();
 	}
 
 	public final String name;
