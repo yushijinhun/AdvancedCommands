@@ -1,7 +1,7 @@
 package yushijinhun.advancedcommands.common.command.var;
 
 import yushijinhun.advancedcommands.common.command.datatype.DataType;
-import yushijinhun.advancedcommands.common.command.funtion.Function;
+import yushijinhun.advancedcommands.common.command.function.Function;
 import yushijinhun.advancedcommands.util.LocalizationHelper;
 
 public final class VarHelper {

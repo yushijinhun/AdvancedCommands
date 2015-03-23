@@ -1,19 +1,19 @@
-package yushijinhun.advancedcommands.common.command.funtion;
+package yushijinhun.advancedcommands.common.command.function;
 
 import yushijinhun.advancedcommands.common.command.datatype.DataType;
 import yushijinhun.advancedcommands.common.command.var.Var;
 
-public class FunctionSqrt extends Function {
+public class FunctionTan extends Function {
 
-	public FunctionSqrt() {
-		super("sqrt");
+	public FunctionTan() {
+		super("tan");
 	}
 
 	@Override
 	public Var call(Var[] args) {
 		Object val = args[0].value;
 		if (val instanceof Number) {
-			return new Var(DataType.TYPE_DOUBLE, Math.sqrt(((Number) val).doubleValue()));
+			return new Var(DataType.TYPE_DOUBLE, Math.tan(((Number) val).doubleValue()));
 		}
 
 		throw new IllegalArgumentException("Argument must be a number");

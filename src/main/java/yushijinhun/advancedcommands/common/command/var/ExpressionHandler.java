@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
 import yushijinhun.advancedcommands.common.command.datatype.DataType;
-import yushijinhun.advancedcommands.common.command.funtion.Function;
+import yushijinhun.advancedcommands.common.command.function.Function;
 
 public final class ExpressionHandler {
 

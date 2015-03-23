@@ -1,13 +1,13 @@
-package yushijinhun.advancedcommands.common.command.funtion;
+package yushijinhun.advancedcommands.common.command.function;
 
 import yushijinhun.advancedcommands.common.command.datatype.DataType;
 import yushijinhun.advancedcommands.common.command.var.ExpressionHandler;
 import yushijinhun.advancedcommands.common.command.var.Var;
 
-public class FunctionMin extends Function {
+public class FunctionMax extends Function {
 
-	public FunctionMin() {
-		super("min");
+	public FunctionMax() {
+		super("max");
 	}
 
 	@Override
@@ -31,7 +31,7 @@ public class FunctionMin extends Function {
 		} else {
 			throw new IllegalArgumentException("Argument must be a number");
 		}
-		return larger ? args[1].clone() : args[0].clone();
+		return larger ? args[0].clone() : args[1].clone();
 	}
 
 	@Override

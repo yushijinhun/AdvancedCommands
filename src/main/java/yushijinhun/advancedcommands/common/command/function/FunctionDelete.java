@@ -1,4 +1,4 @@
-package yushijinhun.advancedcommands.common.command.funtion;
+package yushijinhun.advancedcommands.common.command.function;
 
 import yushijinhun.advancedcommands.common.command.var.Var;
 import yushijinhun.advancedcommands.common.command.var.VarData;
