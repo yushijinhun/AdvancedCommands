@@ -198,4 +198,19 @@ public final class NBTExpressionHandler {
 		}
 		location.source.set(location.sourceString, nbtroot);
 	}
+
+	public static void deleteNBT(String locationStr) {
+		NBTLocation location = parseLocation(locationStr);
+		NBTTagCompound nbtroot = location.getRoot();
+		NBTBase parent = locate(nbtroot, location.getParent().locationString);
+		String name = locationStr.substring(locationStr.lastIndexOf('.') + 1, locationStr.length());
+		if (parent instanceof NBTTagCompound) {
+			((NBTTagCompound) parent).removeTag(name);
+		} else if (parent instanceof NBTTagList) {
+			((NBTTagList) parent).removeTag(Integer.parseInt(name));
+		} else {
+			throw new IllegalArgumentException("Unknow parent node " + idToName.get((int) parent.getId()));
+		}
+		location.source.set(location.sourceString, nbtroot);
+	}
 }
