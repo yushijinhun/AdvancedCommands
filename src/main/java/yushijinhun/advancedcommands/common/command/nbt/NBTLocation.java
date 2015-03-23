@@ -28,6 +28,10 @@ public class NBTLocation {
 		return new NBTLocation(locationString.substring(0, locationString.lastIndexOf('.')), source, sourceString);
 	}
 
+	public String getChildName() {
+		return locationString.substring(locationString.lastIndexOf('.') + 1, locationString.length());
+	}
+
 	public NBTTagCompound getRoot() {
 		return source.get(sourceString);
 	}

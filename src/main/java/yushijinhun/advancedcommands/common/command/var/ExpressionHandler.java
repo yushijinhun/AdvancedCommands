@@ -250,9 +250,9 @@ public final class ExpressionHandler {
 
 	public static Var opDown(Var arg1) {
 		if (arg1.value instanceof Byte) {
-			return new Var(DataType.TYPE_BYTE, -((Byte) arg1.value));
+			return new Var(DataType.TYPE_BYTE, (byte) -((Byte) arg1.value));
 		} else if (arg1.value instanceof Short) {
-			return new Var(DataType.TYPE_SHORT, -((Short) arg1.value));
+			return new Var(DataType.TYPE_SHORT, (short) -((Short) arg1.value));
 		} else if (arg1.value instanceof Integer) {
 			return new Var(DataType.TYPE_INT, -((Integer) arg1.value));
 		} else if (arg1.value instanceof Long) {
@@ -267,9 +267,9 @@ public final class ExpressionHandler {
 
 	public static Var opUp(Var arg1) {
 		if (arg1.value instanceof Byte) {
-			return new Var(DataType.TYPE_BYTE, +((Byte) arg1.value));
+			return new Var(DataType.TYPE_BYTE, (byte) +((Byte) arg1.value));
 		} else if (arg1.value instanceof Short) {
-			return new Var(DataType.TYPE_SHORT, +((Short) arg1.value));
+			return new Var(DataType.TYPE_SHORT, (short) +((Short) arg1.value));
 		} else if (arg1.value instanceof Integer) {
 			return new Var(DataType.TYPE_INT, +((Integer) arg1.value));
 		} else if (arg1.value instanceof Long) {

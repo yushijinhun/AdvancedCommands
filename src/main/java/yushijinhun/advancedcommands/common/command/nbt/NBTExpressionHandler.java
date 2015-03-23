@@ -94,25 +94,6 @@ public final class NBTExpressionHandler {
 		throw new IllegalArgumentException(idToName.get(nbt.getId()) + " unsupported");
 	}
 
-	public static NBTBase toNBT(Var var) {
-		if (var.type == DataType.TYPE_BOOLEAN) {
-			return new NBTTagByte((Boolean) var.value ? (byte) 1 : (byte) 0);
-		} else if (var.type == DataType.TYPE_BYTE) {
-			return new NBTTagByte((Byte) var.value);
-		} else if (var.type == DataType.TYPE_SHORT) {
-			return new NBTTagShort((Short) var.value);
-		} else if (var.type == DataType.TYPE_INT) {
-			return new NBTTagInt((Integer) var.value);
-		} else if (var.type == DataType.TYPE_LONG) {
-			return new NBTTagLong((Long) var.value);
-		} else if (var.type == DataType.TYPE_FLOAT) {
-			return new NBTTagFloat((Float) var.value);
-		} else if (var.type == DataType.TYPE_DOUBLE) {
-			return new NBTTagDouble((Double) var.value);
-		}
-		throw new IllegalArgumentException(var.type + " unsupported");
-	}
-
 	public static NBTLocation parseLocation(String location) {
 		String[] spilted = location.split("@");
 		if (!spilted[1].startsWith("<")) {
@@ -160,50 +141,71 @@ public final class NBTExpressionHandler {
 		return toVar(nbt);
 	}
 
-	public static void setNBT(String locationStr, Var var) {
-		NBTLocation location = parseLocation(locationStr);
-		int index = -1;
-		if (location.locationString.endsWith("]")) {
-			for (int i = location.locationString.length() - 1; i > -1; i--) {
-				if (location.locationString.charAt(i) == '[') {
-					String token = location.locationString.substring(i + 1, location.locationString.length() - 1);
-					index = Integer.parseInt(token);
-					location = new NBTLocation(location.locationString.substring(0, i), location.source,
-							location.sourceString);
-					break;
+	public static void setNBT(String locationStr,String typeStr, Var var) {
+		NBTLocation child = parseLocation(locationStr);
+		NBTLocation parent=child.getParent();
+		String childName= child.getChildName();
+		NBTTagCompound nbtroot = parent.getRoot();
+		if (typeStr.equals("int") || typeStr.equals("byte")) {
+			int index = Integer.parseInt(childName.substring(childName.lastIndexOf('[') + 1, childName.length() - 1));
+			NBTBase nbtarray = locate(nbtroot, child.locationString.substring(0, child.locationString.lastIndexOf('[')));
+			if (typeStr.equals("int")) {
+				((NBTTagIntArray) nbtarray).getIntArray()[index] = (Integer) var.value;
+			} else if (typeStr.equals("byte")) {
+				((NBTTagByteArray) nbtarray).getByteArray()[index] = (Byte) var.value;
+			}
+		} else {
+			NBTBase nbtparent = locate(nbtroot, parent.locationString);
+			NBTBase nbt = null;
+			if (typeStr.equals("TAG_BYTE")) {
+				byte value;
+				if (var.value instanceof Boolean) {
+					value = (byte) ((Boolean) var.value ? 1 : 0);
+				} else {
+					value = (Byte) var.value;
+				}
+				nbt = new NBTTagByte(value);
+			} else if (typeStr.equals("TAG_SHORT")) {
+				nbt = new NBTTagShort((Short) var.value);
+			} else if (typeStr.equals("TAG_INT")) {
+				nbt = new NBTTagInt((Integer) var.value);
+			} else if (typeStr.equals("TAG_LONG")) {
+				nbt = new NBTTagLong((Long) var.value);
+			} else if (typeStr.equals("TAG_FLOAT")) {
+				nbt = new NBTTagFloat((Float) var.value);
+			} else if (typeStr.equals("TAG_DOUBLE")) {
+				nbt = new NBTTagDouble((Double) var.value);
+			} else if (typeStr.equals("TAG_STRING")) {
+				nbt = new NBTTagString((String) var.value);
+			} else if (typeStr.equals("TAG_INT_ARRAY")) {
+				nbt = new NBTTagIntArray(new int[(Integer) var.value]);
+			} else if (typeStr.equals("TAG_BYTE_ARRAY")) {
+				nbt = new NBTTagByteArray(new byte[(Integer) var.value]);
+			} else if (typeStr.equals("TAG_COMPOUND")) {
+				nbt = new NBTTagCompound();
+			} else if (typeStr.equals("TAG_LIST")) {
+				nbt = new NBTTagList();
+			}else{
+				throw new IllegalArgumentException("Invalid NBT type");
+			}
+			if (nbtparent instanceof NBTTagCompound) {
+				((NBTTagCompound) nbtparent).setTag(childName, nbt);
+			} else if (nbtparent instanceof NBTTagList) {
+				if (childName.equals("?")) {
+					((NBTTagList) nbtparent).appendTag(nbt);
+				} else {
+					((NBTTagList) nbtparent).set(Integer.parseInt(childName), nbt);
 				}
 			}
 		}
-		NBTTagCompound nbtroot = location.getRoot();
-		NBTBase nbt = locate(nbtroot, location.locationString);
-		if (index != -1) {
-			if (nbt instanceof NBTTagByteArray) {
-				((NBTTagByteArray) nbt).getByteArray()[index] = (Byte) var.value;
-			} else if (nbt instanceof NBTTagIntArray) {
-				((NBTTagIntArray) nbt).getIntArray()[index] = (Integer) var.value;
-			} else {
-				throw new IllegalArgumentException("Useless index token");
-			}
-		} else {
-			NBTBase parent = locate(nbtroot, location.getParent().locationString);
-			NBTBase toset = toNBT(var);
-			String name = location.locationString.substring(location.locationString.lastIndexOf('.') + 1);
-			if (parent instanceof NBTTagCompound) {
-				((NBTTagCompound) parent).setTag(name, toset);
-			} else if (parent instanceof NBTTagList) {
-				((NBTTagList) parent).set(Integer.parseInt(name), toset);
-			} else {
-				throw new IllegalArgumentException("Unknow parent node " + idToName.get((int) parent.getId()));
-			}
-		}
-		location.source.set(location.sourceString, nbtroot);
+		parent.source.set(parent.sourceString, nbtroot);
 	}
 
 	public static void deleteNBT(String locationStr) {
 		NBTLocation location = parseLocation(locationStr);
 		NBTTagCompound nbtroot = location.getRoot();
 		NBTBase parent = locate(nbtroot, location.getParent().locationString);
-		String name = locationStr.substring(locationStr.lastIndexOf('.') + 1, locationStr.length());
+		String name = location.getChildName();
 		if (parent instanceof NBTTagCompound) {
 			((NBTTagCompound) parent).removeTag(name);
 		} else if (parent instanceof NBTTagList) {
