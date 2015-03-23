@@ -9,7 +9,6 @@ import net.minecraft.command.ICommandSender;
 import yushijinhun.advancedcommands.AdvancedCommands;
 import yushijinhun.advancedcommands.Config;
 import yushijinhun.advancedcommands.util.ExceptionHelper;
-import yushijinhun.advancedcommands.util.LocalizationHelper;
 
 public abstract class BasicCommand extends CommandBase {
 
@@ -33,16 +32,13 @@ public abstract class BasicCommand extends CommandBase {
 		} catch (Throwable e) {
 			if (Config.printErrorMessageToConsole) {
 				AdvancedCommands.logger.info(
-						LocalizationHelper.localizeString("advancedcommands.command.execute.failed", getName(),
-								Arrays.toString(args)), e);
+						String.format("Executing command %s with %s failed", getName(), Arrays.toString(args)), e);
 			}
 
 			if (Config.sendErrorMessageToOps) {
-				notifyOperators(
-						sender,
-						this,
-						LocalizationHelper.localizeString("advancedcommands.command.execute.failed", getName(),
-								Arrays.toString(args)) + "\n" + ExceptionHelper.exceptionToString(e));
+				notifyOperators(sender, this,
+						String.format("Executing command %s with %s failed", getName(), Arrays.toString(args)) + "\n"
+								+ ExceptionHelper.exceptionToString(e));
 			}
 			throw new CommandException(e.getClass().getName() + ": " + e.getMessage(), new Object[0]);
 		}

@@ -4,7 +4,6 @@ import yushijinhun.advancedcommands.common.command.datatype.DataType;
 import yushijinhun.advancedcommands.common.command.var.Var;
 import yushijinhun.advancedcommands.common.command.var.VarData;
 import yushijinhun.advancedcommands.common.command.var.VarHelper;
-import yushijinhun.advancedcommands.util.LocalizationHelper;
 
 public class FunctionCreate extends Function {
 
@@ -17,13 +16,11 @@ public class FunctionCreate extends Function {
 		String var = (String) args[1].value;
 		DataType datatype = DataType.types.get(args[0].value);
 		if (datatype == null) {
-			throw new IllegalArgumentException(LocalizationHelper.localizeString(
-					"advancedcommands.command.datatype.notexists", args[0].value));
+			throw new IllegalArgumentException(String.format("Data type %s not exists", args[0].value));
 		}
 
 		if (!VarHelper.isValidIdentifier(var)) {
-			throw new IllegalArgumentException(LocalizationHelper.localizeString(
-					"advancedcommands.command.identifier.invalid", var));
+			throw new IllegalArgumentException(String.format("%s is not a valid identifier", var));
 		}
 
 		VarData.theVarData.add(var, new Var(datatype));

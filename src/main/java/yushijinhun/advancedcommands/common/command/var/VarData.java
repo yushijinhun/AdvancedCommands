@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import yushijinhun.advancedcommands.common.command.datatype.DataType;
-import yushijinhun.advancedcommands.util.LocalizationHelper;
 
 public class VarData {
 
@@ -55,8 +54,7 @@ public class VarData {
 		Objects.requireNonNull(name);
 		Objects.requireNonNull(var);
 		if (names.contains(name)) {
-			throw new IllegalArgumentException(LocalizationHelper.localizeString("advancedcommands.command.var.exists",
-					name));
+			throw new IllegalArgumentException(String.format("Var %s already exists", name));
 		}
 		vars.put(name, var);
 		names.add(name);
@@ -71,8 +69,7 @@ public class VarData {
 		}
 		Var old = vars.get(name);
 		if (old == null) {
-			throw new IllegalArgumentException(LocalizationHelper.localizeString(
-					"advancedcommands.command.var.notexists", name));
+			throw new IllegalArgumentException(String.format("Var %s not exists", name));
 		}
 		vars.put(name, VarHelper.cast(var, old.type));
 		markDirty();
@@ -84,7 +81,7 @@ public class VarData {
 			throw new IllegalArgumentException("Constant cannot be removed");
 		}
 		if (!vars.containsKey(name)) {
-			throw new IllegalArgumentException(LocalizationHelper.localizeString(
+			throw new IllegalArgumentException(String.format(
 					"advancedcommands.command.var.notexists", name));
 		}
 		vars.remove(name);

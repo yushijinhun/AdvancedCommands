@@ -7,7 +7,6 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 import yushijinhun.advancedcommands.common.command.var.ExpressionHandler;
 import yushijinhun.advancedcommands.common.command.var.Var;
-import yushijinhun.advancedcommands.util.LocalizationHelper;
 
 public class CommandExp extends BasicCommand {
 
@@ -29,8 +28,7 @@ public class CommandExp extends BasicCommand {
 	@Override
 	public void doExecute(ICommandSender sender, String[] args) {
 		if (args.length == 0) {
-			throw new IllegalArgumentException(
-					LocalizationHelper.localizeString("advancedcommands.command.argument.short"));
+			throw new IllegalArgumentException("Argument length is too short");
 		}
 
 		StringBuilder sb = new StringBuilder();
