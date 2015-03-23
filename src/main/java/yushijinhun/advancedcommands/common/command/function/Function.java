@@ -24,6 +24,7 @@ public abstract class Function {
 		new FunctionDelete();
 		new FunctionListVar();
 		new FunctionSubString();
+		new FunctionReplaceString();
 	}
 
 	public final String name;
