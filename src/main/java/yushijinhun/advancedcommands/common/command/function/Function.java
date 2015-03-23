@@ -25,6 +25,7 @@ public abstract class Function {
 		new FunctionListVar();
 		new FunctionSubString();
 		new FunctionReplaceString();
+		new FunctionStringFirstIndexOf();
 	}
 
 	public final String name;
