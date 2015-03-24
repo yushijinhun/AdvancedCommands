@@ -117,7 +117,7 @@ public class VarData {
 		this.savedData = savedData;
 	}
 
-	protected void markDirty() {
+	public void markDirty() {
 		if (savedData == null) {
 			return;
 		}

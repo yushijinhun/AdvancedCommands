@@ -5,7 +5,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
-import yushijinhun.advancedcommands.common.command.var.ExpressionHandler;
+import yushijinhun.advancedcommands.common.command.expression.ExpressionHandler;
 import yushijinhun.advancedcommands.common.command.var.Var;
 
 public class CommandExp extends BasicCommand {
