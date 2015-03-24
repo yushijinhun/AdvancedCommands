@@ -9,6 +9,7 @@ public abstract class DataType {
 
 	public static final Map<String, DataType> types = new LinkedHashMap<String, DataType>();
 
+	public static final DataTypeArray TYPE_ARRAY = new DataTypeArray();
 	public static final DataTypeBoolean TYPE_BOOLEAN = new DataTypeBoolean();
 	public static final DataTypeByte TYPE_BYTE = new DataTypeByte();
 	public static final DataTypeShort TYPE_SHORT = new DataTypeShort();

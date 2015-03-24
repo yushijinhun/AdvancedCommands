@@ -13,18 +13,24 @@ public class FunctionCreate extends Function {
 
 	@Override
 	public Var call(Var[] args) {
-		String var = (String) args[1].value;
+		String name = (String) args[1].value;
 		DataType datatype = DataType.types.get(args[0].value);
 		if (datatype == null) {
 			throw new IllegalArgumentException(String.format("Data type %s not exists", args[0].value));
 		}
 
-		if (!VarHelper.isValidIdentifier(var)) {
-			throw new IllegalArgumentException(String.format("%s is not a valid identifier", var));
+		if (!VarHelper.isValidIdentifier(name)) {
+			throw new IllegalArgumentException(String.format("%s is not a valid identifier", name));
 		}
 
+		Var var;
+		if (datatype == DataType.TYPE_ARRAY) {
+			var = new Var(datatype, new Var[(Integer) args[2].value]);
+		} else {
+			var = new Var(datatype);
+		}
 
-		VarData.theVarData.add(var, new Var(datatype));
+		VarData.theVarData.add(name, var);
 		return null;
 	}
 
