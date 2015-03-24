@@ -17,9 +17,6 @@ public abstract class Function {
 		new FunctionSqrt();
 		new FunctionMax();
 		new FunctionMin();
-		new FunctionGetNBT();
-		new FunctionSetNBT();
-		new FunctionDeleteNBT();
 		new FunctionCreate();
 		new FunctionDelete();
 		new FunctionListVar();
