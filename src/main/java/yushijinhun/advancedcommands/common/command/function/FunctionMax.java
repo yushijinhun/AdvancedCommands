@@ -34,9 +34,4 @@ public class FunctionMax extends Function {
 		return larger ? args[0].clone() : args[1].clone();
 	}
 
-	@Override
-	public int getArguments() {
-		return 2;
-	}
-
 }

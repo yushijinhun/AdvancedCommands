@@ -28,9 +28,4 @@ public class FunctionListVar extends Function {
 		return new Var(DataType.TYPE_STRING, sb.toString());
 	}
 
-	@Override
-	public int getArguments() {
-		return 0;
-	}
-
 }

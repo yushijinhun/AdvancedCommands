@@ -27,9 +27,4 @@ public class FunctionCreate extends Function {
 		return null;
 	}
 
-	@Override
-	public int getArguments() {
-		return 2;
-	}
-
 }

@@ -34,9 +34,4 @@ public class FunctionMin extends Function {
 		return larger ? args[1].clone() : args[0].clone();
 	}
 
-	@Override
-	public int getArguments() {
-		return 2;
-	}
-
 }

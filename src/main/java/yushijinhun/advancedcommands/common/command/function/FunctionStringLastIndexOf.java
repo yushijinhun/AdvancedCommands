@@ -14,9 +14,4 @@ public class FunctionStringLastIndexOf extends Function {
 		return new Var(DataType.TYPE_INT, ((String) args[0].value).lastIndexOf((Integer) args[1].value));
 	}
 
-	@Override
-	public int getArguments() {
-		return 2;
-	}
-
 }

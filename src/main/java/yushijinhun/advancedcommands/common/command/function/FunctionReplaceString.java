@@ -15,9 +15,4 @@ public class FunctionReplaceString extends Function {
 				(String) args[2].value));
 	}
 
-	@Override
-	public int getArguments() {
-		return 3;
-	}
-
 }

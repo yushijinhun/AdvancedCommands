@@ -19,9 +19,4 @@ public class FunctionCos extends Function {
 		throw new IllegalArgumentException("Argument must be a number");
 	}
 
-	@Override
-	public int getArguments() {
-		return 1;
-	}
-
 }

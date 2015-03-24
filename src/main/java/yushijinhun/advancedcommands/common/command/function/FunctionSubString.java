@@ -15,9 +15,4 @@ public class FunctionSubString extends Function {
 				(Integer) args[2].value));
 	}
 
-	@Override
-	public int getArguments() {
-		return 3;
-	}
-
 }

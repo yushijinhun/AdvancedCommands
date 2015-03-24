@@ -98,8 +98,9 @@ public final class ExpressionHandler {
 			} else {
 				String op = (String) o;
 				if (op.startsWith("()")) {
-					Function function = Function.functions.get(op.substring(2));
-					int argLength = function.getArguments();
+					String[] spilted = op.substring(2).split("@", 2);
+					int argLength = Integer.parseInt(spilted[0]);
+					Function function = Function.functions.get(spilted[1]);
 					Var[] args = new Var[argLength];
 					for (int i = argLength - 1; i > -1; i--) {
 						args[i] = stack.pop();
@@ -764,7 +765,27 @@ public final class ExpressionHandler {
 								result.add(new Var(DataType.TYPE_INT, Integer.valueOf(str, radix)));
 							}
 						} else {
-							stack.push("()" + str);
+							int deep = 0;
+							int parmCount;
+							if (exps[i + 1].equals("(") && exps[i + 2].equals(")")) {
+								parmCount = 0;
+							} else {
+								parmCount = 1;
+								for (int k = i + 1; k < exps.length; k++) {
+									String ex = exps[k];
+									if (ex.equals("(")) {
+										deep++;
+									} else if (ex.equals(")")) {
+										deep--;
+									} else if (ex.equals(",")) {
+										parmCount++;
+									}
+									if (deep == 0) {
+										break;
+									}
+								}
+							}
+							stack.push("()" + parmCount + "@" + str);
 						}
 					} else {
 						result.add(var);

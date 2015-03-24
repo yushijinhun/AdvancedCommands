@@ -16,9 +16,4 @@ public class FunctionDelete extends Function {
 		return null;
 	}
 
-	@Override
-	public int getArguments() {
-		return 1;
-	}
-
 }

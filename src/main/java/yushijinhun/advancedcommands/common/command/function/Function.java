@@ -36,8 +36,6 @@ public abstract class Function {
 
 	public abstract Var call(Var[] args);
 
-	public abstract int getArguments();
-
 	@Override
 	public String toString() {
 		return name;
