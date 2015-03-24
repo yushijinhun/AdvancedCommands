@@ -32,7 +32,7 @@ public class Var implements Cloneable {
 
 	@Override
 	public String toString() {
-		return type + "@" + value;
+		return type + "@" + type.valueToString(value);
 	}
 
 	@Override

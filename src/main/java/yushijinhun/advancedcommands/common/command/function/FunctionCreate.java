@@ -23,6 +23,7 @@ public class FunctionCreate extends Function {
 			throw new IllegalArgumentException(String.format("%s is not a valid identifier", var));
 		}
 
+
 		VarData.theVarData.add(var, new Var(datatype));
 		return null;
 	}

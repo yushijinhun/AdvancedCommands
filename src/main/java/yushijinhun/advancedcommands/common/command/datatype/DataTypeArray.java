@@ -1,5 +1,6 @@
 package yushijinhun.advancedcommands.common.command.datatype;
 
+import java.util.Arrays;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import yushijinhun.advancedcommands.common.command.var.Var;
@@ -48,4 +49,8 @@ public class DataTypeArray extends DataType {
 		throw new ClassCastException();
 	}
 
+	@Override
+	public String valueToString(Object obj) {
+		return Arrays.toString((Object[]) obj);
+	}
 }

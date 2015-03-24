@@ -34,6 +34,10 @@ public abstract class DataType {
 
 	public abstract Object cast(Object src, DataType srcType);
 
+	public String valueToString(Object obj) {
+		return String.valueOf(obj.toString());
+	}
+
 	@Override
 	public String toString() {
 		return name;
