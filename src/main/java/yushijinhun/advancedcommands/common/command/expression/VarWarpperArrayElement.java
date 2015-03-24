@@ -28,7 +28,7 @@ public class VarWarpperArrayElement implements IVarWarpper {
 
 	@Override
 	public Var get() {
-		return var.get();
+		return ((Var[]) this.var.get().value)[index];
 	}
 
 }
