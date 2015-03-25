@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
-import scala.actors.threadpool.Arrays;
 import yushijinhun.advancedcommands.common.command.datatype.DataType;
 import yushijinhun.advancedcommands.common.command.function.Function;
 import yushijinhun.advancedcommands.common.command.var.Var;
@@ -93,7 +92,6 @@ public final class ExpressionHandler {
 	}
 
 	public static Var computeRPN(Object[] rpn) {
-		System.out.println(Arrays.toString(rpn));
 		Stack<IVarWarpper> stack = new Stack<IVarWarpper>();
 		boolean stopped = false;
 		for (Object o : rpn) {
