@@ -24,6 +24,7 @@ public abstract class Function {
 		new FunctionReplaceString();
 		new FunctionStringFirstIndexOf();
 		new FunctionStringLastIndexOf();
+		new FunctionGetChild();
 	}
 
 	public final String name;
