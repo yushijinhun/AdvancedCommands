@@ -27,6 +27,7 @@ public abstract class Function {
 		new FunctionGetChild();
 		new FunctionSetChild();
 		new FunctionRemoveChild();
+		new FunctionLength();
 	}
 
 	public final String name;
