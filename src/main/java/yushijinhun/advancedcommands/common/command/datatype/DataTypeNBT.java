@@ -1,0 +1,40 @@
+package yushijinhun.advancedcommands.common.command.datatype;
+
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import yushijinhun.advancedcommands.common.command.nbt.NBTExpressionHandler;
+
+public class DataTypeNBT extends DataType {
+
+	public DataTypeNBT() {
+		super("nbt");
+	}
+
+	@Override
+	public Object getDefaultValue() {
+		return new NBTTagCompound();
+	}
+
+	@Override
+	public void writeToNBT(Object value, NBTTagCompound nbt) {
+		nbt.setTag("value", (NBTBase) value);
+	}
+
+	@Override
+	public Object readFromNBT(NBTTagCompound nbt) {
+		return nbt.getTag("value");
+	}
+
+	@Override
+	public Object cast(Object src, DataType srcType) {
+		if (srcType == this) {
+			return src;
+		}
+		throw new ClassCastException();
+	}
+
+	@Override
+	public String valueToString(Object obj) {
+		return NBTExpressionHandler.idToName.get((int) ((NBTBase) obj).getId()) + "@" + String.valueOf(obj.toString());
+	}
+}

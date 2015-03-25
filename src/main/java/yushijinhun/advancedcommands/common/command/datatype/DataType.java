@@ -18,6 +18,7 @@ public abstract class DataType {
 	public static final DataTypeFloat TYPE_FLOAT = new DataTypeFloat();
 	public static final DataTypeDouble TYPE_DOUBLE = new DataTypeDouble();
 	public static final DataTypeString TYPE_STRING = new DataTypeString();
+	public static final DataTypeNBT TYPE_NBT = new DataTypeNBT();
 
 	public final String name;
 
