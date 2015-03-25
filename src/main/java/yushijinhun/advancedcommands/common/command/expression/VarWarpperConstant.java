@@ -25,4 +25,8 @@ public class VarWarpperConstant implements IVarWarpper {
 		return var;
 	}
 
+	@Override
+	public void changed() {
+	}
+
 }

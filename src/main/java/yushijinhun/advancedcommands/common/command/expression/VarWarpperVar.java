@@ -25,4 +25,9 @@ public class VarWarpperVar implements IVarWarpper {
 	public Var get() {
 		return VarData.theVarData.get(name);
 	}
+
+	@Override
+	public void changed() {
+		VarData.theVarData.markDirty();
+	}
 }

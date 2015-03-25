@@ -8,5 +8,7 @@ public interface IVarWarpper {
 
 	void set(Var var);
 
+	void changed();
+
 	Var get();
 }
