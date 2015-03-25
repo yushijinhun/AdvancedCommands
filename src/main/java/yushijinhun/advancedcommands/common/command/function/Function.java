@@ -26,6 +26,7 @@ public abstract class Function {
 		new FunctionStringLastIndexOf();
 		new FunctionGetChild();
 		new FunctionSetChild();
+		new FunctionRemoveChild();
 	}
 
 	public final String name;
