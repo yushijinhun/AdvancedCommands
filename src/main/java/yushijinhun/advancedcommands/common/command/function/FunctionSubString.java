@@ -10,7 +10,7 @@ public class FunctionSubString extends Function {
 	}
 
 	@Override
-	public Var call(Var[] args) {
+	public Var call(Var[] args, FunctionContext context) {
 		return new Var(DataType.TYPE_STRING, ((String) args[0].value).substring((Integer) args[1].value,
 				(Integer) args[2].value));
 	}

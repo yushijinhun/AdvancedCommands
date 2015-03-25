@@ -9,8 +9,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
+import net.minecraft.command.ICommandSender;
 import yushijinhun.advancedcommands.common.command.datatype.DataType;
 import yushijinhun.advancedcommands.common.command.function.Function;
+import yushijinhun.advancedcommands.common.command.function.FunctionContext;
 import yushijinhun.advancedcommands.common.command.var.Var;
 import yushijinhun.advancedcommands.common.command.var.VarData;
 import yushijinhun.advancedcommands.common.command.var.VarHelper;
@@ -91,7 +93,7 @@ public final class ExpressionHandler {
 		}
 	}
 
-	public static Var computeRPN(Object[] rpn) {
+	public static Var computeRPN(Object[] rpn, ICommandSender sender) {
 		Stack<IVarWarpper> stack = new Stack<IVarWarpper>();
 		boolean stopped = false;
 		for (Object o : rpn) {
@@ -107,10 +109,13 @@ public final class ExpressionHandler {
 					int argLength = Integer.parseInt(spilted[0]);
 					Function function = Function.functions.get(spilted[1]);
 					Var[] args = new Var[argLength];
+					IVarWarpper[] rawArgs = new IVarWarpper[argLength];
 					for (int i = argLength - 1; i > -1; i--) {
-						args[i] = stack.pop().get();
+						rawArgs[i] = stack.pop();
+						args[i] = rawArgs[i].get();
 					}
-					Var result = function.call(args);
+					FunctionContext context = new FunctionContext(sender, rawArgs);
+					Var result = function.call(args, context);
 					if (result != null) {
 						stack.push(new VarWarpperConstant(result));
 					} else {
@@ -913,7 +918,7 @@ public final class ExpressionHandler {
 		return leftAssoc.contains(op);
 	}
 
-	public static Var handleExpression(String expression) {
-		return computeRPN(toRPN(spiltExpression(expression)));
+	public static Var handleExpression(String expression, ICommandSender sender) {
+		return computeRPN(toRPN(spiltExpression(expression)), sender);
 	}
 }

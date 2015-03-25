@@ -34,11 +34,11 @@ public class CommandExp extends BasicCommand {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < args.length; i++) {
 			sb.append(args[i]);
-			if (i != args.length - 1) {
+			if (i != (args.length - 1)) {
 				sb.append(' ');
 			}
 		}
-		Var result = ExpressionHandler.handleExpression(sb.toString());
+		Var result = ExpressionHandler.handleExpression(sb.toString(), sender);
 		IChatComponent msg = new ChatComponentText("Result: " + result);
 		sender.addChatMessage(msg);
 	}

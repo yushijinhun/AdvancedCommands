@@ -11,7 +11,7 @@ public class FunctionListVar extends Function {
 	}
 
 	@Override
-	public Var call(Var[] args) {
+	public Var call(Var[] args, FunctionContext context) {
 		StringBuilder sb = new StringBuilder();
 		for (String name : VarData.theVarData.varNamesSet()) {
 			Var var = VarData.theVarData.get(name);

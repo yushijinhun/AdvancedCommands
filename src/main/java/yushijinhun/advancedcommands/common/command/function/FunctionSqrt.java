@@ -10,7 +10,7 @@ public class FunctionSqrt extends Function {
 	}
 
 	@Override
-	public Var call(Var[] args) {
+	public Var call(Var[] args, FunctionContext context) {
 		Object val = args[0].value;
 		if (val instanceof Number) {
 			return new Var(DataType.TYPE_DOUBLE, Math.sqrt(((Number) val).doubleValue()));

@@ -11,7 +11,7 @@ public class FunctionMax extends Function {
 	}
 
 	@Override
-	public Var call(Var[] args) {
+	public Var call(Var[] args, FunctionContext context) {
 		boolean larger;
 		DataType type = ExpressionHandler.getPrecisest(args[0].type, args[1].type);
 		Object var1 = type.cast(args[0].value, args[0].type);

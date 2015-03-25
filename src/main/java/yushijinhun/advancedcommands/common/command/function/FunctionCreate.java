@@ -13,7 +13,7 @@ public class FunctionCreate extends Function {
 	}
 
 	@Override
-	public Var call(Var[] args) {
+	public Var call(Var[] args, FunctionContext context) {
 		String name = (String) args[1].value;
 		DataType datatype = DataType.types.get(args[0].value);
 		if (datatype == null) {

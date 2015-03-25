@@ -10,7 +10,7 @@ public class FunctionReplaceString extends Function {
 	}
 
 	@Override
-	public Var call(Var[] args) {
+	public Var call(Var[] args, FunctionContext context) {
 		return new Var(DataType.TYPE_STRING, ((String) args[0].value).replaceAll((String) args[1].value,
 				(String) args[2].value));
 	}

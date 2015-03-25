@@ -10,7 +10,7 @@ public class FunctionStringFirstIndexOf extends Function {
 	}
 
 	@Override
-	public Var call(Var[] args) {
+	public Var call(Var[] args, FunctionContext context) {
 		return new Var(DataType.TYPE_INT, ((String) args[0].value).indexOf((Integer) args[1].value));
 	}
 

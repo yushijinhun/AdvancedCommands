@@ -34,7 +34,7 @@ public abstract class Function {
 		AdvancedCommands.logger.debug("Function " + name + " has registered");
 	}
 
-	public abstract Var call(Var[] args);
+	public abstract Var call(Var[] args, FunctionContext context);
 
 	@Override
 	public String toString() {
