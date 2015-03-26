@@ -35,6 +35,7 @@ public class DataTypeNBT extends DataType {
 
 	@Override
 	public String valueToString(Object obj) {
-		return NBTHandler.idToName.get((int) ((NBTBase) obj).getId()) + "@" + String.valueOf(obj.toString());
+		return obj == null ? "null" : NBTHandler.idToName.get((int) ((NBTBase) obj).getId()) + "@"
+				+ String.valueOf(obj.toString());
 	}
 }
