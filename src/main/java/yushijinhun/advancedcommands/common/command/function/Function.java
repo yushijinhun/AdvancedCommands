@@ -31,6 +31,8 @@ public abstract class Function {
 		new FunctionGetChildrenNames();
 		new FunctionCreateNBT();
 		new FunctionValueOfNBT();
+		new FunctionReadNBT();
+		new FunctionWriteNBT();
 	}
 
 	public final String name;
