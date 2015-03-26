@@ -34,6 +34,7 @@ public abstract class Function {
 		new FunctionReadNBT();
 		new FunctionWriteNBT();
 		new FunctionCreateArray();
+		new FunctionSelectEntity();
 	}
 
 	public final String name;
