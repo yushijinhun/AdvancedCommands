@@ -52,7 +52,6 @@ public class VarData {
 
 	public void add(String name, Var var) {
 		Objects.requireNonNull(name);
-		Objects.requireNonNull(var);
 		if (names.contains(name)) {
 			throw new IllegalArgumentException(String.format("Var %s already exists", name));
 		}
@@ -63,7 +62,6 @@ public class VarData {
 
 	public void set(String name, Var var) {
 		Objects.requireNonNull(name);
-		Objects.requireNonNull(var);
 		if (constants.containsKey(name)) {
 			throw new IllegalArgumentException("Constant cannot be modified");
 		}
@@ -71,7 +69,7 @@ public class VarData {
 		if (old == null) {
 			throw new IllegalArgumentException(String.format("Var %s not exists", name));
 		}
-		vars.put(name, VarHelper.cast(var, old.type));
+		vars.put(name, var == null ? null : VarHelper.cast(var, old.type));
 		markDirty();
 	}
 

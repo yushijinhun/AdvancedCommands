@@ -95,11 +95,7 @@ public final class ExpressionHandler {
 
 	public static Var computeRPN(Object[] rpn, ICommandSender sender) {
 		Stack<IVarWarpper> stack = new Stack<IVarWarpper>();
-		boolean stopped = false;
 		for (Object o : rpn) {
-			if (stopped) {
-				throw new IllegalArgumentException("A function returned void, expression handing stopped");
-			}
 			if (o instanceof IVarWarpper) {
 				stack.push((IVarWarpper) o);
 			} else {
@@ -116,11 +112,7 @@ public final class ExpressionHandler {
 					}
 					FunctionContext context = new FunctionContext(sender, rawArgs);
 					Var result = function.call(args, context);
-					if (result != null) {
-						stack.push(new VarWarpperConstant(result));
-					} else {
-						stopped = true;
-					}
+					stack.push(new VarWarpperConstant(result));
 				} else {
 					Var arg1 = stack.pop().get();
 					Var result = null;
@@ -199,14 +191,9 @@ public final class ExpressionHandler {
 					} else {
 						throw new IllegalArgumentException("un-matched op " + op);
 					}
-					if (result != null) {
-						stack.push(new VarWarpperConstant(result));
-					}
+					stack.push(new VarWarpperConstant(result));
 				}
 			}
-		}
-		if (stopped) {
-			return null;
 		}
 		return stack.pop().get();
 	}
