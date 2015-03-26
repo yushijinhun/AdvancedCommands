@@ -2,7 +2,7 @@ package yushijinhun.advancedcommands.common.command.datatype;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
-import yushijinhun.advancedcommands.common.command.nbt.NBTExpressionHandler;
+import yushijinhun.advancedcommands.common.command.nbt.NBTHandler;
 
 public class DataTypeNBT extends DataType {
 
@@ -35,6 +35,6 @@ public class DataTypeNBT extends DataType {
 
 	@Override
 	public String valueToString(Object obj) {
-		return NBTExpressionHandler.idToName.get((int) ((NBTBase) obj).getId()) + "@" + String.valueOf(obj.toString());
+		return NBTHandler.idToName.get((int) ((NBTBase) obj).getId()) + "@" + String.valueOf(obj.toString());
 	}
 }

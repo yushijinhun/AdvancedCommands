@@ -1,7 +1,7 @@
 package yushijinhun.advancedcommands.common.command.function;
 
 import yushijinhun.advancedcommands.common.command.datatype.DataType;
-import yushijinhun.advancedcommands.common.command.nbt.NBTExpressionHandler;
+import yushijinhun.advancedcommands.common.command.nbt.NBTHandler;
 import yushijinhun.advancedcommands.common.command.var.Var;
 import yushijinhun.advancedcommands.common.command.var.VarData;
 import yushijinhun.advancedcommands.common.command.var.VarHelper;
@@ -28,7 +28,7 @@ public class FunctionCreate extends Function {
 		if (datatype == DataType.TYPE_ARRAY) {
 			var = new Var(datatype, new Var[(Integer) args[2].value]);
 		} else if (datatype == DataType.TYPE_NBT) {
-			var = new Var(datatype, NBTExpressionHandler.createTag((String) args[2].value, args[3]));
+			var = new Var(datatype, NBTHandler.createTag((String) args[2].value, args[3]));
 		} else {
 			var = new Var(datatype);
 		}

@@ -1,7 +1,7 @@
 package yushijinhun.advancedcommands.common.command.function;
 
 import net.minecraft.nbt.NBTBase;
-import yushijinhun.advancedcommands.common.command.nbt.NBTExpressionHandler;
+import yushijinhun.advancedcommands.common.command.nbt.NBTHandler;
 import yushijinhun.advancedcommands.common.command.var.Var;
 
 public class FunctionValueOfNBT extends Function {
@@ -12,7 +12,7 @@ public class FunctionValueOfNBT extends Function {
 
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
-		return NBTExpressionHandler.valueOf((NBTBase) args[0].value);
+		return NBTHandler.valueOf((NBTBase) args[0].value);
 	}
 
 }

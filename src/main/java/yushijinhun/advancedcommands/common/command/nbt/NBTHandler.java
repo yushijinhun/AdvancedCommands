@@ -18,7 +18,7 @@ import net.minecraft.nbt.NBTTagString;
 import yushijinhun.advancedcommands.common.command.datatype.DataType;
 import yushijinhun.advancedcommands.common.command.var.Var;
 
-public final class NBTExpressionHandler {
+public final class NBTHandler {
 
 	public static final Map<String, NBTSource> sources = new LinkedHashMap<String, NBTSource>();
 
