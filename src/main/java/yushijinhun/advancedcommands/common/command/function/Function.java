@@ -29,6 +29,7 @@ public abstract class Function {
 		new FunctionRemoveChild();
 		new FunctionLength();
 		new FunctionGetChildrenNames();
+		new FunctionCreateNBT();
 	}
 
 	public final String name;
