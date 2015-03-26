@@ -33,6 +33,7 @@ public abstract class Function {
 		new FunctionValueOfNBT();
 		new FunctionReadNBT();
 		new FunctionWriteNBT();
+		new FunctionCreateArray();
 	}
 
 	public final String name;
