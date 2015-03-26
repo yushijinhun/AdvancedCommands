@@ -15,6 +15,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagLong;
 import net.minecraft.nbt.NBTTagShort;
 import net.minecraft.nbt.NBTTagString;
+import yushijinhun.advancedcommands.common.command.datatype.DataType;
 import yushijinhun.advancedcommands.common.command.var.Var;
 
 public final class NBTExpressionHandler {
@@ -35,20 +36,6 @@ public final class NBTExpressionHandler {
 			nameToId.put(NBTBase.NBT_TYPES[i], i);
 			idToName.put(i, NBTBase.NBT_TYPES[i]);
 		}
-	}
-
-	@SuppressWarnings("unchecked")
-	public static <T> T[] filterObjects(Var array, Class<T> clazz) {
-		Var[] vars = (Var[]) array.value;
-		Object[] out = new Object[vars.length];
-		for (int i = 0; i < vars.length; i++) {
-			Var var = vars[i];
-			if ((var == null) || !clazz.isInstance(var.value)) {
-				throw new IllegalArgumentException();
-			}
-			out[i] = var.value;
-		}
-		return (T[]) out;
 	}
 
 	public static NBTBase createTag(String name, Var data) {
@@ -97,6 +84,40 @@ public final class NBTExpressionHandler {
 			return new NBTTagIntArray(out);
 		} else {
 			throw new IllegalArgumentException("Unknow nbt type " + name);
+		}
+	}
+
+	public static Var valueOf(NBTBase nbt) {
+		if (nbt instanceof NBTTagByte) {
+			return new Var(DataType.TYPE_BYTE, ((NBTTagByte) nbt).getByte());
+		} else if (nbt instanceof NBTTagShort) {
+			return new Var(DataType.TYPE_SHORT, ((NBTTagShort) nbt).getShort());
+		} else if (nbt instanceof NBTTagInt) {
+			return new Var(DataType.TYPE_INT, ((NBTTagInt) nbt).getInt());
+		} else if (nbt instanceof NBTTagLong) {
+			return new Var(DataType.TYPE_LONG, ((NBTTagLong) nbt).getLong());
+		} else if (nbt instanceof NBTTagFloat) {
+			return new Var(DataType.TYPE_FLOAT, ((NBTTagFloat) nbt).getFloat());
+		} else if (nbt instanceof NBTTagDouble) {
+			return new Var(DataType.TYPE_DOUBLE, ((NBTTagDouble) nbt).getDouble());
+		} else if (nbt instanceof NBTTagString) {
+			return new Var(DataType.TYPE_STRING, ((NBTTagString) nbt).getString());
+		} else if (nbt instanceof NBTTagByteArray) {
+			byte[] bytes = ((NBTTagByteArray) nbt).getByteArray();
+			Var[] vars = new Var[bytes.length];
+			for (int i = 0; i < bytes.length; i++) {
+				vars[i] = new Var(DataType.TYPE_BYTE, bytes[i]);
+			}
+			return new Var(DataType.TYPE_ARRAY, vars);
+		} else if (nbt instanceof NBTTagIntArray) {
+			int[] ints = ((NBTTagIntArray) nbt).getIntArray();
+			Var[] vars = new Var[ints.length];
+			for (int i = 0; i < ints.length; i++) {
+				vars[i] = new Var(DataType.TYPE_INT, ints[i]);
+			}
+			return new Var(DataType.TYPE_ARRAY, vars);
+		} else {
+			throw new IllegalArgumentException("Unknow nbt type " + nbt.getId());
 		}
 	}
 }

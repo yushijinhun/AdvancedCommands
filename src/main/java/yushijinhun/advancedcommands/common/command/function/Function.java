@@ -30,6 +30,7 @@ public abstract class Function {
 		new FunctionLength();
 		new FunctionGetChildrenNames();
 		new FunctionCreateNBT();
+		new FunctionValueOfNBT();
 	}
 
 	public final String name;
