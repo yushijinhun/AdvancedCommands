@@ -28,7 +28,7 @@ public class FunctionCreate extends Function {
 		if (datatype == DataType.TYPE_ARRAY) {
 			var = new Var(datatype, new Var[(Integer) args[2].value]);
 		} else if (datatype == DataType.TYPE_NBT) {
-			var = new Var(datatype, NBTHandler.createTag((String) args[2].value, args[3]));
+			var = new Var(datatype, NBTHandler.createTag((String) args[2].value, args.length > 3 ? args[3] : null));
 		} else {
 			var = new Var(datatype);
 		}

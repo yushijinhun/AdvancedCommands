@@ -793,7 +793,7 @@ public final class ExpressionHandler {
 										deep++;
 									} else if (ex.equals(")")) {
 										deep--;
-									} else if (ex.equals(",")) {
+									} else if (ex.equals(",") && (deep == 1)) {
 										parmCount++;
 									}
 									if (deep == 0) {

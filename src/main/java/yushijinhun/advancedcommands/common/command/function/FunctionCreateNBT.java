@@ -12,7 +12,8 @@ public class FunctionCreateNBT extends Function{
 
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
-		return new Var(DataType.TYPE_NBT, NBTHandler.createTag((String) args[0].value, args[1]));
+		return new Var(DataType.TYPE_NBT,
+				NBTHandler.createTag((String) args[0].value, args.length > 1 ? args[1] : null));
 	}
 
 }
