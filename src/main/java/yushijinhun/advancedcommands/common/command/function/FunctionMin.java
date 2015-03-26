@@ -31,7 +31,7 @@ public class FunctionMin extends Function {
 		} else {
 			throw new IllegalArgumentException("Argument must be a number");
 		}
-		return larger ? args[1].clone() : args[0].clone();
+		return larger ? args[1] : args[0];
 	}
 
 }

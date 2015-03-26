@@ -13,7 +13,7 @@ public class DataTypeArray extends DataType {
 
 	@Override
 	public Object getDefaultValue() {
-		return new Var[0];
+		return null;
 	}
 
 	@Override

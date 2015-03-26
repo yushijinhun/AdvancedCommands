@@ -1,7 +1,6 @@
 package yushijinhun.advancedcommands.common.command.function;
 
 import yushijinhun.advancedcommands.common.command.datatype.DataType;
-import yushijinhun.advancedcommands.common.command.nbt.NBTHandler;
 import yushijinhun.advancedcommands.common.command.var.Var;
 import yushijinhun.advancedcommands.common.command.var.VarData;
 import yushijinhun.advancedcommands.common.command.var.VarHelper;
@@ -24,16 +23,21 @@ public class FunctionCreate extends Function {
 			throw new IllegalArgumentException(String.format("%s is not a valid identifier", name));
 		}
 
-		Var var;
-		if (datatype == DataType.TYPE_ARRAY) {
-			var = new Var(datatype, new Var[(Integer) args[2].value]);
-		} else if (datatype == DataType.TYPE_NBT) {
-			var = new Var(datatype, NBTHandler.createTag((String) args[2].value, args.length > 3 ? args[3] : null));
+		Object value;
+		if (args.length > 2) {
+			Var data = args[2];
+			if ((data == null) || (data.value == null)) {
+				value = null;
+			} else if (data.type == datatype) {
+				value = data.value;
+			} else {
+				throw new IllegalArgumentException(String.format("Type %s does not equal %s", data.type, datatype));
+			}
 		} else {
-			var = new Var(datatype);
+			value = datatype.getDefaultValue();
 		}
 
-		VarData.theVarData.add(name, var);
+		VarData.theVarData.add(name, new Var(datatype, value));
 		return null;
 	}
 

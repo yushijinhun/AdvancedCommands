@@ -12,7 +12,7 @@ public class DataTypeNBT extends DataType {
 
 	@Override
 	public Object getDefaultValue() {
-		return new NBTTagCompound();
+		return null;
 	}
 
 	@Override

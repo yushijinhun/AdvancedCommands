@@ -731,7 +731,9 @@ public final class ExpressionHandler {
 					stack.push(str);
 				}
 			} else {
-				if (str.startsWith("\"")) {
+				if (str.equals("null")) {
+					result.add(new VarWarpperConstant(null));
+				} else if (str.startsWith("\"")) {
 					if (str.endsWith("\"")) {
 						result.add(new VarWarpperConstant(new Var(DataType.TYPE_STRING, str.substring(1,
 								str.length() - 1))));
