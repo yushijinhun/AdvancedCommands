@@ -17,9 +17,6 @@ public abstract class Function {
 		new FunctionSqrt();
 		new FunctionMax();
 		new FunctionMin();
-		new FunctionGetNBT();
-		new FunctionSetNBT();
-		new FunctionDeleteNBT();
 		new FunctionCreate();
 		new FunctionDelete();
 		new FunctionListVar();
@@ -27,6 +24,16 @@ public abstract class Function {
 		new FunctionReplaceString();
 		new FunctionStringFirstIndexOf();
 		new FunctionStringLastIndexOf();
+		new FunctionGetChild();
+		new FunctionSetChild();
+		new FunctionRemoveChild();
+		new FunctionLength();
+		new FunctionGetChildrenNames();
+		new FunctionCreateNBT();
+		new FunctionValueOfNBT();
+		new FunctionReadNBT();
+		new FunctionWriteNBT();
+		new FunctionCreateArray();
 	}
 
 	public final String name;
@@ -37,9 +44,7 @@ public abstract class Function {
 		AdvancedCommands.logger.debug("Function " + name + " has registered");
 	}
 
-	public abstract Var call(Var[] args);
-
-	public abstract int getArguments();
+	public abstract Var call(Var[] args, FunctionContext context);
 
 	@Override
 	public String toString() {

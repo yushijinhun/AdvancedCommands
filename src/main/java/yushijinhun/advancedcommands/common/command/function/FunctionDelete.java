@@ -10,15 +10,10 @@ public class FunctionDelete extends Function {
 	}
 
 	@Override
-	public Var call(Var[] args) {
+	public Var call(Var[] args, FunctionContext context) {
 		String var = (String) args[0].value;
 		VarData.theVarData.remove(var);
 		return null;
-	}
-
-	@Override
-	public int getArguments() {
-		return 1;
 	}
 
 }

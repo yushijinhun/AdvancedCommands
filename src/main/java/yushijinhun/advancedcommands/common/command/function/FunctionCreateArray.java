@@ -3,15 +3,15 @@ package yushijinhun.advancedcommands.common.command.function;
 import yushijinhun.advancedcommands.common.command.datatype.DataType;
 import yushijinhun.advancedcommands.common.command.var.Var;
 
-public class FunctionStringFirstIndexOf extends Function {
+public class FunctionCreateArray extends Function {
 
-	public FunctionStringFirstIndexOf() {
-		super("stringFirstIndexOf");
+	public FunctionCreateArray() {
+		super("createArray");
 	}
 
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
-		return new Var(DataType.TYPE_INT, ((String) args[0].value).indexOf((Integer) args[1].value));
+		return new Var(DataType.TYPE_ARRAY, new Var[(Integer) args[0].value]);
 	}
 
 }

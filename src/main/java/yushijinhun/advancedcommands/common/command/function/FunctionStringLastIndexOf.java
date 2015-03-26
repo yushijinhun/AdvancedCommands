@@ -10,13 +10,8 @@ public class FunctionStringLastIndexOf extends Function {
 	}
 
 	@Override
-	public Var call(Var[] args) {
+	public Var call(Var[] args, FunctionContext context) {
 		return new Var(DataType.TYPE_INT, ((String) args[0].value).lastIndexOf((Integer) args[1].value));
-	}
-
-	@Override
-	public int getArguments() {
-		return 2;
 	}
 
 }

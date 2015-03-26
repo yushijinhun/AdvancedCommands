@@ -9,6 +9,7 @@ public abstract class DataType {
 
 	public static final Map<String, DataType> types = new LinkedHashMap<String, DataType>();
 
+	public static final DataTypeArray TYPE_ARRAY = new DataTypeArray();
 	public static final DataTypeBoolean TYPE_BOOLEAN = new DataTypeBoolean();
 	public static final DataTypeByte TYPE_BYTE = new DataTypeByte();
 	public static final DataTypeShort TYPE_SHORT = new DataTypeShort();
@@ -17,6 +18,7 @@ public abstract class DataType {
 	public static final DataTypeFloat TYPE_FLOAT = new DataTypeFloat();
 	public static final DataTypeDouble TYPE_DOUBLE = new DataTypeDouble();
 	public static final DataTypeString TYPE_STRING = new DataTypeString();
+	public static final DataTypeNBT TYPE_NBT = new DataTypeNBT();
 
 	public final String name;
 
@@ -33,6 +35,10 @@ public abstract class DataType {
 	public abstract Object readFromNBT(NBTTagCompound nbt);
 
 	public abstract Object cast(Object src, DataType srcType);
+
+	public String valueToString(Object obj) {
+		return String.valueOf(obj);
+	}
 
 	@Override
 	public String toString() {

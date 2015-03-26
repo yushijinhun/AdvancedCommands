@@ -1,4 +1,4 @@
-package yushijinhun.advancedcommands.common.command.var;
+package yushijinhun.advancedcommands.common.command.expression;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -9,8 +9,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
+import net.minecraft.command.ICommandSender;
 import yushijinhun.advancedcommands.common.command.datatype.DataType;
 import yushijinhun.advancedcommands.common.command.function.Function;
+import yushijinhun.advancedcommands.common.command.function.FunctionContext;
+import yushijinhun.advancedcommands.common.command.var.Var;
+import yushijinhun.advancedcommands.common.command.var.VarData;
+import yushijinhun.advancedcommands.common.command.var.VarHelper;
 
 public final class ExpressionHandler {
 
@@ -36,6 +41,8 @@ public final class ExpressionHandler {
 		registerOp("(", Integer.MIN_VALUE, false);
 		registerOp(")", Integer.MIN_VALUE, false);
 		registerOp(",", Integer.MIN_VALUE, false);
+		registerOp("[", Integer.MIN_VALUE, false);
+		registerOp("]", Integer.MIN_VALUE, false);
 		registerOp("!", -1, false);
 		registerOp("+.", -1, false);
 		registerOp("-.", -1, false);
@@ -86,166 +93,165 @@ public final class ExpressionHandler {
 		}
 	}
 
-	public static Var computeRPN(Object[] rpn) {
-		Stack<Var> stack = new Stack<Var>();
-		boolean stopped = false;
+	public static Var computeRPN(Object[] rpn, ICommandSender sender) {
+		Stack<IVarWarpper> stack = new Stack<IVarWarpper>();
 		for (Object o : rpn) {
-			if (stopped) {
-				throw new IllegalArgumentException("A function returned void, expression handing stopped");
-			}
-			if (o instanceof Var) {
-				stack.push((Var) o);
+			if (o instanceof IVarWarpper) {
+				stack.push((IVarWarpper) o);
 			} else {
 				String op = (String) o;
 				if (op.startsWith("()")) {
-					Function function = Function.functions.get(op.substring(2));
-					int argLength = function.getArguments();
+					String[] spilted = op.substring(2).split("@", 2);
+					int argLength = Integer.parseInt(spilted[0]);
+					Function function = Function.functions.get(spilted[1]);
 					Var[] args = new Var[argLength];
+					IVarWarpper[] rawArgs = new IVarWarpper[argLength];
 					for (int i = argLength - 1; i > -1; i--) {
-						args[i] = stack.pop();
+						rawArgs[i] = stack.pop();
+						args[i] = rawArgs[i].get();
 					}
-					Var result = function.call(args);
-					if (result != null) {
-						stack.push(result);
-					} else {
-						stopped = true;
-					}
+					FunctionContext context = new FunctionContext(sender, rawArgs);
+					Var result = function.call(args, context);
+					stack.push(new VarWarpperConstant(result));
 				} else {
-					Var arg1 = stack.pop();
+					Var arg1 = stack.pop().get();
+					Var result = null;
 					if (op.equals("!")) {
-						stack.push(opNot(arg1));
+						result = opNot(arg1);
 					} else if (op.equals("+.")) {
-						stack.push(opUp(arg1));
+						result = opUp(arg1);
 					} else if (op.equals("-.")) {
-						stack.push(opDown(arg1));
+						result = opDown(arg1);
 					} else if (op.equals("*")) {
-						stack.push(opMultiply(stack.pop(), arg1));
+						result = opMultiply(stack.pop().get(), arg1);
 					} else if (op.equals("/")) {
-						stack.push(opDiv(stack.pop(), arg1));
+						result = opDiv(stack.pop().get(), arg1);
 					} else if (op.equals("%")) {
-						stack.push(opMod(stack.pop(), arg1));
+						result = opMod(stack.pop().get(), arg1);
 					} else if (op.equals("+")) {
-						stack.push(opPlus(stack.pop(), arg1));
+						result = opPlus(stack.pop().get(), arg1);
 					} else if (op.equals("-")) {
-						stack.push(opMinus(stack.pop(), arg1));
+						result = opMinus(stack.pop().get(), arg1);
 					} else if (op.equals("<<")) {
-						stack.push(opLShift(stack.pop(), arg1));
+						result = opLShift(stack.pop().get(), arg1);
 					} else if (op.equals(">>")) {
-						stack.push(opRShift(stack.pop(), arg1));
+						result = opRShift(stack.pop().get(), arg1);
 					} else if (op.equals(">>>")) {
-						stack.push(opNRShift(stack.pop(), arg1));
+						result = opNRShift(stack.pop().get(), arg1);
 					} else if (op.equals("<")) {
-						stack.push(opLess(stack.pop(), arg1));
+						result = opLess(stack.pop().get(), arg1);
 					} else if (op.equals(">")) {
-						stack.push(opLarger(stack.pop(), arg1));
+						result = opLarger(stack.pop().get(), arg1);
 					} else if (op.equals(">=")) {
-						stack.push(opLargerEquals(stack.pop(), arg1));
+						result = opLargerEquals(stack.pop().get(), arg1);
 					} else if (op.equals("<=")) {
-						stack.push(opLessEquals(stack.pop(), arg1));
+						result = opLessEquals(stack.pop().get(), arg1);
 					} else if (op.equals("==")) {
-						stack.push(opEquals(stack.pop(), arg1));
+						result = opEquals(stack.pop().get(), arg1);
 					} else if (op.equals("!=")) {
-						stack.push(opNotEquals(stack.pop(), arg1));
+						result = opNotEquals(stack.pop().get(), arg1);
 					} else if (op.equals("&")) {
-						stack.push(opAnd(stack.pop(), arg1));
+						result = opAnd(stack.pop().get(), arg1);
 					} else if (op.equals("|")) {
-						stack.push(opOr(stack.pop(), arg1));
+						result = opOr(stack.pop().get(), arg1);
 					} else if (op.equals("^")) {
-						stack.push(opXor(stack.pop(), arg1));
+						result = opXor(stack.pop().get(), arg1);
 					} else if (op.equals("=")) {
-						stack.push(opSet(stack.pop(), arg1));
+						result = opSet(stack.pop(), arg1);
 					} else if (op.equals("+=")) {
-						stack.push(opSetPlus(stack.pop(), arg1));
+						result = opSetPlus(stack.pop(), arg1);
 					} else if (op.equals("-=")) {
-						stack.push(opSetMinus(stack.pop(), arg1));
+						result = opSetMinus(stack.pop(), arg1);
 					} else if (op.equals("*=")) {
-						stack.push(opSetMultiply(stack.pop(), arg1));
+						result = opSetMultiply(stack.pop(), arg1);
 					} else if (op.equals("/=")) {
-						stack.push(opSetDiv(stack.pop(), arg1));
+						result = opSetDiv(stack.pop(), arg1);
 					} else if (op.equals("%=")) {
-						stack.push(opSetMod(stack.pop(), arg1));
+						result = opSetMod(stack.pop(), arg1);
 					} else if (op.equals("<<=")) {
-						stack.push(opSetLShift(stack.pop(), arg1));
+						result = opSetLShift(stack.pop(), arg1);
 					} else if (op.equals(">>=")) {
-						stack.push(opSetRShift(stack.pop(), arg1));
+						result = opSetRShift(stack.pop(), arg1);
 					} else if (op.equals(">>>=")) {
-						stack.push(opSetNRShift(stack.pop(), arg1));
+						result = opSetNRShift(stack.pop(), arg1);
 					} else if (op.equals("&=")) {
-						stack.push(opSetAnd(stack.pop(), arg1));
+						result = opSetAnd(stack.pop(), arg1);
 					} else if (op.equals("|=")) {
-						stack.push(opSetOr(stack.pop(), arg1));
+						result = opSetOr(stack.pop(), arg1);
 					} else if (op.equals("^=")) {
-						stack.push(opSetXor(stack.pop(), arg1));
+						result = opSetXor(stack.pop(), arg1);
+					} else if (op.equals("[")) {
+						stack.push(opArraySelect(stack.pop(), arg1));
 					} else if (op.startsWith("(")) {
 						if (op.endsWith(")")) {
-							stack.push(opCast(arg1, op.substring(1, op.length() - 1)));
+							result = opCast(arg1, op.substring(1, op.length() - 1));
 						} else {
 							throw new IllegalArgumentException("un-matched (");
 						}
 					} else {
-						throw new IllegalArgumentException("un-matched op");
+						throw new IllegalArgumentException("un-matched op " + op);
 					}
+					stack.push(new VarWarpperConstant(result));
 				}
 			}
 		}
-		if (stopped) {
-			return null;
+		return stack.pop().get();
+	}
+
+	public static IVarWarpper opArraySelect(IVarWarpper arg1, Var arg2) {
+		if ((arg1.get().type == DataType.TYPE_ARRAY) && (arg2.type == DataType.TYPE_INT)) {
+			return new VarWarpperArrayElement(arg1, (Integer) arg2.value);
 		}
-		return stack.pop();
+		throw new UnsupportedOperationException(arg1.get() + "[" + arg2 + "] unsupported");
 	}
 
-	public static Var opSetXor(Var arg1, Var arg2) {
-		return opSet(arg1, opXor(arg1, arg2));
+	public static Var opSetXor(IVarWarpper arg1, Var arg2) {
+		return opSet(arg1, opXor(arg1.get(), arg2));
 	}
 
-	public static Var opSetOr(Var arg1, Var arg2) {
-		return opSet(arg1, opOr(arg1, arg2));
+	public static Var opSetOr(IVarWarpper arg1, Var arg2) {
+		return opSet(arg1, opOr(arg1.get(), arg2));
 	}
 
-	public static Var opSetAnd(Var arg1, Var arg2) {
-		return opSet(arg1, opAnd(arg1, arg2));
+	public static Var opSetAnd(IVarWarpper arg1, Var arg2) {
+		return opSet(arg1, opAnd(arg1.get(), arg2));
 	}
 
-	public static Var opSetNRShift(Var arg1, Var arg2) {
-		return opSet(arg1, opNRShift(arg1, arg2));
+	public static Var opSetNRShift(IVarWarpper arg1, Var arg2) {
+		return opSet(arg1, opNRShift(arg1.get(), arg2));
 	}
 
-	public static Var opSetRShift(Var arg1, Var arg2) {
-		return opSet(arg1, opRShift(arg1, arg2));
+	public static Var opSetRShift(IVarWarpper arg1, Var arg2) {
+		return opSet(arg1, opRShift(arg1.get(), arg2));
 	}
 
-	public static Var opSetLShift(Var arg1, Var arg2) {
-		return opSet(arg1, opLShift(arg1, arg2));
+	public static Var opSetLShift(IVarWarpper arg1, Var arg2) {
+		return opSet(arg1, opLShift(arg1.get(), arg2));
 	}
 
-	public static Var opSetMod(Var arg1, Var arg2) {
-		return opSet(arg1, opMod(arg1, arg2));
+	public static Var opSetMod(IVarWarpper arg1, Var arg2) {
+		return opSet(arg1, opMod(arg1.get(), arg2));
 	}
 
-	public static Var opSetDiv(Var arg1, Var arg2) {
-		return opSet(arg1, opDiv(arg1, arg2));
+	public static Var opSetDiv(IVarWarpper arg1, Var arg2) {
+		return opSet(arg1, opDiv(arg1.get(), arg2));
 	}
 
-	public static Var opSetMultiply(Var arg1, Var arg2) {
-		return opSet(arg1, opMultiply(arg1, arg2));
+	public static Var opSetMultiply(IVarWarpper arg1, Var arg2) {
+		return opSet(arg1, opMultiply(arg1.get(), arg2));
 	}
 
-	public static Var opSetMinus(Var arg1, Var arg2) {
-		return opSet(arg1, opMinus(arg1, arg2));
+	public static Var opSetMinus(IVarWarpper arg1, Var arg2) {
+		return opSet(arg1, opMinus(arg1.get(), arg2));
 	}
 
-	public static Var opSetPlus(Var arg1, Var arg2) {
-		return opSet(arg1, opPlus(arg1, arg2));
+	public static Var opSetPlus(IVarWarpper arg1, Var arg2) {
+		return opSet(arg1, opPlus(arg1.get(), arg2));
 	}
 
-	public static Var opSet(Var arg1, Var arg2) {
-		for (String s : VarData.theVarData.varNamesSet()) {
-			if (VarData.theVarData.get(s) == arg1) {
-				VarData.theVarData.set(s, arg2.clone());
-				return arg2;
-			}
-		}
-		throw new IllegalArgumentException("Cannot set var");
+	public static Var opSet(IVarWarpper arg1, Var arg2) {
+		arg1.set(arg2);
+		return arg2;
 	}
 
 	public static Var opDown(Var arg1) {
@@ -298,7 +304,7 @@ public final class ExpressionHandler {
 	}
 
 	public static Var opPlus(Var arg1, Var arg2) {
-		if (arg1.type == DataType.TYPE_STRING && arg2.type == DataType.TYPE_STRING) {
+		if ((arg1.type == DataType.TYPE_STRING) && (arg2.type == DataType.TYPE_STRING)) {
 			return new Var(DataType.TYPE_STRING, (String) arg1.value + (String) arg2.value);
 		}
 		DataType type = getPrecisest(arg1.type, arg2.type);
@@ -597,7 +603,7 @@ public final class ExpressionHandler {
 	}
 
 	public static Var opAnd(Var arg1, Var arg2) {
-		if (arg1.value instanceof Boolean && arg2.value instanceof Boolean) {
+		if ((arg1.value instanceof Boolean) && (arg2.value instanceof Boolean)) {
 			return new Var(DataType.TYPE_BOOLEAN, (Boolean) arg1.value && (Boolean) arg2.value);
 		}
 		DataType type = getPrecisest(arg1.type, arg2.type);
@@ -619,7 +625,7 @@ public final class ExpressionHandler {
 	}
 
 	public static Var opOr(Var arg1, Var arg2) {
-		if (arg1.value instanceof Boolean && arg2.value instanceof Boolean) {
+		if ((arg1.value instanceof Boolean) && (arg2.value instanceof Boolean)) {
 			return new Var(DataType.TYPE_BOOLEAN, (Boolean) arg1.value || (Boolean) arg2.value);
 		}
 		DataType type = getPrecisest(arg1.type, arg2.type);
@@ -641,7 +647,7 @@ public final class ExpressionHandler {
 	}
 
 	public static Var opXor(Var arg1, Var arg2) {
-		if (arg1.value instanceof Boolean && arg2.value instanceof Boolean) {
+		if ((arg1.value instanceof Boolean) && (arg2.value instanceof Boolean)) {
 			return new Var(DataType.TYPE_BOOLEAN, (Boolean) arg1.value ^ (Boolean) arg2.value);
 		}
 		DataType type = getPrecisest(arg1.type, arg2.type);
@@ -690,7 +696,7 @@ public final class ExpressionHandler {
 			String str = exps[i];
 			str = str.trim();
 			if (isOp(str)) {
-				if (str.equals("(")) {
+				if (str.equals("(")||str.equals("[")) {
 					stack.push(str);
 				} else if (str.equals(",")) {
 					while (!stack.isEmpty() && !stack.peek().equals("(")) {
@@ -704,22 +710,33 @@ public final class ExpressionHandler {
 						}
 						result.add(str2);
 					}
+				} else if (str.equals("]")) {
+					while (!stack.isEmpty()) {
+						String str2 = stack.pop();
+						if (str2.equals("[")) {
+							break;
+						}
+						result.add(str2);
+					}
+					result.add("[");
 				} else {
-					if ((i == 0 || !exps[i - 1].equals(")") && isOp(exps[i - 1]))
-							&& (str.equals("+") || str.equals("-"))) {
+					if (((i==0)||(isOp(exps[i-1])&&!(exps[i - 1].equals(")")||exps[i - 1].equals("]"))))&& (str.equals("+") || str.equals("-"))) {
 						str += ".";
 					}
 					while (!stack.isEmpty() &&
-							(isLeftAssoc(stack.peek()) && getPriority(str) <= getPriority(stack.peek()) ||
-							!isLeftAssoc(stack.peek()) && getPriority(str) < getPriority(stack.peek()))) {
+							((isLeftAssoc(stack.peek()) && (getPriority(str) <= getPriority(stack.peek()))) ||
+									(!isLeftAssoc(stack.peek()) && (getPriority(str) < getPriority(stack.peek()))))) {
 						result.add(stack.pop());
 					}
 					stack.push(str);
 				}
 			} else {
-				if (str.startsWith("\"")) {
+				if (str.equals("null")) {
+					result.add(new VarWarpperConstant(null));
+				} else if (str.startsWith("\"")) {
 					if (str.endsWith("\"")) {
-						result.add(new Var(DataType.TYPE_STRING, str.substring(1, str.length() - 1)));
+						result.add(new VarWarpperConstant(new Var(DataType.TYPE_STRING, str.substring(1,
+								str.length() - 1))));
 					} else {
 						throw new IllegalArgumentException("un-matched \"");
 					}
@@ -729,7 +746,7 @@ public final class ExpressionHandler {
 						Function function = Function.functions.get(str);
 						if (function == null) {
 							int radix = 10;
-							if (str.startsWith("0") && str.length() > 1) {
+							if (str.startsWith("0") && (str.length() > 1)) {
 								switch (str.charAt(1)) {
 								case 'b':
 								case 'B':
@@ -748,26 +765,48 @@ public final class ExpressionHandler {
 								}
 							}
 							String spilted = str.substring(0, str.length() - 1);
+							Var constant;
 							if (str.endsWith("b") || str.endsWith("B")) {
-								result.add(new Var(DataType.TYPE_BYTE, Byte.valueOf(spilted, radix)));
+								constant = new Var(DataType.TYPE_BYTE, Byte.valueOf(spilted, radix));
 							} else if (str.endsWith("s") || str.endsWith("S")) {
-								result.add(new Var(DataType.TYPE_SHORT, Short.valueOf(spilted, radix)));
+								constant = new Var(DataType.TYPE_SHORT, Short.valueOf(spilted, radix));
 							} else if (str.endsWith("l") || str.endsWith("L")) {
-								result.add(new Var(DataType.TYPE_LONG, Long.valueOf(spilted, radix)));
-							} else if (radix == 10 && (str.endsWith("f") || str.endsWith("F"))) {
-								result.add(new Var(DataType.TYPE_FLOAT, Float.valueOf(spilted)));
-							} else if (radix == 10 && (str.endsWith("d") || str.endsWith("D"))) {
-								result.add(new Var(DataType.TYPE_DOUBLE, Double.valueOf(spilted)));
+								constant = new Var(DataType.TYPE_LONG, Long.valueOf(spilted, radix));
+							} else if ((radix == 10) && (str.endsWith("f") || str.endsWith("F"))) {
+								constant = new Var(DataType.TYPE_FLOAT, Float.valueOf(spilted));
+							} else if ((radix == 10) && (str.endsWith("d") || str.endsWith("D"))) {
+								constant = new Var(DataType.TYPE_DOUBLE, Double.valueOf(spilted));
 							} else if (str.contains(".")) {
-								result.add(new Var(DataType.TYPE_DOUBLE, Double.valueOf(str)));
+								constant = new Var(DataType.TYPE_DOUBLE, Double.valueOf(str));
 							} else {
-								result.add(new Var(DataType.TYPE_INT, Integer.valueOf(str, radix)));
+								constant = new Var(DataType.TYPE_INT, Integer.valueOf(str, radix));
 							}
+							result.add(new VarWarpperConstant(constant));
 						} else {
-							stack.push("()" + str);
+							int deep = 0;
+							int parmCount;
+							if (exps[i + 1].equals("(") && exps[i + 2].equals(")")) {
+								parmCount = 0;
+							} else {
+								parmCount = 1;
+								for (int k = i + 1; k < exps.length; k++) {
+									String ex = exps[k];
+									if (ex.equals("(")) {
+										deep++;
+									} else if (ex.equals(")")) {
+										deep--;
+									} else if (ex.equals(",") && (deep == 1)) {
+										parmCount++;
+									}
+									if (deep == 0) {
+										break;
+									}
+								}
+							}
+							stack.push("()" + parmCount + "@" + str);
 						}
 					} else {
-						result.add(var);
+						result.add(new VarWarpperVar(str));
 					}
 				}
 			}
@@ -818,7 +857,7 @@ public final class ExpressionHandler {
 			} else {
 				boolean found = false;
 				for (String op : ops) {
-					if (i + op.length() > exp.length()) {
+					if ((i + op.length()) > exp.length()) {
 						continue;
 					}
 					if (exp.substring(i, i + op.length()).equals(op)) {
@@ -868,7 +907,7 @@ public final class ExpressionHandler {
 		return leftAssoc.contains(op);
 	}
 
-	public static Var handleExpression(String expression) {
-		return computeRPN(toRPN(spiltExpression(expression)));
+	public static Var handleExpression(String expression, ICommandSender sender) {
+		return computeRPN(toRPN(spiltExpression(expression)), sender);
 	}
 }

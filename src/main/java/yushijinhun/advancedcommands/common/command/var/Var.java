@@ -21,18 +21,21 @@ public class Var implements Cloneable {
 	public void writeToNBT(NBTTagCompound nbt) {
 		nbt.setString("type", type.name);
 		NBTTagCompound data = new NBTTagCompound();
-		type.writeToNBT(value, data);
+		if (value != null) {
+			type.writeToNBT(value, data);
+		}
+		nbt.setBoolean("isNull", value == null);
 		nbt.setTag("data", data);
 	}
 
 	public static Var parseFromNBT(NBTTagCompound nbt) {
 		DataType type = DataType.types.get(nbt.getString("type"));
-		return new Var(type, type.readFromNBT(nbt.getCompoundTag("data")));
+		return new Var(type, nbt.getBoolean("isNull") ? null : type.readFromNBT(nbt.getCompoundTag("data")));
 	}
 
 	@Override
 	public String toString() {
-		return type + "@" + value;
+		return type + "@" + type.valueToString(value);
 	}
 
 	@Override

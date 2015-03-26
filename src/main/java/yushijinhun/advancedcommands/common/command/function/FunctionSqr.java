@@ -10,7 +10,7 @@ public class FunctionSqr extends Function {
 	}
 
 	@Override
-	public Var call(Var[] args) {
+	public Var call(Var[] args, FunctionContext context) {
 		Object val = args[0].value;
 		if (val instanceof Byte || val instanceof Short || val instanceof Integer) {
 			int num = ((Number) val).intValue();
@@ -27,11 +27,6 @@ public class FunctionSqr extends Function {
 		}
 
 		throw new IllegalArgumentException("Argument must be a number");
-	}
-
-	@Override
-	public int getArguments() {
-		return 1;
 	}
 
 }

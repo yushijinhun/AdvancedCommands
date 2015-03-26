@@ -1,7 +1,7 @@
 package yushijinhun.advancedcommands.common.command.function;
 
 import yushijinhun.advancedcommands.common.command.datatype.DataType;
-import yushijinhun.advancedcommands.common.command.var.ExpressionHandler;
+import yushijinhun.advancedcommands.common.command.expression.ExpressionHandler;
 import yushijinhun.advancedcommands.common.command.var.Var;
 
 public class FunctionMax extends Function {
@@ -11,7 +11,7 @@ public class FunctionMax extends Function {
 	}
 
 	@Override
-	public Var call(Var[] args) {
+	public Var call(Var[] args, FunctionContext context) {
 		boolean larger;
 		DataType type = ExpressionHandler.getPrecisest(args[0].type, args[1].type);
 		Object var1 = type.cast(args[0].value, args[0].type);
@@ -31,12 +31,7 @@ public class FunctionMax extends Function {
 		} else {
 			throw new IllegalArgumentException("Argument must be a number");
 		}
-		return larger ? args[0].clone() : args[1].clone();
-	}
-
-	@Override
-	public int getArguments() {
-		return 2;
+		return larger ? args[0] : args[1];
 	}
 
 }

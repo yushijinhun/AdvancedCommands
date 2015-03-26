@@ -10,18 +10,13 @@ public class FunctionTan extends Function {
 	}
 
 	@Override
-	public Var call(Var[] args) {
+	public Var call(Var[] args, FunctionContext context) {
 		Object val = args[0].value;
 		if (val instanceof Number) {
 			return new Var(DataType.TYPE_DOUBLE, Math.tan(((Number) val).doubleValue()));
 		}
 
 		throw new IllegalArgumentException("Argument must be a number");
-	}
-
-	@Override
-	public int getArguments() {
-		return 1;
 	}
 
 }

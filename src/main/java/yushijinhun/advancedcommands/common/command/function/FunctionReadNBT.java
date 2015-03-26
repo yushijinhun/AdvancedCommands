@@ -1,17 +1,18 @@
 package yushijinhun.advancedcommands.common.command.function;
 
 import yushijinhun.advancedcommands.common.command.datatype.DataType;
+import yushijinhun.advancedcommands.common.command.nbt.NBTSourceInfo;
 import yushijinhun.advancedcommands.common.command.var.Var;
 
-public class FunctionStringFirstIndexOf extends Function {
+public class FunctionReadNBT extends Function {
 
-	public FunctionStringFirstIndexOf() {
-		super("stringFirstIndexOf");
+	public FunctionReadNBT() {
+		super("readNBT");
 	}
 
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
-		return new Var(DataType.TYPE_INT, ((String) args[0].value).indexOf((Integer) args[1].value));
+		return new Var(DataType.TYPE_NBT, NBTSourceInfo.parseNBTInfo((String) args[0].value).get());
 	}
 
 }

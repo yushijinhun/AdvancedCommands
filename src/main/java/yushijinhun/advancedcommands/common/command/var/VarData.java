@@ -63,7 +63,6 @@ public class VarData {
 
 	public void set(String name, Var var) {
 		Objects.requireNonNull(name);
-		Objects.requireNonNull(var);
 		if (constants.containsKey(name)) {
 			throw new IllegalArgumentException("Constant cannot be modified");
 		}
@@ -117,7 +116,7 @@ public class VarData {
 		this.savedData = savedData;
 	}
 
-	protected void markDirty() {
+	public void markDirty() {
 		if (savedData == null) {
 			return;
 		}
