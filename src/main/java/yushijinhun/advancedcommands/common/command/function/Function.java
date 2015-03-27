@@ -38,6 +38,7 @@ public abstract class Function {
 		new FunctionSay();
 		new FunctionArrayOf();
 		new FunctionShell();
+		new FunctionIf();
 	}
 
 	public final String name;
