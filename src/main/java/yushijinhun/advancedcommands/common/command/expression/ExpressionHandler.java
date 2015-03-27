@@ -844,12 +844,28 @@ public final class ExpressionHandler {
 			} else if (ch == '"') {
 				StringBuilder s = new StringBuilder();
 				int l;
+				boolean escape = false;
 				s.append('"');
 				for (l = i + 1; l < exp.length(); l++) {
 					char ch2 = exp.charAt(l);
-					s.append(ch2);
-					if (ch2 == '"') {
-						break;
+					if ((ch2 == '\\') && !escape) {
+						escape = true;
+					} else if (escape) {
+						if (ch2 == 'n') {
+							s.append('\n');
+						} else if (ch2 == '"') {
+							s.append('"');
+						} else if (ch2 == '\\') {
+							s.append('\\');
+						} else {
+							throw new IllegalArgumentException("Unknow escaped char " + ch2);
+						}
+						escape = false;
+					} else {
+						s.append(ch2);
+						if (ch2 == '"') {
+							break;
+						}
 					}
 				}
 				result.add(s.toString());
