@@ -36,6 +36,7 @@ public abstract class Function {
 		new FunctionCreateArray();
 		new FunctionSelectEntity();
 		new FunctionSay();
+		new FunctionArrayOf();
 	}
 
 	public final String name;
