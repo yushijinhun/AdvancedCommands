@@ -35,6 +35,7 @@ public abstract class Function {
 		new FunctionWriteNBT();
 		new FunctionCreateArray();
 		new FunctionSelectEntity();
+		new FunctionSay();
 	}
 
 	public final String name;
