@@ -30,8 +30,8 @@ buildProps.withReader {
 
 version = "${config.version.minecraft}-${config.version.main}"
 
-if (System.getenv("BUILD_NUMBER") != null) {
-	version += ".${System.getenv("BUILD_NUMBER")}"
+if (System.getenv("BUILD_ID") != null) {
+	version += ".${System.getenv("BUILD_ID")}"
 } else {
 	version += ".UNKNOW"
 }
