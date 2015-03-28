@@ -7,7 +7,6 @@ import net.minecraft.nbt.NBTTagByte;
 import net.minecraft.nbt.NBTTagByteArray;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagDouble;
-import net.minecraft.nbt.NBTTagEnd;
 import net.minecraft.nbt.NBTTagFloat;
 import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.nbt.NBTTagIntArray;
@@ -39,9 +38,7 @@ public final class NBTHandler {
 	}
 
 	public static NBTBase createTag(String name, Var data) {
-		if (name.equals("END")) {
-			return new NBTTagEnd();
-		} else if (name.equals("BYTE")) {
+		if (name.equals("BYTE")) {
 			return new NBTTagByte(data.value instanceof Boolean ? ((Boolean) data.value ? (byte) 1 : (byte) 0)
 					: (Byte) data.value);
 		} else if (name.equals("SHORT")) {
