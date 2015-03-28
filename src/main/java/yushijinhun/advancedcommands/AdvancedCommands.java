@@ -14,7 +14,6 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
 import net.minecraftforge.fml.common.network.NetworkCheckHandler;
 import net.minecraftforge.fml.relauncher.Side;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import yushijinhun.advancedcommands.common.CommonProxy;
 import yushijinhun.advancedcommands.common.command.CommandExp;
@@ -33,13 +32,14 @@ public final class AdvancedCommands {
 	@SidedProxy(clientSide = "yushijinhun.advancedcommands.client.ClientProxy", serverSide = "yushijinhun.advancedcommands.common.CommonProxy")
 	public static CommonProxy PROXY;
 
-	public static Logger logger=LogManager.getFormatterLogger(AdvancedCommands.ID);
+	public static Logger logger;
 
 	public static Thread serverThread;
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		INSTANCE = this;
+		logger = event.getModLog();
 
 		Config.loadConfig(event.getSuggestedConfigurationFile());
 	}
