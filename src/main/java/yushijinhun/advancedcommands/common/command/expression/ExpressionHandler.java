@@ -10,6 +10,8 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
 import net.minecraft.command.ICommandSender;
+import yushijinhun.advancedcommands.AdvancedCommands;
+import yushijinhun.advancedcommands.Config;
 import yushijinhun.advancedcommands.common.command.datatype.DataType;
 import yushijinhun.advancedcommands.common.command.function.Function;
 import yushijinhun.advancedcommands.common.command.function.FunctionContext;
@@ -924,6 +926,14 @@ public final class ExpressionHandler {
 	}
 
 	public static Var handleExpression(String expression, ICommandSender sender) {
+		checkSecurity();
 		return computeRPN(toRPN(spiltExpression(expression)), sender);
+	}
+
+	private static void checkSecurity() {
+		if (Config.safetyMode && Thread.interrupted()) {
+			AdvancedCommands.logger.warn("Expression handling interrupted because thread has interrupted!");
+			throw new Error("interrupted");
+		}
 	}
 }

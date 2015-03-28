@@ -14,5 +14,5 @@ public abstract class SafetyModeManager {
 		SafetyModeManager.manager = manager;
 	}
 
-	public abstract Var executeExperssion(ExperssionTask task);
+	public abstract Var executeExpression(ExpressionTask task);
 }

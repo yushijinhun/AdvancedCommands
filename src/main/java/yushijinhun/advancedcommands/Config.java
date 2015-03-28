@@ -8,6 +8,9 @@ import net.minecraftforge.common.config.ConfigElement;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.client.config.IConfigElement;
+import yushijinhun.advancedcommands.util.SafetyModeManager;
+import yushijinhun.advancedcommands.util.SafetyModeManagerNo;
+import yushijinhun.advancedcommands.util.SafetyModeManagerTimeout;
 
 public final class Config {
 
@@ -82,7 +85,11 @@ public final class Config {
 	}
 
 	public static void afterLoadConfig() {
-
+		if (safetyMode) {
+			SafetyModeManager.setManager(new SafetyModeManagerTimeout(safetyTime));
+		} else {
+			SafetyModeManager.setManager(new SafetyModeManagerNo());
+		}
 	}
 
 	public static List<IConfigElement> getConfigElements() {

@@ -9,6 +9,7 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
 import net.minecraftforge.fml.common.network.NetworkCheckHandler;
@@ -33,6 +34,8 @@ public final class AdvancedCommands {
 	public static CommonProxy PROXY;
 
 	public static Logger logger=LogManager.getFormatterLogger(AdvancedCommands.ID);
+
+	public static Thread serverThread;
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
@@ -65,8 +68,14 @@ public final class AdvancedCommands {
 	}
 
 	@EventHandler
+	public void serverStarted(FMLServerStartedEvent event) {
+		serverThread = Thread.currentThread();
+	}
+
+	@EventHandler
 	public void serverStopped(FMLServerStoppedEvent event) {
 		VarData.theVarData=null;
+		serverThread = null;
 	}
 
 	@NetworkCheckHandler

@@ -6,7 +6,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 import yushijinhun.advancedcommands.common.command.var.Var;
-import yushijinhun.advancedcommands.util.ExperssionTask;
+import yushijinhun.advancedcommands.util.ExpressionTask;
 import yushijinhun.advancedcommands.util.SafetyModeManager;
 
 public class CommandExp extends BasicCommand {
@@ -39,7 +39,7 @@ public class CommandExp extends BasicCommand {
 				sb.append(' ');
 			}
 		}
-		Var result = SafetyModeManager.getManager().executeExperssion(new ExperssionTask(sb.toString(), sender));
+		Var result = SafetyModeManager.getManager().executeExpression(new ExpressionTask(sb.toString(), sender));
 		IChatComponent msg = new ChatComponentText("Result: " + result);
 		sender.addChatMessage(msg);
 	}
