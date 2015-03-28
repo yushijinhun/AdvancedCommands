@@ -20,7 +20,7 @@ import yushijinhun.advancedcommands.common.command.CommandExp;
 import yushijinhun.advancedcommands.common.command.var.VarData;
 import yushijinhun.advancedcommands.common.command.var.VarSavedData;
 
-@Mod(modid = AdvancedCommands.ID, name = AdvancedCommands.NAME, version = "${VERSION}", useMetadata = true, guiFactory = "yushijinhun.advancedcommands.client.gui.GuiFactory")
+@Mod(modid = AdvancedCommands.ID, name = AdvancedCommands.NAME, useMetadata = true, guiFactory = "yushijinhun.advancedcommands.client.gui.GuiFactory")
 public final class AdvancedCommands {
 
 	public static final String ID = "advancedcommands";
@@ -55,7 +55,7 @@ public final class AdvancedCommands {
 	public void serverStarting(FMLServerStartingEvent event) {
 		event.registerServerCommand(new CommandExp());
 
-		MapStorage mapStorage = event.getServer().worldServers[0].getMapStorage();
+		MapStorage mapStorage = event.getServer().worldServers[0].func_175693_T();
 		VarData.theVarData = new VarData();
 		VarData.theVarData.savedData = (VarSavedData) mapStorage.loadData(VarSavedData.class, "ac-vars");
 		if (VarData.theVarData.savedData == null) {

@@ -16,7 +16,7 @@ public class CommandExp extends BasicCommand {
 	}
 
 	@Override
-	public String getName() {
+	public String getCommandName() {
 		return "exp";
 	}
 

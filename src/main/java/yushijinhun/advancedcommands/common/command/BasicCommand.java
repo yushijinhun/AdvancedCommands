@@ -23,21 +23,23 @@ public abstract class BasicCommand extends CommandBase {
 	}
 
 	@Override
-	public void execute(ICommandSender sender, String[] args) throws CommandException {
+	public void processCommand(ICommandSender sender, String[] args) throws CommandException {
 		try {
 			doExecute(sender, args);
 			if (Config.sendExecutedMessageToOps) {
-				notifyOperators(sender, this, "Command '" + getName() + "' executed " + Arrays.toString(args));
+				notifyOperators(sender, this, "Command '" + getCommandName() + "' executed " + Arrays.toString(args));
 			}
 		} catch (Throwable e) {
 			if (Config.printErrorMessageToConsole) {
 				AdvancedCommands.logger.info(
-						String.format("Executing command %s with %s failed", getName(), Arrays.toString(args)), e);
+						String.format("Executing command %s with %s failed", getCommandName(), Arrays.toString(args)),
+						e);
 			}
 
 			if (Config.sendErrorMessageToOps) {
 				notifyOperators(sender, this,
-						String.format("Executing command %s with %s failed", getName(), Arrays.toString(args)) + "\n"
+						String.format("Executing command %s with %s failed", getCommandName(), Arrays.toString(args))
+								+ "\n"
 								+ ExceptionHelper.exceptionToString(e));
 			}
 			throw new CommandException(e.getClass().getName() + ": " + e.getMessage(), new Object[0]);

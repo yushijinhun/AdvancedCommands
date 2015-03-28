@@ -16,8 +16,7 @@ public class FunctionSelectEntity extends Function {
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
 		@SuppressWarnings("unchecked")
-		List<Entity> entities = PlayerSelector.matchEntities(context.getCommandSender(), (String) args[0].value,
-				Entity.class);
+		List<Entity> entities = PlayerSelector.func_179656_b(context.getCommandSender(), (String) args[0].value,Entity.class);
 		Var[] result = new Var[entities.size()];
 		Iterator<Entity> it = entities.iterator();
 		for (int i = 0; i < result.length; i++) {
