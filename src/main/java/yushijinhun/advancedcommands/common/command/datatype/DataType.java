@@ -25,7 +25,7 @@ public abstract class DataType {
 	public DataType(String name) {
 		this.name = name;
 		types.put(name, this);
-		AdvancedCommands.logger.debug("Data type " + name + " has registered");
+		AdvancedCommands.logger.debug(String.format("Data type %s has registered", name));
 	}
 
 	public abstract Object getDefaultValue();

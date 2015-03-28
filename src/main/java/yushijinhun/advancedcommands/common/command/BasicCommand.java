@@ -27,7 +27,8 @@ public abstract class BasicCommand extends CommandBase {
 		try {
 			doExecute(sender, args);
 			if (Config.sendExecutedMessageToOps) {
-				notifyOperators(sender, this, "Command '" + getCommandName() + "' executed " + Arrays.toString(args));
+				notifyOperators(sender, this,
+						String.format("Command %s executed with %s", getCommandName(), Arrays.toString(args)));
 			}
 		} catch (Throwable e) {
 			if (Config.printErrorMessageToConsole) {
@@ -38,11 +39,10 @@ public abstract class BasicCommand extends CommandBase {
 
 			if (Config.sendErrorMessageToOps) {
 				notifyOperators(sender, this,
-						String.format("Executing command %s with %s failed", getCommandName(), Arrays.toString(args))
-								+ "\n"
-								+ ExceptionHelper.exceptionToString(e));
+						String.format("Executing command %s with %s failed%n%s", getCommandName(),
+								Arrays.toString(args), ExceptionHelper.exceptionToString(e)));
 			}
-			throw new CommandException(e.getClass().getName() + ": " + e.getMessage(), new Object[0]);
+			throw new CommandException(String.format("%s: %s", e.getClass().getName(), e.getMessage()), new Object[0]);
 		}
 	}
 

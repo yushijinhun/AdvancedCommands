@@ -57,7 +57,7 @@ public final class NBTHandler {
 			for (int i = 0; i < vars.length; i++) {
 				Var var = vars[i];
 				if ((var == null) || !(var.value instanceof Byte)) {
-					throw new IllegalArgumentException("Cannot convert element " + i);
+					throw new IllegalArgumentException(String.format("Cannot convert element %s", i));
 				}
 				out[i] = (Byte) var.value;
 			}
@@ -74,13 +74,13 @@ public final class NBTHandler {
 			for (int i = 0; i < vars.length; i++) {
 				Var var = vars[i];
 				if ((var == null) || !(var.value instanceof Integer)) {
-					throw new IllegalArgumentException("Cannot convert element " + i);
+					throw new IllegalArgumentException(String.format("Cannot convert element %s", i));
 				}
 				out[i] = (Integer) var.value;
 			}
 			return new NBTTagIntArray(out);
 		} else {
-			throw new IllegalArgumentException("Unknow nbt type " + name);
+			throw new IllegalArgumentException(String.format("Unknow nbt type %s", name));
 		}
 	}
 
@@ -114,7 +114,7 @@ public final class NBTHandler {
 			}
 			return new Var(DataType.TYPE_ARRAY, vars);
 		} else {
-			throw new IllegalArgumentException("Unknow nbt type " + nbt.getId());
+			throw new IllegalArgumentException(String.format("Unknow nbt type %s", nbt.getId()));
 		}
 	}
 }
