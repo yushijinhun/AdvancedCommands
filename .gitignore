@@ -1,15 +1,3 @@
-*.bat
-*.cmd
-*.class
-*.jar
-*.iml
-*.ipr
-*.iws
-*.log
-*.pdf
-*.py
-*.sh
-*.txt
 .cache
 build.xml
 lib/
@@ -20,8 +8,6 @@ natives/
 ._*
 .gradle/
 build/
-gradle/
-gradlew
 out/
 output/
 run/
@@ -36,3 +22,4 @@ eclipse/
 nbbuild/
 nbproject/
 *~
+
