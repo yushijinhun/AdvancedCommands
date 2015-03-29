@@ -38,4 +38,9 @@ public class DataTypeNBT extends DataType {
 		return obj == null ? "null" : NBTHandler.idToName.get((int) ((NBTBase) obj).getId()) + "@"
 				+ String.valueOf(obj.toString());
 	}
+
+	@Override
+	public Object cloneValue(Object value) {
+		return ((NBTBase) value).copy();
+	}
 }

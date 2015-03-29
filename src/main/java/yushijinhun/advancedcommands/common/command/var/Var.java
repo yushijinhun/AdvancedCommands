@@ -57,6 +57,6 @@ public class Var implements Cloneable {
 
 	@Override
 	public Var clone() {
-		return new Var(type, value);
+		return new Var(type, type.cloneValue(value));
 	}
 }

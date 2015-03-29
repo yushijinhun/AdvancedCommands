@@ -53,4 +53,14 @@ public class DataTypeArray extends DataType {
 	public String valueToString(Object obj) {
 		return Arrays.toString((Object[]) obj);
 	}
+
+	@Override
+	public Object cloneValue(Object value) {
+		Var[] src = (Var[]) value;
+		Var[] result = new Var[src.length];
+		for (int i = 0; i < src.length; i++) {
+			result[i] = src[i];
+		}
+		return result;
+	}
 }

@@ -9,4 +9,9 @@ public class SafetyModeManagerNo extends SafetyModeManager {
 		return task.call();
 	}
 
+	@Override
+	public void checkSecurity() {
+
+	}
+
 }

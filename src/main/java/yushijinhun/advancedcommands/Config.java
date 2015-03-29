@@ -21,6 +21,7 @@ public final class Config {
 	public static boolean printErrorMessageToConsole = false;
 	public static boolean safetyMode = true;
 	public static int safetyTime = 200;
+	public static int cancelWaitTime = 500;
 
 	public static void loadConfig(File file) {
 		config = new Configuration(file);
@@ -75,6 +76,14 @@ public final class Config {
 				StatCollector.translateToLocal("config.safetyTime.description");
 		prop.setLanguageKey("config.safetyTime");
 		safetyTime = prop.getInt();
+		configList.add(prop.getName());
+
+		prop = config.get(Configuration.CATEGORY_GENERAL, "cancelWaitTime",
+				Config.cancelWaitTime);
+		prop.comment =
+				StatCollector.translateToLocal("config.cancelWaitTime.description");
+		prop.setLanguageKey("config.cancelWaitTime");
+		cancelWaitTime = prop.getInt();
 		configList.add(prop.getName());
 
 		if (config.hasChanged()) {

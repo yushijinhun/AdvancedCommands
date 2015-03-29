@@ -15,4 +15,6 @@ public abstract class SafetyModeManager {
 	}
 
 	public abstract Var executeExpression(ExpressionTask task);
+
+	public abstract void checkSecurity();
 }

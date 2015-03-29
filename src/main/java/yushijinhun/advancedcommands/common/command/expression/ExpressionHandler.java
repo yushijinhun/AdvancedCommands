@@ -10,14 +10,13 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
 import net.minecraft.command.ICommandSender;
-import yushijinhun.advancedcommands.AdvancedCommands;
-import yushijinhun.advancedcommands.Config;
 import yushijinhun.advancedcommands.common.command.datatype.DataType;
 import yushijinhun.advancedcommands.common.command.function.Function;
 import yushijinhun.advancedcommands.common.command.function.FunctionContext;
 import yushijinhun.advancedcommands.common.command.var.Var;
 import yushijinhun.advancedcommands.common.command.var.VarData;
 import yushijinhun.advancedcommands.common.command.var.VarHelper;
+import yushijinhun.advancedcommands.util.SafetyModeManager;
 
 public final class ExpressionHandler {
 
@@ -118,6 +117,7 @@ public final class ExpressionHandler {
 				} else {
 					Var arg1 = stack.pop().get();
 					Var result = null;
+					boolean pushResult = true;
 					if (op.equals("!")) {
 						result = opNot(arg1);
 					} else if (op.equals("+.")) {
@@ -184,6 +184,7 @@ public final class ExpressionHandler {
 						result = opSetXor(stack.pop(), arg1);
 					} else if (op.equals("[")) {
 						stack.push(opArraySelect(stack.pop(), arg1));
+						pushResult = false;
 					} else if (op.startsWith("(")) {
 						if (op.endsWith(")")) {
 							result = opCast(arg1, op.substring(1, op.length() - 1));
@@ -193,7 +194,9 @@ public final class ExpressionHandler {
 					} else {
 						throw new IllegalArgumentException("un-matched op " + op);
 					}
-					stack.push(new VarWarpperConstant(result));
+					if (pushResult) {
+						stack.push(new VarWarpperConstant(result));
+					}
 				}
 			}
 		}
@@ -252,7 +255,7 @@ public final class ExpressionHandler {
 	}
 
 	public static Var opSet(IVarWarpper arg1, Var arg2) {
-		arg1.set(arg2);
+		arg1.set(arg2 == null ? null : arg2.clone());
 		return arg2;
 	}
 
@@ -926,14 +929,7 @@ public final class ExpressionHandler {
 	}
 
 	public static Var handleExpression(String expression, ICommandSender sender) {
-		checkSecurity();
+		SafetyModeManager.getManager().checkSecurity();
 		return computeRPN(toRPN(spiltExpression(expression)), sender);
-	}
-
-	private static void checkSecurity() {
-		if (Config.safetyMode && Thread.interrupted()) {
-			AdvancedCommands.logger.warn("Expression handling interrupted because thread has interrupted!");
-			throw new Error("interrupted");
-		}
 	}
 }
