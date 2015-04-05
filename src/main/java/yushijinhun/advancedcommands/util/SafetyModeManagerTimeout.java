@@ -10,24 +10,25 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import yushijinhun.advancedcommands.AdvancedCommands;
-import yushijinhun.advancedcommands.Config;
-import yushijinhun.advancedcommands.common.command.var.Var;
+import yushijinhun.advancedcommands.command.var.Var;
 
 public class SafetyModeManagerTimeout extends SafetyModeManager {
 
+	private AdvancedCommands plugin;
 	private Thread runningThread;
 	private long timeout;
 	private ExecutorService pool;
 
-	public SafetyModeManagerTimeout(long timeout) {
-		this.setTimeout(timeout);
+	public SafetyModeManagerTimeout(long timeout, AdvancedCommands plugin) {
+		this.plugin = plugin;
+		setTimeout(timeout);
 		newPool();
 	}
 
 	@SuppressWarnings("deprecation")
 	@Override
 	public Var executeExpression(final ExpressionTask task) {
-		if (Thread.currentThread() != AdvancedCommands.serverThread) {
+		if (runningThread != null) {
 			return task.call();
 		}
 
@@ -44,29 +45,31 @@ public class SafetyModeManagerTimeout extends SafetyModeManager {
 			}
 		});
 		try {
-			return future.get(Config.safetyTime, TimeUnit.MILLISECONDS);
+			return future.get(plugin.config.safetyTime, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {
 			throw new RuntimeException(e);
 		} catch (ExecutionException e) {
 			throw new RuntimeException(e);
 		} catch (TimeoutException e) {
-			AdvancedCommands.logger.warn(String.format("Expression %s time out, cancelling", task.toString()), e);
+			plugin.getLogger().warning(String.format("Expression %s time out, cancelling\n%s", task.toString(),
+					ExceptionHelper.exceptionToString(e)));
 			future.cancel(true);
 			Thread thread = runningThread;
 			if (thread != null) {
 				try {
-					thread.join(Config.cancelWaitTime);
+					thread.join(plugin.config.cancelWaitTime);
 				} catch (InterruptedException e1) {
 					throw new RuntimeException(e1);
 				}
 				if (runningThread == null) {
-					AdvancedCommands.logger.warn("Expression handling cancelled");
+					plugin.getLogger().warning("Expression handling cancelled");
 				} else {
-					AdvancedCommands.logger.warn("Expression handling cancelling time out, killing thread");
+					plugin.getLogger().warning("Expression handling cancelling time out, killing thread");
 					runningThread.stop();
+					createThread();
 				}
 			} else {
-				AdvancedCommands.logger.warn("Expression handling cancelled");
+				plugin.getLogger().warning("Expression handling cancelled");
 			}
 			throw new RuntimeException(e);
 		}
@@ -86,9 +89,9 @@ public class SafetyModeManagerTimeout extends SafetyModeManager {
 
 			@Override
 			public Thread newThread(Runnable r) {
-						Thread thread = new Thread(r, "ac-commands-executer");
-						thread.setPriority(Thread.MAX_PRIORITY);
-						return thread;
+				Thread thread = new Thread(r, "ac-commands-executer");
+				thread.setPriority(Thread.MAX_PRIORITY);
+				return thread;
 			}
 		}) {
 
@@ -97,6 +100,18 @@ public class SafetyModeManagerTimeout extends SafetyModeManager {
 				shutdownNow();
 			}
 		};
+		createThread();
+	}
+
+	@Override
+	public void checkSecurity() {
+		if (plugin.config.safetyMode && Thread.interrupted()) {
+			plugin.getLogger().warning("Expression handling interrupted because thread has interrupted!");
+			throw new Error("interrupted");
+		}
+	}
+
+	private void createThread() {
 		pool.execute(new Runnable() { // to create a thread in the pool
 
 			@Override
@@ -104,13 +119,5 @@ public class SafetyModeManagerTimeout extends SafetyModeManager {
 
 			}
 		});
-	}
-
-	@Override
-	public void checkSecurity() {
-		if (Config.safetyMode && Thread.interrupted()) {
-			AdvancedCommands.logger.warn("Expression handling interrupted because thread has interrupted!");
-			throw new Error("interrupted");
-		}
 	}
 }

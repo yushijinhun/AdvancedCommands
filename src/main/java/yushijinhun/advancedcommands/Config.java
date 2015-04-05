@@ -1,109 +1,44 @@
 package yushijinhun.advancedcommands;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import net.minecraft.util.StatCollector;
-import net.minecraftforge.common.config.ConfigElement;
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.config.Property;
-import net.minecraftforge.fml.client.config.IConfigElement;
+import org.bukkit.configuration.file.FileConfiguration;
 import yushijinhun.advancedcommands.util.SafetyModeManager;
 import yushijinhun.advancedcommands.util.SafetyModeManagerNo;
 import yushijinhun.advancedcommands.util.SafetyModeManagerTimeout;
 
 public final class Config {
 
-	public static Configuration config;
+	public boolean printErrorMessageToConsole = true;
+	public boolean safetyMode = true;
+	public int safetyTime = 200;
+	public int cancelWaitTime = 500;
 
-	public static boolean sendErrorMessageToOps = false;
-	public static boolean sendExecutedMessageToOps = false;
-	public static boolean printErrorMessageToConsole = false;
-	public static boolean safetyMode = true;
-	public static int safetyTime = 200;
-	public static int cancelWaitTime = 500;
+	private AdvancedCommands plugin;
 
-	public static void loadConfig(File file) {
-		config = new Configuration(file);
+	public Config(AdvancedCommands plugin) {
+		this.plugin = plugin;
+	}
 
-		Property prop;
-		List<String> configList = new ArrayList<String>();
-
-		config.addCustomCategoryComment(Configuration.CATEGORY_GENERAL, StatCollector.translateToLocal("config.general.description"));
-
-		// eg.
-		// prop = config.get(Configuration.CATEGORY_GENERAL, "<name>",
-		// Config.<name>);
-		// prop.comment =
-		// StatCollector.translateToLocal("config.<name>.description");
-		// prop.setLanguageKey("config.<name>");
-		// <name> = prop.get<xxxx>();
-		// configList.add(prop.getName());
-
-		prop = config.get(Configuration.CATEGORY_GENERAL, "sendErrorMessageToOps",
-				Config.sendErrorMessageToOps);
-		prop.comment = StatCollector.translateToLocal("config.sendErrorMessageToOps.description");
-		prop.setLanguageKey("config.sendErrorMessageToOps");
-		sendErrorMessageToOps = prop.getBoolean();
-		configList.add(prop.getName());
-
-		prop = config.get(Configuration.CATEGORY_GENERAL, "printErrorMessageToConsole",
-				Config.printErrorMessageToConsole);
-		prop.comment = StatCollector.translateToLocal("config.printErrorMessageToConsole.description");
-		prop.setLanguageKey("config.printErrorMessageToConsole");
-		printErrorMessageToConsole = prop.getBoolean();
-		configList.add(prop.getName());
-
-		prop = config.get(Configuration.CATEGORY_GENERAL, "sendExecutedMessageToOps",
-				Config.sendExecutedMessageToOps);
-		prop.comment =
-				StatCollector.translateToLocal("config.sendExecutedMessageToOps.description");
-		prop.setLanguageKey("config.sendExecutedMessageToOps");
-		sendExecutedMessageToOps = prop.getBoolean();
-		configList.add(prop.getName());
-
-		prop = config.get(Configuration.CATEGORY_GENERAL, "safetyMode",
-				Config.safetyMode);
-		prop.comment =
-				StatCollector.translateToLocal("config.safetyMode.description");
-		prop.setLanguageKey("config.safetyMode");
-		safetyMode = prop.getBoolean();
-		configList.add(prop.getName());
-
-		prop = config.get(Configuration.CATEGORY_GENERAL, "safetyTime",
-				Config.safetyTime);
-		prop.comment =
-				StatCollector.translateToLocal("config.safetyTime.description");
-		prop.setLanguageKey("config.safetyTime");
-		safetyTime = prop.getInt();
-		configList.add(prop.getName());
-
-		prop = config.get(Configuration.CATEGORY_GENERAL, "cancelWaitTime",
-				Config.cancelWaitTime);
-		prop.comment =
-				StatCollector.translateToLocal("config.cancelWaitTime.description");
-		prop.setLanguageKey("config.cancelWaitTime");
-		cancelWaitTime = prop.getInt();
-		configList.add(prop.getName());
-
-		if (config.hasChanged()) {
-			config.save();
-		}
+	public void loadConfig(FileConfiguration config) {
+		config.getBoolean("printErrorMessageToConsole", printErrorMessageToConsole);
+		config.getBoolean("safetyMode", safetyMode);
+		config.getInt("safetyTime", safetyTime);
+		config.getInt("cancelWaitTime", cancelWaitTime);
 
 		afterLoadConfig();
 	}
 
-	public static void afterLoadConfig() {
+	public void saveConfig(FileConfiguration config) {
+		config.set("printErrorMessageToConsole", printErrorMessageToConsole);
+		config.set("safetyMode", safetyMode);
+		config.set("safetyTime", safetyTime);
+		config.set("cancelWaitTime", cancelWaitTime);
+	}
+
+	public void afterLoadConfig() {
 		if (safetyMode) {
-			SafetyModeManager.setManager(new SafetyModeManagerTimeout(safetyTime));
+			SafetyModeManager.setManager(new SafetyModeManagerTimeout(safetyTime, plugin));
 		} else {
 			SafetyModeManager.setManager(new SafetyModeManagerNo());
 		}
-	}
-
-	public static List<IConfigElement> getConfigElements() {
-		List<IConfigElement> list = new ArrayList<IConfigElement>();
-		list.addAll(new ConfigElement(config.getCategory(Configuration.CATEGORY_GENERAL)).getChildElements());
-		return list;
 	}
 }

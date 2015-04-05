@@ -1,6 +1,6 @@
 package yushijinhun.advancedcommands.util;
 
-import yushijinhun.advancedcommands.common.command.var.Var;
+import yushijinhun.advancedcommands.command.var.Var;
 
 public class SafetyModeManagerNo extends SafetyModeManager {
 

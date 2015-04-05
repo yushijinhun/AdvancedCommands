@@ -1,17 +1,17 @@
 package yushijinhun.advancedcommands.util;
 
 import java.util.concurrent.Callable;
-import net.minecraft.command.ICommandSender;
-import yushijinhun.advancedcommands.common.command.expression.ExpressionHandler;
-import yushijinhun.advancedcommands.common.command.var.Var;
+import org.bukkit.command.CommandSender;
+import yushijinhun.advancedcommands.AdvancedCommands;
+import yushijinhun.advancedcommands.command.var.Var;
 
 public class ExpressionTask implements Callable<Var> {
 
 	private final String expression;
-	private final ICommandSender commandSender;
+	private final CommandSender commandSender;
+	private AdvancedCommands plugin;
 
-	public ExpressionTask(String experssion, ICommandSender commandSender) {
-		super();
+	public ExpressionTask(String experssion, CommandSender commandSender, AdvancedCommands plugin) {
 		this.expression = experssion;
 		this.commandSender = commandSender;
 	}
@@ -20,13 +20,13 @@ public class ExpressionTask implements Callable<Var> {
 		return expression;
 	}
 
-	public ICommandSender getCommandSender() {
+	public CommandSender getCommandSender() {
 		return commandSender;
 	}
 
 	@Override
 	public Var call() {
-		return ExpressionHandler.handleExpression(expression, commandSender);
+		return plugin.expressionHandler.handleExpression(expression, commandSender);
 	}
 
 	@Override
