@@ -1,5 +1,5 @@
 name: "AdvancedCommands"
-main: "yushijinhun.advancedcommands"
+main: "yushijinhun.advancedcommands.AdvancedCommands"
 version: "0.2"
 commands:
    exp:
