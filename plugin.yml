@@ -1,5 +1,5 @@
-name: AdvancedCommands
-main: yushijinhun.advancedcommands
+name: "AdvancedCommands"
+main: "yushijinhun.advancedcommands"
 version: "0.2"
 commands:
    exp:
@@ -7,4 +7,11 @@ commands:
       usage: "/exp <experssion>"
       permission: "advancedcommands.exp"
       permission-message: "You don't have permission"
-      
+permissions:
+    advancedcommands.*:
+        description: "Gives access to all AdvancedCommands commands"
+        children:
+            advancedcommands.exp: true
+    advancedcommands.exp:
+        description: "Allows you to execute a expression"
+        default: op
