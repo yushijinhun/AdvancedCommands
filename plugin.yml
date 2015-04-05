@@ -1,0 +1,10 @@
+name: AdvancedCommands
+main: yushijinhun.advancedcommands
+version: "0.2"
+commands:
+   exp:
+      description: "Execute a expression"
+      usage: "/exp <experssion>"
+      permission: "advancedcommands.exp"
+      permission-message: "You don't have permission"
+      
