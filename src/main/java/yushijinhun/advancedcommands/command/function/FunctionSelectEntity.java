@@ -18,7 +18,7 @@ public class FunctionSelectEntity extends Function {
 		try {
 			nmsentities = (List<?>) ReflectionHelper.selectingEntitiesMethod.invoke(null,
 					ReflectionHelper.toNMSIComandSender(context.getCommandSender()),
-					MinecraftReflection.getEntityClass());
+					args[0].value, MinecraftReflection.getEntityClass());
 
 			Var[] result = new Var[nmsentities.size()];
 			for (int i = 0; i < result.length; i++) {

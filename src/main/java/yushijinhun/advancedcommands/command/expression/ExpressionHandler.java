@@ -689,7 +689,7 @@ public final class ExpressionHandler {
 		int maxPrecision = 0;
 		DataType precisestType = null;
 		for (DataType type : types) {
-			Integer thePriority = precision.get(type);
+			Integer thePriority = precision.get(type.name);
 			if (thePriority == null) {
 				return null;
 			}

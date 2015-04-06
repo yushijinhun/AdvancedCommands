@@ -7,7 +7,6 @@ import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import yushijinhun.advancedcommands.AdvancedCommands;
-import yushijinhun.advancedcommands.util.ExceptionHelper;
 
 public abstract class BasicCommand implements CommandExecutor {
 
@@ -17,19 +16,14 @@ public abstract class BasicCommand implements CommandExecutor {
 		this.plugin = plugin;
 	}
 
-	protected abstract void doExecute(CommandSender sender, String arg);
+	protected abstract void doExecute(CommandSender sender, String[] args);
 
 	@Override
 	public boolean onCommand(CommandSender paramCommandSender, Command paramCommand, String paramString,
 			String[] paramArrayOfString) {
 		try {
-			doExecute(paramCommandSender, paramString);
+			doExecute(paramCommandSender, paramArrayOfString);
 		} catch (Throwable e) {
-			if (plugin.config.printErrorMessageToConsole) {
-				plugin.getLogger().info(
-						String.format("Executing command %s with %s failed\n%s", paramCommand.getName(), paramString,
-								ExceptionHelper.exceptionToString(e)));
-			}
 			throw new CommandException(e.getMessage() == null ? "" : e.getMessage(), e);
 		}
 		return true;

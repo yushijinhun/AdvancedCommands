@@ -13,7 +13,7 @@ public class NBTSourceEntity implements NBTSource {
 		try {
 			Object nmsnbt = MinecraftReflection.getNBTCompoundClass().newInstance();
 			ReflectionHelper.entityReadMethod.invoke(
-					ReflectionHelper.getEntityByUUIDMethod.invoke(ReflectionHelper.server.get(null),
+					ReflectionHelper.getEntityByUUIDMethod.invoke(ReflectionHelper.getServerMethod.invoke(null),
 							UUID.fromString(id)), nmsnbt);
 			return NbtFactory.fromNMSCompound(nmsnbt);
 		} catch (Exception e) {
@@ -25,9 +25,9 @@ public class NBTSourceEntity implements NBTSource {
 	public void set(String id, NbtCompound nbt) {
 		try {
 			ReflectionHelper.entityWriteMethod.invoke(
-					ReflectionHelper.getEntityByUUIDMethod.invoke(ReflectionHelper.server.get(null),
+					ReflectionHelper.getEntityByUUIDMethod.invoke(ReflectionHelper.getServerMethod.invoke(null),
 							UUID.fromString(id)), NbtFactory.fromBase(nbt)
-					.getHandle());
+							.getHandle());
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

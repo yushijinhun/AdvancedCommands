@@ -13,8 +13,16 @@ public class CommandExp extends BasicCommand {
 	}
 
 	@Override
-	public void doExecute(CommandSender sender, String args) {
-		Var result = SafetyModeManager.getManager().executeExpression(new ExpressionTask(args, sender, plugin));
+	public void doExecute(CommandSender sender, String[] args) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < args.length; i++) {
+			if (i != 0) {
+				sb.append(' ');
+			}
+			sb.append(args[i]);
+		}
+		Var result = SafetyModeManager.getManager()
+				.executeExpression(new ExpressionTask(sb.toString(), sender, plugin));
 		sender.sendMessage("Result: " + result);
 	}
 }

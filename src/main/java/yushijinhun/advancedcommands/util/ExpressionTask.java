@@ -14,6 +14,7 @@ public class ExpressionTask implements Callable<Var> {
 	public ExpressionTask(String experssion, CommandSender commandSender, AdvancedCommands plugin) {
 		this.expression = experssion;
 		this.commandSender = commandSender;
+		this.plugin = plugin;
 	}
 
 	public String getExperssion() {

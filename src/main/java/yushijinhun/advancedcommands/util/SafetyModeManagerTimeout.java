@@ -17,11 +17,14 @@ public class SafetyModeManagerTimeout extends SafetyModeManager {
 	private AdvancedCommands plugin;
 	private Thread runningThread;
 	private long timeout;
+	private long cancelwaittime;
+
 	private ExecutorService pool;
 
-	public SafetyModeManagerTimeout(long timeout, AdvancedCommands plugin) {
+	public SafetyModeManagerTimeout(long timeout, long cancelwaittime, AdvancedCommands plugin) {
 		this.plugin = plugin;
 		setTimeout(timeout);
+		setCancelwaittime(cancelwaittime);
 		newPool();
 	}
 
@@ -111,6 +114,14 @@ public class SafetyModeManagerTimeout extends SafetyModeManager {
 		}
 	}
 
+	public long getCancelwaittime() {
+		return cancelwaittime;
+	}
+
+	public void setCancelwaittime(long cancelwaittime) {
+		this.cancelwaittime = cancelwaittime;
+	}
+
 	private void createThread() {
 		pool.execute(new Runnable() { // to create a thread in the pool
 
@@ -119,5 +130,10 @@ public class SafetyModeManagerTimeout extends SafetyModeManager {
 
 			}
 		});
+	}
+
+	@Override
+	public String toString() {
+		return super.toString() + "[timeout=" + timeout + ",cancelwaittime=" + cancelwaittime + "]";
 	}
 }

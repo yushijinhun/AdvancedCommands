@@ -95,6 +95,8 @@ public final class AdvancedCommands extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
+		saveVarData();
+
 		config = null;
 		functions = null;
 		datatypes = null;

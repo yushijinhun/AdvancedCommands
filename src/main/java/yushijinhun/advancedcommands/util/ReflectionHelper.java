@@ -1,6 +1,5 @@
 package yushijinhun.advancedcommands.util;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.UUID;
@@ -15,7 +14,6 @@ import org.bukkit.command.RemoteConsoleCommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import com.comphenix.net.sf.cglib.asm.ClassReader;
-import com.comphenix.net.sf.cglib.asm.FieldVisitor;
 import com.comphenix.net.sf.cglib.asm.MethodVisitor;
 import com.comphenix.net.sf.cglib.asm.Opcodes;
 import com.comphenix.protocol.reflect.accessors.Accessors;
@@ -80,16 +78,16 @@ public final class ReflectionHelper {
 		}
 	}
 
-	public static Method entityReadMethod;
-	public static Method entityWriteMethod;
-	public static Method getEntityByUUIDMethod;
-	public static Method selectingEntitiesMethod;
-	public static Method tileGetCommandBlockLogicMethod;
-	public static Method entityGetUUIDMethod;
-	public static Field server;
+	public static Method entityReadMethod;//
+	public static Method entityWriteMethod;// f
+	public static Method getEntityByUUIDMethod;//
+	public static Method selectingEntitiesMethod;// getplayers
+	public static Method tileGetCommandBlockLogicMethod;// getcommandblock
+	public static Method entityGetUUIDMethod;//
+	public static Method getServerMethod;// getserver
 
 	static {
-		getServerField();
+		getServerMethod();
 		getGettingEntityMethod();
 		getIOMethods();
 		getSelectingMethod();
@@ -100,9 +98,9 @@ public final class ReflectionHelper {
 	public static Object toNMSIComandSender(CommandSender s) {
 		try {
 			if (s instanceof Entity) {
-				return getEntityByUUIDMethod.invoke(server.get(null), ((Entity) s).getUniqueId());
+				return getEntityByUUIDMethod.invoke(getServerMethod.invoke(null), ((Entity) s).getUniqueId());
 			} else if ((s instanceof ConsoleCommandSender) || (s instanceof RemoteConsoleCommandSender)) {
-				return server.get(null);
+				return getServerMethod.invoke(null);
 			} else if (s instanceof Player) {
 				UUID uuid = null;
 				int id = ((Player) s).getEntityId();
@@ -115,7 +113,7 @@ public final class ReflectionHelper {
 							}
 						}
 					}
-				return getEntityByUUIDMethod.invoke(server.get(null), uuid);
+				return getEntityByUUIDMethod.invoke(getServerMethod.invoke(null), uuid);
 			} else if (s instanceof ProxiedCommandSender) {
 				ProxiedCommandSenderHandleFinder finder = new ProxiedCommandSenderHandleFinder();
 				finder.find((ProxiedCommandSender) s);
@@ -138,7 +136,7 @@ public final class ReflectionHelper {
 		try {
 			final Class<?> entity = MinecraftReflection.getEntityClass();
 			final Class<?> uuid = UUID.class;
-			final String methodDesc = "();L" + uuid.getCanonicalName().replace('.', '/') + ";";
+			final String methodDesc = "()L" + uuid.getCanonicalName().replace('.', '/') + ";";
 			ClassReader reader = new ClassReader(entity.getCanonicalName());
 			reader.accept(new EmptyClassVisitor() {
 
@@ -160,7 +158,7 @@ public final class ReflectionHelper {
 	private static void getTileGetCommandBlockLogicMethod() {
 		try {
 			final Class<?> tileEntityCommand = MinecraftReflection.getMinecraftClass("TileEntityCommand");
-			final Class<?> commandBlockLogic = MinecraftReflection.getMinecraftClass("CommandBlockLogic");
+			final Class<?> commandBlockLogic = MinecraftReflection.getMinecraftClass("CommandBlockListenerAbstract");
 			final String methodDesc = "()L" + commandBlockLogic.getCanonicalName().replace('.', '/') + ";";
 			ClassReader reader = new ClassReader(tileEntityCommand.getCanonicalName());
 			reader.accept(new EmptyClassVisitor() {
@@ -182,18 +180,18 @@ public final class ReflectionHelper {
 		}
 	}
 
-	private static void getServerField() {
+	private static void getServerMethod() {
 		try {
 			final Class<?> serverClass = MinecraftReflection.getMinecraftServerClass();
-			final String fieldDesc = "L" + serverClass.getCanonicalName().replace('.', '/') + ";";
+			final String methodDesc = "()L" + serverClass.getCanonicalName().replace('.', '/') + ";";
 			ClassReader serverClassReader = new ClassReader(serverClass.getCanonicalName());
 			serverClassReader.accept(new EmptyClassVisitor() {
 
 				@Override
-				public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
-					// public static MinecraftServer xxx
-					if ((access == (Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC)) && fieldDesc.equals(desc)) {
-						server = Accessors.getFieldAccessor(serverClass, name, true).getField();
+				public MethodVisitor visitMethod(int access, String name, String desc, String signature,
+						String[] exceptions) {
+					if ((access == (Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC)) && methodDesc.equals(desc)) {
+						getServerMethod = Accessors.getMethodAccessor(serverClass, name).getMethod();
 					}
 					return null;
 				}
@@ -209,7 +207,7 @@ public final class ReflectionHelper {
 		try {
 			final String entityName = MinecraftReflection.getEntityClass().getCanonicalName();
 			final String uuidName = UUID.class.getCanonicalName();
-			final String methodDesc = "(L" + uuidName.replace('.', '/') + ";)L" + entityName;
+			final String methodDesc = "(L" + uuidName.replace('.', '/') + ";)L" + entityName.replace('.', '/') + ";";
 			final Class<?> serverClass = MinecraftReflection.getMinecraftServerClass();
 			ClassReader serverClassReader = new ClassReader(serverClass.getCanonicalName());
 			serverClassReader.accept(new EmptyClassVisitor() {
@@ -231,9 +229,8 @@ public final class ReflectionHelper {
 
 	private static void getIOMethods() {
 		try {
-			final String compName = MinecraftReflection.getNBTCompoundClass().getCanonicalName();
-			final String compDesc = "(L" + compName.replace('.', '/') + ";)V";
-
+			final String compName = MinecraftReflection.getNBTCompoundClass().getCanonicalName().replace('.', '/');
+			final String compDesc = "(L" + compName + ";)V";
 			final Class<?> entityClass = MinecraftReflection.getEntityClass();
 			ClassReader entityClassReader = new ClassReader(entityClass.getCanonicalName());
 			entityClassReader.accept(new EmptyClassVisitor() {
