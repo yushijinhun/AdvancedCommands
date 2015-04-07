@@ -22,19 +22,19 @@ public final class NBTHandler {
 
 	public NbtBase<?> createTag(String name, Var data) {
 		if (name.equals("BYTE")) {
-			return NbtFactory.ofWrapper(NbtType.TAG_BYTE, null,
+			return NbtFactory.ofWrapper(NbtType.TAG_BYTE, "",
 					data.value instanceof Boolean ? ((Boolean) data.value ? (byte) 1 : (byte) 0)
 							: (Byte) data.value);
 		} else if (name.equals("SHORT")) {
-			return NbtFactory.ofWrapper(NbtType.TAG_SHORT, null, (Short) data.value);
+			return NbtFactory.ofWrapper(NbtType.TAG_SHORT, "", (Short) data.value);
 		} else if (name.equals("INT")) {
-			return NbtFactory.ofWrapper(NbtType.TAG_INT, null, (Integer) data.value);
+			return NbtFactory.ofWrapper(NbtType.TAG_INT, "", (Integer) data.value);
 		} else if (name.equals("LONG")) {
-			return NbtFactory.ofWrapper(NbtType.TAG_LONG, null, (Long) data.value);
+			return NbtFactory.ofWrapper(NbtType.TAG_LONG, "", (Long) data.value);
 		} else if (name.equals("FLOAT")) {
-			return NbtFactory.ofWrapper(NbtType.TAG_FLOAT, null, (Float) data.value);
+			return NbtFactory.ofWrapper(NbtType.TAG_FLOAT, "", (Float) data.value);
 		} else if (name.equals("DOUBLE")) {
-			return NbtFactory.ofWrapper(NbtType.TAG_DOUBLE, null, (Double) data.value);
+			return NbtFactory.ofWrapper(NbtType.TAG_DOUBLE, "", (Double) data.value);
 		} else if (name.equals("BYTE[]")) {
 			Var[] vars = (Var[]) data.value;
 			byte[] out = new byte[vars.length];
@@ -45,13 +45,13 @@ public final class NBTHandler {
 				}
 				out[i] = (Byte) var.value;
 			}
-			return NbtFactory.ofWrapper(NbtType.TAG_BYTE_ARRAY, null, out);
+			return NbtFactory.ofWrapper(NbtType.TAG_BYTE_ARRAY, "", out);
 		} else if (name.equals("STRING")) {
-			return NbtFactory.ofWrapper(NbtType.TAG_STRING, null, (String) data.value);
+			return NbtFactory.ofWrapper(NbtType.TAG_STRING, "", (String) data.value);
 		} else if (name.equals("LIST")) {
-			return NbtFactory.ofWrapper(NbtType.TAG_LIST, null);
+			return NbtFactory.ofWrapper(NbtType.TAG_LIST, "");
 		} else if (name.equals("COMPOUND")) {
-			return NbtFactory.ofWrapper(NbtType.TAG_COMPOUND, null);
+			return NbtFactory.ofWrapper(NbtType.TAG_COMPOUND, "");
 		} else if (name.equals("INT[]")) {
 			Var[] vars = (Var[]) data.value;
 			int[] out = new int[vars.length];
@@ -62,7 +62,7 @@ public final class NBTHandler {
 				}
 				out[i] = (Integer) var.value;
 			}
-			return NbtFactory.ofWrapper(NbtType.TAG_INT_ARRAY, null, out);
+			return NbtFactory.ofWrapper(NbtType.TAG_INT_ARRAY, "", out);
 		} else {
 			throw new IllegalArgumentException(String.format("Unknow nbt type %s", name));
 		}

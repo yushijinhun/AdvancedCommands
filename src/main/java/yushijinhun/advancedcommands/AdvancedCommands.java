@@ -1,5 +1,7 @@
 package yushijinhun.advancedcommands;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -55,6 +57,7 @@ import yushijinhun.advancedcommands.command.nbt.NBTHandler;
 import yushijinhun.advancedcommands.command.var.Var;
 import yushijinhun.advancedcommands.command.var.VarData;
 import yushijinhun.advancedcommands.util.ExceptionHelper;
+import yushijinhun.advancedcommands.util.ReflectionHelper;
 import yushijinhun.advancedcommands.util.Register;
 
 public final class AdvancedCommands extends JavaPlugin {
@@ -70,6 +73,8 @@ public final class AdvancedCommands extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
+		ReflectionHelper.init();
+
 		config = new Config(this);
 		config.loadConfig(getConfig());
 		config.saveConfig(getConfig());
@@ -141,7 +146,7 @@ public final class AdvancedCommands extends JavaPlugin {
 	}
 
 	public void loadVarData() {
-		try (DataInputStream in = new DataInputStream(new FileInputStream(vardataFile))) {
+		try (DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(vardataFile)))) {
 			vardata.read(in);
 		} catch (IOException e) {
 			getLogger().warning(String.format("Load var data file failed\n%s", ExceptionHelper.exceptionToString(e)));
@@ -149,7 +154,7 @@ public final class AdvancedCommands extends JavaPlugin {
 	}
 
 	public void saveVarData() {
-		try (DataOutputStream out = new DataOutputStream(new FileOutputStream(vardataFile))) {
+		try (DataOutputStream out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(vardataFile)))) {
 			vardata.write(out);
 		} catch (IOException e) {
 			getLogger().warning(String.format("Save var data file failed\n%s", ExceptionHelper.exceptionToString(e)));

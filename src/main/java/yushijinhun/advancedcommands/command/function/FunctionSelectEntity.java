@@ -1,6 +1,5 @@
 package yushijinhun.advancedcommands.command.function;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import yushijinhun.advancedcommands.command.var.Var;
 import yushijinhun.advancedcommands.util.ReflectionHelper;
@@ -14,22 +13,16 @@ public class FunctionSelectEntity extends Function {
 
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
-		List<?> nmsentities;
-		try {
-			nmsentities = (List<?>) ReflectionHelper.selectingEntitiesMethod.invoke(null,
-					ReflectionHelper.toNMSIComandSender(context.getCommandSender()),
-					args[0].value, MinecraftReflection.getEntityClass());
+		List<?> nmsentities = ReflectionHelper.selectEntities(context.getCommandSender(), (String) args[0].value,
+				MinecraftReflection.getEntityClass());
 
-			Var[] result = new Var[nmsentities.size()];
-			for (int i = 0; i < result.length; i++) {
-				result[i] = new Var(context.getPlugin().datatypes.get("string"), ReflectionHelper.entityGetUUIDMethod
-						.invoke(nmsentities.get(i)).toString());
-			}
-
-			return new Var(context.getPlugin().datatypes.get("array"), result);
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			throw new RuntimeException(e);
+		Var[] result = new Var[nmsentities.size()];
+		for (int i = 0; i < result.length; i++) {
+			result[i] = new Var(context.getPlugin().datatypes.get("string"), ReflectionHelper.getEntityUUID(nmsentities
+					.get(i)));
 		}
+
+		return new Var(context.getPlugin().datatypes.get("array"), result);
 	}
 
 }

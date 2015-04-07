@@ -10,27 +10,20 @@ public class NBTSourceEntity implements NBTSource {
 
 	@Override
 	public NbtCompound get(String id) {
+		Object nmsnbt;
 		try {
-			Object nmsnbt = MinecraftReflection.getNBTCompoundClass().newInstance();
-			ReflectionHelper.entityReadMethod.invoke(
-					ReflectionHelper.getEntityByUUIDMethod.invoke(ReflectionHelper.getServerMethod.invoke(null),
-							UUID.fromString(id)), nmsnbt);
-			return NbtFactory.fromNMSCompound(nmsnbt);
-		} catch (Exception e) {
+			nmsnbt = MinecraftReflection.getNBTCompoundClass().newInstance();
+		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}
+		ReflectionHelper.entityRead(ReflectionHelper.getEntityByUUID(UUID.fromString(id)), nmsnbt);
+		return NbtFactory.fromNMSCompound(nmsnbt);
 	}
 
 	@Override
 	public void set(String id, NbtCompound nbt) {
-		try {
-			ReflectionHelper.entityWriteMethod.invoke(
-					ReflectionHelper.getEntityByUUIDMethod.invoke(ReflectionHelper.getServerMethod.invoke(null),
-							UUID.fromString(id)), NbtFactory.fromBase(nbt)
-							.getHandle());
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		ReflectionHelper.entityWrite(ReflectionHelper.getEntityByUUID(UUID.fromString(id)), NbtFactory.fromBase(nbt)
+				.getHandle());
 	}
 
 	@Override

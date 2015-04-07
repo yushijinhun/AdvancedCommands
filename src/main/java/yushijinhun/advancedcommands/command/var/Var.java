@@ -52,7 +52,7 @@ public class Var implements Cloneable {
 		out.writeBoolean(value == null);
 		out.writeUTF(type.name);
 		if (value != null) {
-			type.writeValue(plugin, out, plugin);
+			type.writeValue(value, out, plugin);
 		}
 	}
 

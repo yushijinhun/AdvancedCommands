@@ -1,6 +1,7 @@
 name: "AdvancedCommands"
 main: "yushijinhun.advancedcommands.AdvancedCommands"
 version: "0.2"
+depend: ["ProtocolLib"]
 commands:
    exp:
       description: "Execute a expression"

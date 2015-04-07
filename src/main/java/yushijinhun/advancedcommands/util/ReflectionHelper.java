@@ -1,9 +1,11 @@
 package yushijinhun.advancedcommands.util;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.UUID;
-import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.BlockCommandSender;
@@ -12,7 +14,6 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.ProxiedCommandSender;
 import org.bukkit.command.RemoteConsoleCommandSender;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import com.comphenix.net.sf.cglib.asm.ClassReader;
 import com.comphenix.net.sf.cglib.asm.MethodVisitor;
 import com.comphenix.net.sf.cglib.asm.Opcodes;
@@ -23,6 +24,7 @@ import com.comphenix.protocol.utility.MinecraftReflection;
 
 public final class ReflectionHelper {
 
+	@Deprecated
 	public static class ProxiedCommandSenderHandleFinder {
 		public Method method;
 
@@ -50,6 +52,7 @@ public final class ReflectionHelper {
 		}
 	}
 
+	@Deprecated
 	public static class GetTileEntityMethodFinder {
 		public Method method;
 
@@ -78,52 +81,146 @@ public final class ReflectionHelper {
 		}
 	}
 
-	public static Method entityReadMethod;//
-	public static Method entityWriteMethod;// f
-	public static Method getEntityByUUIDMethod;//
-	public static Method selectingEntitiesMethod;// getplayers
-	public static Method tileGetCommandBlockLogicMethod;// getcommandblock
-	public static Method entityGetUUIDMethod;//
-	public static Method getServerMethod;// getserver
+	@Deprecated
+	public static Method entityReadMethod;
 
-	static {
+	@Deprecated
+	public static Method entityWriteMethod;
+
+	@Deprecated
+	public static Method getEntityByUUIDMethod;
+
+	@Deprecated
+	public static Method selectingEntitiesMethod;
+
+	@Deprecated
+	public static Method tileGetCommandBlockLogicMethod;
+
+	@Deprecated
+	public static Method entityGetUUIDMethod;
+
+	@Deprecated
+	public static Method getServerMethod;
+
+	@Deprecated
+	public static Method nbtWrite;
+
+	@Deprecated
+	public static Method nbtRead;
+
+	public static void init() {
 		getServerMethod();
 		getGettingEntityMethod();
 		getIOMethods();
 		getSelectingMethod();
 		getTileGetCommandBlockLogicMethod();
 		getEntityGetUUIDMethod();
+		getNBTReadMethod();
+		getNBTWriteMethod();
+	}
+
+	public static void nbtWrite(Object nmsNBTTagCompound, OutputStream out) {
+		try {
+			nbtWrite.invoke(null, nmsNBTTagCompound, out);
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static Object nbtRead(InputStream in) {
+		try {
+			return nbtRead.invoke(null, in);
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static void entityRead(Object nmsEntity, Object nmsNBTTagCompound) {
+		try {
+			entityReadMethod.invoke(nmsEntity, nmsNBTTagCompound);
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static void entityWrite(Object nmsEntity, Object nmsNBTTagCompound) {
+		try {
+			entityWriteMethod.invoke(nmsEntity, nmsNBTTagCompound);
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static Object getServer() {
+		try {
+			return getServerMethod.invoke(null);
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static Object getEntityByUUID(UUID uuid) {
+		try {
+			return getEntityByUUIDMethod.invoke(getServer(), uuid);
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static UUID getEntityUUID(Object nmsEntity) {
+		try {
+			return (UUID) entityGetUUIDMethod.invoke(nmsEntity);
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static List<?> selectEntities(CommandSender sender, String expression, Class<?> type) {
+		try {
+			return (List<?>) selectingEntitiesMethod.invoke(null, toNMSIComandSender(sender), expression, type);
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static Object getTileEntity(Block block) {
+		GetTileEntityMethodFinder tilefinder = new GetTileEntityMethodFinder();
+		tilefinder.find(block.getWorld());
+		try {
+			return tilefinder.method.invoke(block.getWorld(), block.getX(), block.getY(), block.getZ());
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static Object getCommandBlockLogic(Block block) {
+		try {
+			return tileGetCommandBlockLogicMethod.invoke(getTileEntity(block));
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static Object getProxiedCommandSender(ProxiedCommandSender s) {
+		ProxiedCommandSenderHandleFinder finder = new ProxiedCommandSenderHandleFinder();
+		finder.find(s);
+		try {
+			return finder.method.invoke(s);
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public static Object toNMSIComandSender(CommandSender s) {
 		try {
 			if (s instanceof Entity) {
-				return getEntityByUUIDMethod.invoke(getServerMethod.invoke(null), ((Entity) s).getUniqueId());
+				return getEntityByUUID(((Entity) s).getUniqueId());
 			} else if ((s instanceof ConsoleCommandSender) || (s instanceof RemoteConsoleCommandSender)) {
-				return getServerMethod.invoke(null);
-			} else if (s instanceof Player) {
-				UUID uuid = null;
-				int id = ((Player) s).getEntityId();
-				loopEntities:
-					for (World world : Bukkit.getWorlds()) {
-						for (Entity entity : world.getEntities()) {
-							if (entity.getEntityId() == id) {
-								uuid = entity.getUniqueId();
-								break loopEntities;
-							}
-						}
-					}
-				return getEntityByUUIDMethod.invoke(getServerMethod.invoke(null), uuid);
+				return getServer();
 			} else if (s instanceof ProxiedCommandSender) {
-				ProxiedCommandSenderHandleFinder finder = new ProxiedCommandSenderHandleFinder();
-				finder.find((ProxiedCommandSender) s);
-				return finder.method.invoke(s);
+				return getProxiedCommandSender((ProxiedCommandSender) s);
 			} else if (s instanceof BlockCommandSender) {
-				Block block = ((BlockCommandSender) s).getBlock();
-				GetTileEntityMethodFinder tilefinder = new GetTileEntityMethodFinder();
-				tilefinder.find(block.getWorld());
-				Object tile = tilefinder.method.invoke(block.getWorld(), block.getX(), block.getY(), block.getZ());
-				return tileGetCommandBlockLogicMethod.invoke(tile);
+				return getCommandBlockLogic(((BlockCommandSender) s).getBlock());
 			} else {
 				return null;
 			}
@@ -298,6 +395,57 @@ public final class ReflectionHelper {
 						selectingEntitiesMethod = Accessors.getMethodAccessor(playerSelector, name, icommandsender,
 								string,
 								clazz).getMethod();
+					}
+					return null;
+				}
+
+			}, 0);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private static void getNBTWriteMethod() {
+		try {
+			final Class<?> nbtCompressedStreamTools = MinecraftReflection.getNbtCompressedStreamToolsClass();
+			final Class<?> nbtCompound = MinecraftReflection.getNBTCompoundClass();
+			final Class<?> outputStream = OutputStream.class;
+			final String methodDesc = "(L" + nbtCompound.getCanonicalName().replace('.', '/') + ";L"
+					+ outputStream.getCanonicalName().replace('.', '/') + ";)V";
+			ClassReader reader = new ClassReader(nbtCompressedStreamTools.getCanonicalName());
+			reader.accept(new EmptyClassVisitor() {
+
+				@Override
+				public MethodVisitor visitMethod(int access, String name, String desc, String signature,
+						String[] exceptions) {
+					if ((access == (Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC)) && methodDesc.equals(desc)) {
+						nbtWrite = Accessors.getMethodAccessor(nbtCompressedStreamTools, name, nbtCompound,
+								outputStream).getMethod();
+					}
+					return null;
+				}
+
+			}, 0);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private static void getNBTReadMethod() {
+		try {
+			final Class<?> nbtCompressedStreamTools = MinecraftReflection.getNbtCompressedStreamToolsClass();
+			final Class<?> nbtCompound = MinecraftReflection.getNBTCompoundClass();
+			final Class<?> inputStream = InputStream.class;
+			final String methodDesc = "(L" + inputStream.getCanonicalName().replace('.', '/') + ";)L"
+					+ nbtCompound.getCanonicalName().replace('.', '/') + ";";
+			ClassReader reader = new ClassReader(nbtCompressedStreamTools.getCanonicalName());
+			reader.accept(new EmptyClassVisitor() {
+
+				@Override
+				public MethodVisitor visitMethod(int access, String name, String desc, String signature,
+						String[] exceptions) {
+					if ((access == (Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC)) && methodDesc.equals(desc)) {
+						nbtRead = Accessors.getMethodAccessor(nbtCompressedStreamTools, name, inputStream).getMethod();
 					}
 					return null;
 				}
