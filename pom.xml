@@ -28,7 +28,9 @@
 				<checksumPolicy>warn</checksumPolicy>
 			</snapshots>
 			<releases>
-				<enabled>false</enabled>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>warn</checksumPolicy>
 			</releases>
 			<layout>default</layout>
 		</repository>
@@ -41,7 +43,9 @@
 				<checksumPolicy>warn</checksumPolicy>
 			</snapshots>
 			<releases>
-				<enabled>false</enabled>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>warn</checksumPolicy>
 			</releases>
 			<layout>default</layout>
 		</repository>
