@@ -24,8 +24,8 @@
 			<url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
 			<snapshots>
 				<enabled>true</enabled>
-				<updatePolicy>daily</updatePolicy>
-				<checksumPolicy>always</checksumPolicy>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>warn</checksumPolicy>
 			</snapshots>			
 		</repository>
 		<repository>
@@ -33,8 +33,8 @@
 			<url>http://ci.shadowvolt.com/plugin/repository/everything/</url>
 			<snapshots>
 				<enabled>true</enabled>
-				<updatePolicy>daily</updatePolicy>
-				<checksumPolicy>always</checksumPolicy>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>warn</checksumPolicy>
 			</snapshots>
 			<layout>default</layout> 
 		</repository>
