@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>yushijinhun.advancedcommands</groupId>
 	<artifactId>AdvancedCommands</artifactId>
-	<version>0.2.${env.BUILD_ID}</version>
+	<version>0.2.${env.TRAVIS_BUILD_NUMBER}</version>
 	<name>AdvancedCommands</name>
 	<description>More commands for Minecraft</description>
 	<build>
