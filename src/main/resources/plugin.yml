@@ -1,6 +1,6 @@
 name: "AdvancedCommands"
 main: "yushijinhun.advancedcommands.AdvancedCommands"
-version: "0.2"
+version: "${VERSION}"
 depend: ["ProtocolLib"]
 commands:
    exp:
