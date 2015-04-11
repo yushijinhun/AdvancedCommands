@@ -29,4 +29,8 @@ public class VarWarpperConstant implements IVarWarpper {
 	public void changed() {
 	}
 
+	@Override
+	public String toString() {
+		return String.valueOf(var);
+	}
 }

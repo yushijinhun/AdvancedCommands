@@ -12,13 +12,13 @@ public class FunctionSay extends Function {
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
 		String msg = (String) args[0].value;
-		String sender;
+		String prefix;
 		if (args.length > 1) {
-			sender = (String) args[1].value;
+			prefix = args[1] == null ? "" : "[" + (String) args[1].value + "] ";
 		} else {
-			sender = context.getCommandSender().getName();
+			prefix = "[" + context.getCommandSender().getName() + "] ";
 		}
-		Bukkit.broadcastMessage("[" + sender + "] " + msg);
+		Bukkit.broadcastMessage(prefix + msg);
 		return null;
 	}
 

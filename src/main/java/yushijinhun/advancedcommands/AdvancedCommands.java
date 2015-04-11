@@ -7,7 +7,6 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import org.bukkit.plugin.java.JavaPlugin;
 import yushijinhun.advancedcommands.command.CommandExp;
 import yushijinhun.advancedcommands.command.datatype.DataType;
@@ -148,7 +147,7 @@ public final class AdvancedCommands extends JavaPlugin {
 	public void loadVarData() {
 		try (DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(vardataFile)))) {
 			vardata.read(in);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			getLogger().warning(String.format("Load var data file failed\n%s", ExceptionHelper.exceptionToString(e)));
 		}
 	}
@@ -156,7 +155,7 @@ public final class AdvancedCommands extends JavaPlugin {
 	public void saveVarData() {
 		try (DataOutputStream out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(vardataFile)))) {
 			vardata.write(out);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			getLogger().warning(String.format("Save var data file failed\n%s", ExceptionHelper.exceptionToString(e)));
 		}
 	}

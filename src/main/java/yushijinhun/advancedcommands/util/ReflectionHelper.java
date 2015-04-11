@@ -2,10 +2,13 @@ package yushijinhun.advancedcommands.util;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.UUID;
+import net.minecraft.server.RemoteControlCommandListener;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.BlockCommandSender;
@@ -14,7 +17,9 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.ProxiedCommandSender;
 import org.bukkit.command.RemoteConsoleCommandSender;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.minecart.CommandMinecart;
 import com.comphenix.net.sf.cglib.asm.ClassReader;
+import com.comphenix.net.sf.cglib.asm.FieldVisitor;
 import com.comphenix.net.sf.cglib.asm.MethodVisitor;
 import com.comphenix.net.sf.cglib.asm.Opcodes;
 import com.comphenix.protocol.reflect.accessors.Accessors;
@@ -82,6 +87,34 @@ public final class ReflectionHelper {
 	}
 
 	@Deprecated
+	public static class GetMinecartEntityMethodFinder {
+		public Method method;
+
+		public void find(CommandMinecart m) {
+			try {
+				final Class<?> craftMinecart = m.getClass();
+				final Class<?> entityMinecartAbstract = MinecraftReflection.getMinecraftClass("EntityMinecartAbstract");
+				final String methodDesc = "()L" + entityMinecartAbstract.getCanonicalName().replace('.', '/') + ";";
+				ClassReader reader = new ClassReader(craftMinecart.getCanonicalName());
+				reader.accept(new EmptyClassVisitor() {
+
+					@Override
+					public MethodVisitor visitMethod(int access, String name, String desc, String signature,
+							String[] exceptions) {
+						if ((access == Opcodes.ACC_PUBLIC) && methodDesc.equals(desc)) {
+							method = Accessors.getMethodAccessor(craftMinecart, name).getMethod();
+						}
+						return null;
+					}
+
+				}, 0);
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
+	}
+
+	@Deprecated
 	public static Method entityReadMethod;
 
 	@Deprecated
@@ -108,15 +141,27 @@ public final class ReflectionHelper {
 	@Deprecated
 	public static Method nbtRead;
 
+	@Deprecated
+	public static Method commandSenderGetWorldMethod;
+
+	@Deprecated
+	public static Field serverWorlds;
+
+	@Deprecated
+	public static Field serverWorldsArray;
+
 	public static void init() {
 		getServerMethod();
 		getGettingEntityMethod();
 		getIOMethods();
-		getSelectingMethod();
+		getSelectingEntityMethod();
 		getTileGetCommandBlockLogicMethod();
 		getEntityGetUUIDMethod();
 		getNBTReadMethod();
 		getNBTWriteMethod();
+		getServerWorldsField();
+		getServerWorldsArrayField();
+		getCommandSenderGetWorldMethod();
 	}
 
 	public static void nbtWrite(Object nmsNBTTagCompound, OutputStream out) {
@@ -175,11 +220,42 @@ public final class ReflectionHelper {
 		}
 	}
 
-	public static List<?> selectEntities(CommandSender sender, String expression, Class<?> type) {
+	public static List<?> selectEntities(CommandSender sender, String expression) {
+		Object nmsSender = toNMSIComandSender(sender);
+		Object minecraftserver = getServer();
+		Object[] oldWorldsArray;
+		Object ownWorld;
+		List<?> worlds;
 		try {
-			return (List<?>) selectingEntitiesMethod.invoke(null, toNMSIComandSender(sender), expression, type);
+			ownWorld = commandSenderGetWorldMethod.invoke(nmsSender);
+			oldWorldsArray = (Object[]) serverWorldsArray.get(minecraftserver);
+			worlds = (List<?>) serverWorlds.get(minecraftserver);
+		} catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
+			throw new RuntimeException(e);
+		}
+
+		Object[] newWorldsArray = (Object[]) Array
+				.newInstance(MinecraftReflection.getWorldServerClass(), worlds.size());
+		newWorldsArray[0] = ownWorld;
+		int i = 1;
+		for (Object world : worlds) {
+			if (world != ownWorld) {
+				newWorldsArray[i] = world;
+				i++;
+			}
+		}
+
+		try {
+			serverWorldsArray.set(minecraftserver, newWorldsArray);
+			return (List<?>) selectingEntitiesMethod.invoke(null, nmsSender, expression);
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new RuntimeException(e);
+		} finally {
+			try {
+				serverWorldsArray.set(minecraftserver, oldWorldsArray);
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				throw new RuntimeException(e);
+			}
 		}
 	}
 
@@ -201,6 +277,16 @@ public final class ReflectionHelper {
 		}
 	}
 
+	public static Object getCommandBlockLogic(CommandMinecart sender) {
+		try {
+			GetMinecartEntityMethodFinder handlerFinder = new GetMinecartEntityMethodFinder();
+			handlerFinder.find(sender);
+			return tileGetCommandBlockLogicMethod.invoke(handlerFinder.method);
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	public static Object getProxiedCommandSender(ProxiedCommandSender s) {
 		ProxiedCommandSenderHandleFinder finder = new ProxiedCommandSenderHandleFinder();
 		finder.find(s);
@@ -215,15 +301,18 @@ public final class ReflectionHelper {
 		try {
 			if (s instanceof Entity) {
 				return getEntityByUUID(((Entity) s).getUniqueId());
-			} else if ((s instanceof ConsoleCommandSender) || (s instanceof RemoteConsoleCommandSender)) {
+			} else if (s instanceof ConsoleCommandSender) {
 				return getServer();
+			} else if (s instanceof RemoteConsoleCommandSender) {
+				RemoteControlCommandListener.getInstance();
 			} else if (s instanceof ProxiedCommandSender) {
 				return getProxiedCommandSender((ProxiedCommandSender) s);
 			} else if (s instanceof BlockCommandSender) {
 				return getCommandBlockLogic(((BlockCommandSender) s).getBlock());
-			} else {
-				return null;
+			} else if (s instanceof CommandMinecart) {
+				return getCommandBlockLogic((CommandMinecart) s);
 			}
+			return null;
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -374,32 +463,30 @@ public final class ReflectionHelper {
 		}
 	}
 
-	private static void getSelectingMethod() {
+	private static void getSelectingEntityMethod() {
 		try {
+			final Class<?> commandAbstract = MinecraftReflection.getMinecraftClass("CommandAbstract");
 			final Class<?> list = List.class;
 			final Class<?> icommandsender = MinecraftReflection.getMinecraftClass("ICommandListener");
 			final Class<?> string = String.class;
-			final Class<?> clazz = Class.class;
 			final String methodDesc = "(L" + icommandsender.getCanonicalName().replace('.', '/') + ";L"
-					+ string.getCanonicalName().replace('.', '/') + ";L" + clazz.getCanonicalName().replace('.', '/')
-					+ ";)L" + list.getCanonicalName().replace('.', '/') + ";";
-			final Class<?> playerSelector = MinecraftReflection.getMinecraftClass("PlayerSelector");
-			ClassReader reader = new ClassReader(playerSelector.getCanonicalName());
+					+ string.getCanonicalName().replace('.', '/') + ";)L" + list.getCanonicalName().replace('.', '/')
+					+ ";";
+			ClassReader reader = new ClassReader(commandAbstract.getCanonicalName());
 			reader.accept(new EmptyClassVisitor() {
 
 				@Override
 				public MethodVisitor visitMethod(int access, String name, String desc, String signature,
 						String[] exceptions) {
-					// public static xxx(ICommandListener,String,Class)
 					if ((access == (Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC)) && methodDesc.equals(desc)) {
-						selectingEntitiesMethod = Accessors.getMethodAccessor(playerSelector, name, icommandsender,
-								string,
-								clazz).getMethod();
+						selectingEntitiesMethod = Accessors.getMethodAccessor(commandAbstract, name, icommandsender,
+								string).getMethod();
 					}
 					return null;
 				}
 
 			}, 0);
+
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -446,6 +533,73 @@ public final class ReflectionHelper {
 						String[] exceptions) {
 					if ((access == (Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC)) && methodDesc.equals(desc)) {
 						nbtRead = Accessors.getMethodAccessor(nbtCompressedStreamTools, name, inputStream).getMethod();
+					}
+					return null;
+				}
+
+			}, 0);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private static void getServerWorldsField() {
+		try {
+			final Class<?> minecraftServer = MinecraftReflection.getMinecraftServerClass();
+			final Class<?> list = List.class;
+			final String fieldDesc = "L" + list.getCanonicalName().replace('.', '/') + ";";
+			ClassReader reader = new ClassReader(minecraftServer.getCanonicalName());
+			reader.accept(new EmptyClassVisitor() {
+
+				@Override
+				public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
+					if ((access == Opcodes.ACC_PUBLIC) && fieldDesc.equals(desc)) {
+						serverWorlds = Accessors.getFieldAccessor(minecraftServer, name, true).getField();
+					}
+					return null;
+				}
+
+			}, 0);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private static void getServerWorldsArrayField() {
+		try {
+			final Class<?> minecraftServer = MinecraftReflection.getMinecraftServerClass();
+			final Class<?> serverWorld = MinecraftReflection.getWorldServerClass();
+			final String fieldDesc = "[L" + serverWorld.getCanonicalName().replace('.', '/') + ";";
+			ClassReader reader = new ClassReader(minecraftServer.getCanonicalName());
+			reader.accept(new EmptyClassVisitor() {
+
+				@Override
+				public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
+					if ((access == Opcodes.ACC_PUBLIC) && fieldDesc.equals(desc)) {
+						serverWorldsArray = Accessors.getFieldAccessor(minecraftServer, name, true).getField();
+					}
+					return null;
+				}
+
+			}, 0);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private static void getCommandSenderGetWorldMethod() {
+		try {
+			final Class<?> icommandsender = MinecraftReflection.getMinecraftClass("ICommandListener");
+			final Class<?> world = MinecraftReflection.getNmsWorldClass();
+			final String methodDesc = "()L" + world.getCanonicalName().replace('.', '/') + ";";
+			ClassReader reader = new ClassReader(icommandsender.getCanonicalName());
+			reader.accept(new EmptyClassVisitor() {
+
+				@Override
+				public MethodVisitor visitMethod(int access, String name, String desc, String signature,
+						String[] exceptions) {
+					if ((access == (Opcodes.ACC_PUBLIC + Opcodes.ACC_ABSTRACT)) && methodDesc.equals(desc)) {
+						commandSenderGetWorldMethod = Accessors.getMethodAccessor(icommandsender, name).getMethod();
 					}
 					return null;
 				}

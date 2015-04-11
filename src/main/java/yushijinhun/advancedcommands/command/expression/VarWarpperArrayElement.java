@@ -37,4 +37,8 @@ public class VarWarpperArrayElement implements IVarWarpper {
 		var.changed();
 	}
 
+	@Override
+	public String toString() {
+		return var + "[" + index + "]";
+	}
 }

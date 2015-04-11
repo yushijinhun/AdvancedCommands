@@ -32,4 +32,9 @@ public class VarWarpperVar implements IVarWarpper {
 	public void changed() {
 		plugin.vardata.markDirty();
 	}
+
+	@Override
+	public String toString() {
+		return name + "<" + get() + ">";
+	}
 }

@@ -117,6 +117,9 @@ public final class ExpressionHandler {
 					for (int i = argLength - 1; i > -1; i--) {
 						rawArgs[i] = stack.pop();
 						args[i] = rawArgs[i].get();
+						if ((args[i] != null) && (args[i].value == null)) {
+							args[i] = null;
+						}
 					}
 					FunctionContext context = new FunctionContext(sender, rawArgs, plugin);
 					Var result = function.call(args, context);
@@ -708,16 +711,19 @@ public final class ExpressionHandler {
 			String str = exps[i];
 			str = str.trim();
 			if (isOp(str)) {
-				if (str.equals("(")||str.equals("[")) {
+				if (str.equals("(") || str.equals("[")) {
 					stack.push(str);
 				} else if (str.equals(",")) {
-					while (!stack.isEmpty() && !stack.peek().equals("(")) {
+					while (!stack.isEmpty() && !(stack.peek().equals("(") || stack.peek().equals("["))) {
 						result.add(stack.pop());
 					}
 				} else if (str.equals(")")) {
 					while (!stack.isEmpty()) {
 						String str2 = stack.pop();
 						if (str2.equals("(")) {
+							if (stack.peek().startsWith("()")) {
+								result.add(stack.pop());
+							}
 							break;
 						}
 						result.add(str2);

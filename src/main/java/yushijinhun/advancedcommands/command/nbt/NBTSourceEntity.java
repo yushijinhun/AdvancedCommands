@@ -16,13 +16,13 @@ public class NBTSourceEntity implements NBTSource {
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}
-		ReflectionHelper.entityRead(ReflectionHelper.getEntityByUUID(UUID.fromString(id)), nmsnbt);
+		ReflectionHelper.entityWrite(ReflectionHelper.getEntityByUUID(UUID.fromString(id)), nmsnbt);
 		return NbtFactory.fromNMSCompound(nmsnbt);
 	}
 
 	@Override
 	public void set(String id, NbtCompound nbt) {
-		ReflectionHelper.entityWrite(ReflectionHelper.getEntityByUUID(UUID.fromString(id)), NbtFactory.fromBase(nbt)
+		ReflectionHelper.entityRead(ReflectionHelper.getEntityByUUID(UUID.fromString(id)), NbtFactory.fromBase(nbt)
 				.getHandle());
 	}
 
