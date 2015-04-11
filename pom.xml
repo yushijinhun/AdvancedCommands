@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>yushijinhun.advancedcommands</groupId>
 	<artifactId>AdvancedCommands</artifactId>
-	<version>0.2</version>
+	<version>0.2.${env.BUILD_ID}</version>
 	<name>AdvancedCommands</name>
 	<description>More commands for Minecraft</description>
 	<build>
@@ -22,17 +22,22 @@
 		<repository>
 			<id>bukkit-repo</id>
 			<url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>daily</updatePolicy>
+				<checksumPolicy>always</checksumPolicy>
+			</snapshots>			
 		</repository>
 		<repository>
 			<id>shadowvolt-repo</id>
 			<url>http://ci.shadowvolt.com/plugin/repository/everything/</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>daily</updatePolicy>
+				<checksumPolicy>always</checksumPolicy>
+			</snapshots>
+			<layout>default</layout> 
 		</repository>
-		<snapshots>
-			<enabled>false</enabled>
-			<updatePolicy>daily</updatePolicy>
-			<checksumPolicy>always</checksumPolicy>
-		</snapshots>
-		<layout>default</layout> 
 	</repositories>
 	<dependencies>
 		<dependency>
