@@ -25,11 +25,6 @@
 				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
 			</resource>
-			<resource>
-				<directory></directory>
-				<filtering>true</filtering>
-				<include>.travis.yml</include>
-			</resource>
 		</resources>
 	</build>
 	<repositories>
