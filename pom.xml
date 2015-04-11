@@ -26,7 +26,11 @@
 				<enabled>true</enabled>
 				<updatePolicy>always</updatePolicy>
 				<checksumPolicy>warn</checksumPolicy>
-			</snapshots>			
+			</snapshots>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<layout>default</layout>
 		</repository>
 		<repository>
 			<id>shadowvolt-repo</id>
@@ -36,7 +40,10 @@
 				<updatePolicy>always</updatePolicy>
 				<checksumPolicy>warn</checksumPolicy>
 			</snapshots>
-			<layout>default</layout> 
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<layout>default</layout>
 		</repository>
 	</repositories>
 	<dependencies>
