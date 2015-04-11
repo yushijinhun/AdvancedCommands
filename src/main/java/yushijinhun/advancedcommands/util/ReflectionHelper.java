@@ -8,7 +8,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.UUID;
-import net.minecraft.server.RemoteControlCommandListener;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.BlockCommandSender;
@@ -145,6 +144,9 @@ public final class ReflectionHelper {
 	public static Method commandSenderGetWorldMethod;
 
 	@Deprecated
+	public static Method getRemoteControlCommandListenerMethod;
+
+	@Deprecated
 	public static Field serverWorlds;
 
 	@Deprecated
@@ -162,6 +164,15 @@ public final class ReflectionHelper {
 		getServerWorldsField();
 		getServerWorldsArrayField();
 		getCommandSenderGetWorldMethod();
+		getGetRemoteControlCommandListenerMethod();
+	}
+
+	public static Object getRemoteControlCommandListener() {
+		try {
+			return getRemoteControlCommandListenerMethod.invoke(null);
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public static void nbtWrite(Object nmsNBTTagCompound, OutputStream out) {
@@ -304,7 +315,7 @@ public final class ReflectionHelper {
 			} else if (s instanceof ConsoleCommandSender) {
 				return getServer();
 			} else if (s instanceof RemoteConsoleCommandSender) {
-				RemoteControlCommandListener.getInstance();
+
 			} else if (s instanceof ProxiedCommandSender) {
 				return getProxiedCommandSender((ProxiedCommandSender) s);
 			} else if (s instanceof BlockCommandSender) {
@@ -605,6 +616,31 @@ public final class ReflectionHelper {
 				}
 
 			}, 0);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private static void getGetRemoteControlCommandListenerMethod() {
+		try {
+			final Class<?> remoteControlCommandListener = MinecraftReflection
+					.getMinecraftClass("RemoteControlCommandListener");
+			final String methodDesc = "()L" + remoteControlCommandListener.getCanonicalName().replace('.', '/') + ";";
+			ClassReader reader = new ClassReader(remoteControlCommandListener.getCanonicalName());
+			reader.accept(new EmptyClassVisitor() {
+
+				@Override
+				public MethodVisitor visitMethod(int access, String name, String desc, String signature,
+						String[] exceptions) {
+					if ((access == (Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC)) && methodDesc.equals(desc)) {
+						getRemoteControlCommandListenerMethod = Accessors.getMethodAccessor(
+								remoteControlCommandListener, name).getMethod();
+					}
+					return null;
+				}
+
+			}, 0);
+
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
