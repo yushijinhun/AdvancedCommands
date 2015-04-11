@@ -27,6 +27,12 @@
 			<id>shadowvolt-repo</id>
 			<url>http://ci.shadowvolt.com/plugin/repository/everything/</url>
 		</repository>
+		<snapshots>
+			<enabled>false</enabled>
+			<updatePolicy>daily</updatePolicy>
+			<checksumPolicy>always</checksumPolicy>
+		</snapshots>
+		<layout>default</layout> 
 	</repositories>
 	<dependencies>
 		<dependency>
