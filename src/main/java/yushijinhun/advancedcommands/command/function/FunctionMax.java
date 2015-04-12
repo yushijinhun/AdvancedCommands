@@ -12,9 +12,9 @@ public class FunctionMax extends Function {
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
 		boolean larger;
-		DataType type = context.getPlugin().expressionHandler.getPrecisest(args[0].type, args[1].type);
-		Object var1 = type.cast(args[0].value, args[0].type);
-		Object var2 = type.cast(args[1].value, args[1].type);
+		DataType type = context.getPlugin().expressionHandler.getPrecisest(args[0].getType(), args[1].getType());
+		Object var1 = type.cast(args[0].getValue(), args[0].getType());
+		Object var2 = type.cast(args[1].getValue(), args[1].getType());
 		if (type.name.equals("byte")) {
 			larger = (Byte) var1 > (Byte) var2;
 		} else if (type.name.equals("short")) {

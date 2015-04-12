@@ -23,44 +23,44 @@ public final class NBTHandler {
 	public NbtBase<?> createTag(String name, Var data) {
 		if (name.equals("BYTE")) {
 			return NbtFactory.ofWrapper(NbtType.TAG_BYTE, "",
-					data.value instanceof Boolean ? ((Boolean) data.value ? (byte) 1 : (byte) 0)
-							: (Byte) data.value);
+					data.getValue() instanceof Boolean ? ((Boolean) data.getValue() ? (byte) 1 : (byte) 0)
+							: (Byte) data.getValue());
 		} else if (name.equals("SHORT")) {
-			return NbtFactory.ofWrapper(NbtType.TAG_SHORT, "", (Short) data.value);
+			return NbtFactory.ofWrapper(NbtType.TAG_SHORT, "", (Short) data.getValue());
 		} else if (name.equals("INT")) {
-			return NbtFactory.ofWrapper(NbtType.TAG_INT, "", (Integer) data.value);
+			return NbtFactory.ofWrapper(NbtType.TAG_INT, "", (Integer) data.getValue());
 		} else if (name.equals("LONG")) {
-			return NbtFactory.ofWrapper(NbtType.TAG_LONG, "", (Long) data.value);
+			return NbtFactory.ofWrapper(NbtType.TAG_LONG, "", (Long) data.getValue());
 		} else if (name.equals("FLOAT")) {
-			return NbtFactory.ofWrapper(NbtType.TAG_FLOAT, "", (Float) data.value);
+			return NbtFactory.ofWrapper(NbtType.TAG_FLOAT, "", (Float) data.getValue());
 		} else if (name.equals("DOUBLE")) {
-			return NbtFactory.ofWrapper(NbtType.TAG_DOUBLE, "", (Double) data.value);
+			return NbtFactory.ofWrapper(NbtType.TAG_DOUBLE, "", (Double) data.getValue());
 		} else if (name.equals("BYTE[]")) {
-			Var[] vars = (Var[]) data.value;
+			Var[] vars = (Var[]) data.getValue();
 			byte[] out = new byte[vars.length];
 			for (int i = 0; i < vars.length; i++) {
 				Var var = vars[i];
-				if ((var == null) || !(var.value instanceof Byte)) {
+				if ((var == null) || !(var.getValue() instanceof Byte)) {
 					throw new IllegalArgumentException(String.format("Cannot convert element %s", i));
 				}
-				out[i] = (Byte) var.value;
+				out[i] = (Byte) var.getValue();
 			}
 			return NbtFactory.ofWrapper(NbtType.TAG_BYTE_ARRAY, "", out);
 		} else if (name.equals("STRING")) {
-			return NbtFactory.ofWrapper(NbtType.TAG_STRING, "", (String) data.value);
+			return NbtFactory.ofWrapper(NbtType.TAG_STRING, "", (String) data.getValue());
 		} else if (name.equals("LIST")) {
 			return NbtFactory.ofWrapper(NbtType.TAG_LIST, "");
 		} else if (name.equals("COMPOUND")) {
 			return NbtFactory.ofWrapper(NbtType.TAG_COMPOUND, "");
 		} else if (name.equals("INT[]")) {
-			Var[] vars = (Var[]) data.value;
+			Var[] vars = (Var[]) data.getValue();
 			int[] out = new int[vars.length];
 			for (int i = 0; i < vars.length; i++) {
 				Var var = vars[i];
-				if ((var == null) || !(var.value instanceof Integer)) {
+				if ((var == null) || !(var.getValue() instanceof Integer)) {
 					throw new IllegalArgumentException(String.format("Cannot convert element %s", i));
 				}
-				out[i] = (Integer) var.value;
+				out[i] = (Integer) var.getValue();
 			}
 			return NbtFactory.ofWrapper(NbtType.TAG_INT_ARRAY, "", out);
 		} else {

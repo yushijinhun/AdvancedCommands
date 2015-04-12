@@ -20,7 +20,7 @@ public class VarWarpperArrayElement implements IVarWarpper {
 	@Override
 	public void set(Var var) {
 		if (canWrite()) {
-			((Var[]) this.var.get().value)[index] = var;
+			((Var[]) this.var.get().getValue())[index] = var;
 			this.var.changed();
 		} else {
 			throw new IllegalStateException("Cannot be set");
@@ -29,7 +29,7 @@ public class VarWarpperArrayElement implements IVarWarpper {
 
 	@Override
 	public Var get() {
-		return ((Var[]) this.var.get().value)[index];
+		return ((Var[]) this.var.get().getValue())[index];
 	}
 
 	@Override

@@ -13,11 +13,11 @@ public class FunctionRemoveChild extends Function {
 
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
-		NbtBase<?> tag = (NbtBase<?>) args[0].value;
+		NbtBase<?> tag = (NbtBase<?>) args[0].getValue();
 		if (tag instanceof NbtCompound) {
-			((NbtCompound) tag).remove((String) args[1].value);
+			((NbtCompound) tag).remove((String) args[1].getValue());
 		} else if (tag instanceof NbtList<?>) {
-			((NbtList<?>) tag).getValue().remove(((Integer) args[1].value).intValue());
+			((NbtList<?>) tag).getValue().remove(((Integer) args[1].getValue()).intValue());
 		} else {
 			throw new IllegalArgumentException("Cannot fetch child of " + tag);
 		}

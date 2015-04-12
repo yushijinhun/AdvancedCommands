@@ -9,8 +9,8 @@ import yushijinhun.advancedcommands.command.datatype.DataType;
 
 public class Var implements Cloneable {
 
-	public final DataType type;
-	public Object value;
+	private final DataType type;
+	private Object value;
 
 	public Var(DataType type) {
 		this(type, type.getDefaultValue());
@@ -46,6 +46,18 @@ public class Var implements Cloneable {
 	@Override
 	public Var clone() {
 		return new Var(type, type.cloneValue(value));
+	}
+
+	public Object getValue() {
+		return value;
+	}
+
+	public void setValue(Object value) {
+		this.value = value;
+	}
+
+	public DataType getType() {
+		return type;
 	}
 
 	public void write(DataOutput out, AdvancedCommands plugin) throws IOException {

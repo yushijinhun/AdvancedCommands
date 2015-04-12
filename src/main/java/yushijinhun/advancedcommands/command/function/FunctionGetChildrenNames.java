@@ -13,8 +13,8 @@ public class FunctionGetChildrenNames extends Function {
 
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
-		if (args[0].value instanceof NbtCompound) {
-			NbtCompound nbt = (NbtCompound) args[0].value;
+		if (args[0].getValue() instanceof NbtCompound) {
+			NbtCompound nbt = (NbtCompound) args[0].getValue();
 			Set<String> names = nbt.getKeys();
 			Set<Var> vars = new LinkedHashSet<Var>();
 			for (String s : names) {

@@ -13,11 +13,11 @@ public class FunctionListVar extends Function {
 		StringBuilder sb = new StringBuilder();
 		for (String name : context.getPlugin().vardata.varNamesSet()) {
 			Var var = context.getPlugin().vardata.get(name);
-			sb.append(var.type);
+			sb.append(var.getType());
 			sb.append(' ');
 			sb.append(name);
 			sb.append(" = ");
-			sb.append(var.type.valueToString(var.value));
+			sb.append(var.getType().valueToString(var.getValue()));
 			sb.append('\n');
 		}
 		if (sb.length() > 0) {

@@ -11,7 +11,7 @@ public class FunctionStringFirstIndexOf extends Function {
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
 		return new Var(context.getPlugin().datatypes.get("int"),
-				((String) args[0].value).indexOf((Integer) args[1].value));
+				((String) args[0].getValue()).indexOf((Integer) args[1].getValue()));
 	}
 
 }

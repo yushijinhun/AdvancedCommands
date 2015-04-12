@@ -11,10 +11,10 @@ public class FunctionCreate extends Function {
 
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
-		String name = (String) args[1].value;
-		DataType datatype = context.getPlugin().datatypes.get((String) args[0].value);
+		String name = (String) args[1].getValue();
+		DataType datatype = context.getPlugin().datatypes.get((String) args[0].getValue());
 		if (datatype == null) {
-			throw new IllegalArgumentException(String.format("Data type %s not exists", args[0].value));
+			throw new IllegalArgumentException(String.format("Data type %s not exists", args[0].getValue()));
 		}
 
 		if (!context.getPlugin().isValidIdentifier(name)) {
@@ -24,12 +24,12 @@ public class FunctionCreate extends Function {
 		Object value;
 		if (args.length > 2) {
 			Var data = args[2];
-			if ((data == null) || (data.value == null)) {
+			if ((data == null) || (data.getValue() == null)) {
 				value = null;
-			} else if (data.type == datatype) {
-				value = data.value;
+			} else if (data.getType() == datatype) {
+				value = data.getValue();
 			} else {
-				throw new IllegalArgumentException(String.format("Type %s does not equal %s", data.type, datatype));
+				throw new IllegalArgumentException(String.format("Type %s does not equal %s", data.getType(), datatype));
 			}
 		} else {
 			value = datatype.getDefaultValue();

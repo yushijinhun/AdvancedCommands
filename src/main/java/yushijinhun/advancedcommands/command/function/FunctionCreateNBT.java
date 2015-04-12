@@ -11,7 +11,7 @@ public class FunctionCreateNBT extends Function{
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
 		return new Var(context.getPlugin().datatypes.get("nbt"), context.getPlugin().nbthandler.createTag(
-				(String) args[0].value, args.length > 1 ? args[1] : null));
+				(String) args[0].getValue(), args.length > 1 ? args[1] : null));
 	}
 
 }

@@ -10,7 +10,7 @@ public class FunctionTan extends Function {
 
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
-		Object val = args[0].value;
+		Object val = args[0].getValue();
 		if (val instanceof Number) {
 			return new Var(context.getPlugin().datatypes.get("double"), Math.tan(((Number) val).doubleValue()));
 		}

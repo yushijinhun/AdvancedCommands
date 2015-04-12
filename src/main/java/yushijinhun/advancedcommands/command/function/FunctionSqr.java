@@ -10,7 +10,7 @@ public class FunctionSqr extends Function {
 
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
-		Object val = args[0].value;
+		Object val = args[0].getValue();
 		if ((val instanceof Byte) || (val instanceof Short) || (val instanceof Integer)) {
 			int num = ((Number) val).intValue();
 			return new Var(context.getPlugin().datatypes.get("int"), num * num);

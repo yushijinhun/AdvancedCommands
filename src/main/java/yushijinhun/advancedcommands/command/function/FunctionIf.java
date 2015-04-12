@@ -10,7 +10,7 @@ public class FunctionIf extends Function {
 
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
-		if ((Boolean) args[0].value) {
+		if ((Boolean) args[0].getValue()) {
 			ShellHelper.execute(args[1], context);
 		} else {
 			if (args.length > 2) {

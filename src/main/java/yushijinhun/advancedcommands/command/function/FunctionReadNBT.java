@@ -11,7 +11,7 @@ public class FunctionReadNBT extends Function {
 
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
-		return new Var(context.getPlugin().datatypes.get("nbt"), NBTSourceInfo.parseNBTInfo((String) args[0].value,
+		return new Var(context.getPlugin().datatypes.get("nbt"), NBTSourceInfo.parseNBTInfo((String) args[0].getValue(),
 				context.getPlugin()).get());
 	}
 

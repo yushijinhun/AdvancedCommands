@@ -12,7 +12,7 @@ public class FunctionWriteNBT extends Function {
 
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
-		NBTSourceInfo.parseNBTInfo((String) args[0].value, context.getPlugin()).set((NbtCompound) args[1].value);
+		NBTSourceInfo.parseNBTInfo((String) args[0].getValue(), context.getPlugin()).set((NbtCompound) args[1].getValue());
 		return null;
 	}
 

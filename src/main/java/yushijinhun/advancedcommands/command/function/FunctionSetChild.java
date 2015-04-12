@@ -14,13 +14,13 @@ public class FunctionSetChild extends Function {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
-		NbtBase<?> tag = (NbtBase<?>) args[0].value;
+		NbtBase<?> tag = (NbtBase<?>) args[0].getValue();
 		@SuppressWarnings("rawtypes")
-		NbtBase child = (NbtBase<?>) args[1].value;
+		NbtBase child = (NbtBase<?>) args[1].getValue();
 		if (tag instanceof NbtCompound) {
-			((NbtCompound) tag).put((String) args[2].value, child);
+			((NbtCompound) tag).put((String) args[2].getValue(), child);
 		} else if (tag instanceof NbtList<?>) {
-			int index = (Integer) args[2].value;
+			int index = (Integer) args[2].getValue();
 			if (index == -1) {
 				((NbtList<?>) tag).add(child);
 			} else {

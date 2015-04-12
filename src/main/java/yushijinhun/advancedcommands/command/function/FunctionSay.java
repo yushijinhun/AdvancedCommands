@@ -11,10 +11,10 @@ public class FunctionSay extends Function {
 
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
-		String msg = (String) args[0].value;
+		String msg = (String) args[0].getValue();
 		String prefix;
 		if (args.length > 1) {
-			prefix = args[1] == null ? "" : "[" + (String) args[1].value + "] ";
+			prefix = args[1] == null ? "" : "[" + (String) args[1].getValue() + "] ";
 		} else {
 			prefix = "[" + context.getCommandSender().getName() + "] ";
 		}

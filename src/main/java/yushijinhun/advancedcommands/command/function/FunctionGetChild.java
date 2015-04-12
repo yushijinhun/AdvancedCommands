@@ -13,12 +13,12 @@ public class FunctionGetChild extends Function {
 
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
-		NbtBase<?> tag = (NbtBase<?>) args[0].value;
+		NbtBase<?> tag = (NbtBase<?>) args[0].getValue();
 		NbtBase<?> child;
 		if (tag instanceof NbtCompound) {
-			child = ((NbtCompound) tag).getValue((String) args[1].value);
+			child = ((NbtCompound) tag).getValue((String) args[1].getValue());
 		} else if (tag instanceof NbtList<?>) {
-			child = ((NbtList<?>) tag).getValue().get((Integer) args[1].value);
+			child = ((NbtList<?>) tag).getValue().get((Integer) args[1].getValue());
 		} else {
 			throw new IllegalArgumentException("Cannot fetch child of " + tag);
 		}

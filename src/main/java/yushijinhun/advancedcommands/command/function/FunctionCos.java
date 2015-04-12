@@ -10,7 +10,7 @@ public class FunctionCos extends Function {
 
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
-		Object val = args[0].value;
+		Object val = args[0].getValue();
 		if (val instanceof Number) {
 			return new Var(context.getPlugin().datatypes.get("double"), Math.cos(((Number) val).doubleValue()));
 		}
