@@ -22,4 +22,10 @@ public abstract class Function implements Namable {
 	public String getName() {
 		return name;
 	}
+
+	protected static void checkType(Var[] args, int argid, String type) {
+		if (!args[argid].getType().name.equals(type)) {
+			throw new IllegalArgumentException(String.format("Argument %d must be %s", argid + 1, type));
+		}
+	}
 }

@@ -10,8 +10,10 @@ public class FunctionStringFirstIndexOf extends Function {
 
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
+		checkType(args, 0, "string");
+		checkType(args, 1, "string");
 		return new Var(context.getPlugin().datatypes.get("int"),
-				((String) args[0].getValue()).indexOf((Integer) args[1].getValue()));
+				((String) args[0].getValue()).indexOf((String) args[1].getValue()));
 	}
 
 }

@@ -11,6 +11,7 @@ public class FunctionSay extends Function {
 
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
+		checkType(args, 0, "string");
 		String msg = (String) args[0].getValue();
 		String prefix;
 		if (args.length > 1) {

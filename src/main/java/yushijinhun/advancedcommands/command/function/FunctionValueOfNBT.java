@@ -11,6 +11,7 @@ public class FunctionValueOfNBT extends Function {
 
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
+		checkType(args, 0, "nbt");
 		return context.getPlugin().nbthandler.valueOf((NbtBase<?>) args[0].getValue());
 	}
 

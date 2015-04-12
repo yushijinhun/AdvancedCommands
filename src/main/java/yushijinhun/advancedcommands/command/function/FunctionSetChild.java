@@ -14,17 +14,21 @@ public class FunctionSetChild extends Function {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
+		checkType(args, 0, "nbt");
+		checkType(args, 1, "nbt");
 		NbtBase<?> tag = (NbtBase<?>) args[0].getValue();
 		@SuppressWarnings("rawtypes")
 		NbtBase child = (NbtBase<?>) args[1].getValue();
 		if (tag instanceof NbtCompound) {
+			checkType(args, 2, "string");
 			((NbtCompound) tag).put((String) args[2].getValue(), child);
 		} else if (tag instanceof NbtList<?>) {
-			int index = (Integer) args[2].getValue();
-			if (index == -1) {
-				((NbtList<?>) tag).add(child);
-			} else {
+			if (args.length > 2) {
+				checkType(args, 2, "int");
+				int index = (Integer) args[2].getValue();
 				((NbtList<?>) tag).getValue().set(index, child);
+			} else {
+				((NbtList<?>) tag).add(child);
 			}
 		} else {
 			throw new IllegalArgumentException("Cannot fetch child of " + tag);

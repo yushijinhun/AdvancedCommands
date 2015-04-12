@@ -10,4 +10,14 @@ public final class ExceptionHelper {
 		e.printStackTrace(new PrintWriter(out));
 		return out.toString().replace("\t", "    ");
 	}
+
+	public static String getExceptionMessage(Throwable e) {
+		StringBuilder sb = new StringBuilder();
+		Throwable ex = e;
+		do {
+			sb.append(ex.getMessage());
+			sb.append('\n');
+		} while ((ex = ex.getCause()) != null);
+		return sb.toString();
+	}
 }

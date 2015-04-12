@@ -2,11 +2,13 @@ package yushijinhun.advancedcommands.command;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import yushijinhun.advancedcommands.AdvancedCommands;
+import yushijinhun.advancedcommands.util.ExceptionHelper;
 
 public abstract class BasicCommand implements CommandExecutor {
 
@@ -24,6 +26,7 @@ public abstract class BasicCommand implements CommandExecutor {
 		try {
 			doExecute(paramCommandSender, paramArrayOfString);
 		} catch (Throwable e) {
+			paramCommandSender.sendMessage(ChatColor.RED + ExceptionHelper.getExceptionMessage(e));
 			throw new CommandException(e.getMessage() == null ? "" : e.getMessage(), e);
 		}
 		return true;

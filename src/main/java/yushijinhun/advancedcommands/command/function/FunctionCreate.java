@@ -11,6 +11,8 @@ public class FunctionCreate extends Function {
 
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
+		checkType(args, 0, "string");
+		checkType(args, 1, "string");
 		String name = (String) args[1].getValue();
 		DataType datatype = context.getPlugin().datatypes.get((String) args[0].getValue());
 		if (datatype == null) {

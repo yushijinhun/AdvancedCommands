@@ -122,90 +122,99 @@ public final class ExpressionHandler {
 						}
 					}
 					FunctionContext context = new FunctionContext(sender, rawArgs, plugin);
-					Var result = function.call(args, context);
+					Var result;
+					try {
+						result = function.call(args, context);
+					} catch (Exception e) {
+						throw new ExpressionHandlingException("Failed to invoke function " + function.name, e);
+					}
 					stack.push(new VarWarpperConstant(result));
 				} else {
-					Var arg1 = stack.pop().get();
-					Var result = null;
-					boolean pushResult = true;
-					if (op.equals("!")) {
-						result = opNot(arg1);
-					} else if (op.equals("+.")) {
-						result = opUp(arg1);
-					} else if (op.equals("-.")) {
-						result = opDown(arg1);
-					} else if (op.equals("*")) {
-						result = opMultiply(stack.pop().get(), arg1);
-					} else if (op.equals("/")) {
-						result = opDiv(stack.pop().get(), arg1);
-					} else if (op.equals("%")) {
-						result = opMod(stack.pop().get(), arg1);
-					} else if (op.equals("+")) {
-						result = opPlus(stack.pop().get(), arg1);
-					} else if (op.equals("-")) {
-						result = opMinus(stack.pop().get(), arg1);
-					} else if (op.equals("<<")) {
-						result = opLShift(stack.pop().get(), arg1);
-					} else if (op.equals(">>")) {
-						result = opRShift(stack.pop().get(), arg1);
-					} else if (op.equals(">>>")) {
-						result = opNRShift(stack.pop().get(), arg1);
-					} else if (op.equals("<")) {
-						result = opLess(stack.pop().get(), arg1);
-					} else if (op.equals(">")) {
-						result = opLarger(stack.pop().get(), arg1);
-					} else if (op.equals(">=")) {
-						result = opLargerEquals(stack.pop().get(), arg1);
-					} else if (op.equals("<=")) {
-						result = opLessEquals(stack.pop().get(), arg1);
-					} else if (op.equals("==")) {
-						result = opEquals(stack.pop().get(), arg1);
-					} else if (op.equals("!=")) {
-						result = opNotEquals(stack.pop().get(), arg1);
-					} else if (op.equals("&")) {
-						result = opAnd(stack.pop().get(), arg1);
-					} else if (op.equals("|")) {
-						result = opOr(stack.pop().get(), arg1);
-					} else if (op.equals("^")) {
-						result = opXor(stack.pop().get(), arg1);
-					} else if (op.equals("=")) {
-						result = opSet(stack.pop(), arg1);
-					} else if (op.equals("+=")) {
-						result = opSetPlus(stack.pop(), arg1);
-					} else if (op.equals("-=")) {
-						result = opSetMinus(stack.pop(), arg1);
-					} else if (op.equals("*=")) {
-						result = opSetMultiply(stack.pop(), arg1);
-					} else if (op.equals("/=")) {
-						result = opSetDiv(stack.pop(), arg1);
-					} else if (op.equals("%=")) {
-						result = opSetMod(stack.pop(), arg1);
-					} else if (op.equals("<<=")) {
-						result = opSetLShift(stack.pop(), arg1);
-					} else if (op.equals(">>=")) {
-						result = opSetRShift(stack.pop(), arg1);
-					} else if (op.equals(">>>=")) {
-						result = opSetNRShift(stack.pop(), arg1);
-					} else if (op.equals("&=")) {
-						result = opSetAnd(stack.pop(), arg1);
-					} else if (op.equals("|=")) {
-						result = opSetOr(stack.pop(), arg1);
-					} else if (op.equals("^=")) {
-						result = opSetXor(stack.pop(), arg1);
-					} else if (op.equals("[")) {
-						stack.push(opArraySelect(stack.pop(), arg1));
-						pushResult = false;
-					} else if (op.startsWith("(")) {
-						if (op.endsWith(")")) {
-							result = opCast(arg1, op.substring(1, op.length() - 1));
+					try {
+						Var arg1 = stack.pop().get();
+						Var result = null;
+						boolean pushResult = true;
+						if (op.equals("!")) {
+							result = opNot(arg1);
+						} else if (op.equals("+.")) {
+							result = opUp(arg1);
+						} else if (op.equals("-.")) {
+							result = opDown(arg1);
+						} else if (op.equals("*")) {
+							result = opMultiply(stack.pop().get(), arg1);
+						} else if (op.equals("/")) {
+							result = opDiv(stack.pop().get(), arg1);
+						} else if (op.equals("%")) {
+							result = opMod(stack.pop().get(), arg1);
+						} else if (op.equals("+")) {
+							result = opPlus(stack.pop().get(), arg1);
+						} else if (op.equals("-")) {
+							result = opMinus(stack.pop().get(), arg1);
+						} else if (op.equals("<<")) {
+							result = opLShift(stack.pop().get(), arg1);
+						} else if (op.equals(">>")) {
+							result = opRShift(stack.pop().get(), arg1);
+						} else if (op.equals(">>>")) {
+							result = opNRShift(stack.pop().get(), arg1);
+						} else if (op.equals("<")) {
+							result = opLess(stack.pop().get(), arg1);
+						} else if (op.equals(">")) {
+							result = opLarger(stack.pop().get(), arg1);
+						} else if (op.equals(">=")) {
+							result = opLargerEquals(stack.pop().get(), arg1);
+						} else if (op.equals("<=")) {
+							result = opLessEquals(stack.pop().get(), arg1);
+						} else if (op.equals("==")) {
+							result = opEquals(stack.pop().get(), arg1);
+						} else if (op.equals("!=")) {
+							result = opNotEquals(stack.pop().get(), arg1);
+						} else if (op.equals("&")) {
+							result = opAnd(stack.pop().get(), arg1);
+						} else if (op.equals("|")) {
+							result = opOr(stack.pop().get(), arg1);
+						} else if (op.equals("^")) {
+							result = opXor(stack.pop().get(), arg1);
+						} else if (op.equals("=")) {
+							result = opSet(stack.pop(), arg1);
+						} else if (op.equals("+=")) {
+							result = opSetPlus(stack.pop(), arg1);
+						} else if (op.equals("-=")) {
+							result = opSetMinus(stack.pop(), arg1);
+						} else if (op.equals("*=")) {
+							result = opSetMultiply(stack.pop(), arg1);
+						} else if (op.equals("/=")) {
+							result = opSetDiv(stack.pop(), arg1);
+						} else if (op.equals("%=")) {
+							result = opSetMod(stack.pop(), arg1);
+						} else if (op.equals("<<=")) {
+							result = opSetLShift(stack.pop(), arg1);
+						} else if (op.equals(">>=")) {
+							result = opSetRShift(stack.pop(), arg1);
+						} else if (op.equals(">>>=")) {
+							result = opSetNRShift(stack.pop(), arg1);
+						} else if (op.equals("&=")) {
+							result = opSetAnd(stack.pop(), arg1);
+						} else if (op.equals("|=")) {
+							result = opSetOr(stack.pop(), arg1);
+						} else if (op.equals("^=")) {
+							result = opSetXor(stack.pop(), arg1);
+						} else if (op.equals("[")) {
+							stack.push(opArraySelect(stack.pop(), arg1));
+							pushResult = false;
+						} else if (op.startsWith("(")) {
+							if (op.endsWith(")")) {
+								result = opCast(arg1, op.substring(1, op.length() - 1));
+							} else {
+								throw new ExpressionHandlingException("Unmatched (");
+							}
 						} else {
-							throw new IllegalArgumentException("un-matched (");
+							throw new ExpressionHandlingException("Unmatched op " + op);
 						}
-					} else {
-						throw new IllegalArgumentException("un-matched op " + op);
-					}
-					if (pushResult) {
-						stack.push(new VarWarpperConstant(result));
+						if (pushResult) {
+							stack.push(new VarWarpperConstant(result));
+						}
+					} catch (Exception e) {
+						throw new ExpressionHandlingException("Failed to handle op " + op, e);
 					}
 				}
 			}
@@ -756,7 +765,7 @@ public final class ExpressionHandler {
 						result.add(new VarWarpperConstant(new Var(plugin.datatypes.get("string"), str.substring(1,
 								str.length() - 1))));
 					} else {
-						throw new IllegalArgumentException("un-matched \"");
+						throw new ExpressionHandlingException("Unmatched \"");
 					}
 				} else {
 					Var var = plugin.vardata.get(str);
@@ -784,20 +793,24 @@ public final class ExpressionHandler {
 							}
 							String spilted = str.substring(0, str.length() - 1);
 							Var constant;
-							if (str.endsWith("b") || str.endsWith("B")) {
-								constant = new Var(plugin.datatypes.get("byte"), Byte.valueOf(spilted, radix));
-							} else if (str.endsWith("s") || str.endsWith("S")) {
-								constant = new Var(plugin.datatypes.get("short"), Short.valueOf(spilted, radix));
-							} else if (str.endsWith("l") || str.endsWith("L")) {
-								constant = new Var(plugin.datatypes.get("long"), Long.valueOf(spilted, radix));
-							} else if ((radix == 10) && (str.endsWith("f") || str.endsWith("F"))) {
-								constant = new Var(plugin.datatypes.get("float"), Float.valueOf(spilted));
-							} else if ((radix == 10) && (str.endsWith("d") || str.endsWith("D"))) {
-								constant = new Var(plugin.datatypes.get("double"), Double.valueOf(spilted));
-							} else if (str.contains(".")) {
-								constant = new Var(plugin.datatypes.get("double"), Double.valueOf(str));
-							} else {
-								constant = new Var(plugin.datatypes.get("int"), Integer.valueOf(str, radix));
+							try {
+								if (str.endsWith("b") || str.endsWith("B")) {
+									constant = new Var(plugin.datatypes.get("byte"), Byte.valueOf(spilted, radix));
+								} else if (str.endsWith("s") || str.endsWith("S")) {
+									constant = new Var(plugin.datatypes.get("short"), Short.valueOf(spilted, radix));
+								} else if (str.endsWith("l") || str.endsWith("L")) {
+									constant = new Var(plugin.datatypes.get("long"), Long.valueOf(spilted, radix));
+								} else if ((radix == 10) && (str.endsWith("f") || str.endsWith("F"))) {
+									constant = new Var(plugin.datatypes.get("float"), Float.valueOf(spilted));
+								} else if ((radix == 10) && (str.endsWith("d") || str.endsWith("D"))) {
+									constant = new Var(plugin.datatypes.get("double"), Double.valueOf(spilted));
+								} else if (str.contains(".")) {
+									constant = new Var(plugin.datatypes.get("double"), Double.valueOf(str));
+								} else {
+									constant = new Var(plugin.datatypes.get("int"), Integer.valueOf(str, radix));
+								}
+							} catch (NumberFormatException e) {
+								throw new ExpressionHandlingException("Failed to handle " + str, e);
 							}
 							result.add(new VarWarpperConstant(constant));
 						} else {
@@ -876,7 +889,7 @@ public final class ExpressionHandler {
 						} else if (ch2 == '\\') {
 							s.append('\\');
 						} else {
-							throw new IllegalArgumentException("Unknow escaped char " + ch2);
+							throw new ExpressionHandlingException("Unknow escaped char " + ch2);
 						}
 						escape = false;
 					} else {
