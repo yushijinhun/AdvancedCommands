@@ -7,8 +7,10 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 import yushijinhun.advancedcommands.command.CommandExp;
+import yushijinhun.advancedcommands.command.TabCompleterExp;
 import yushijinhun.advancedcommands.command.datatype.DataType;
 import yushijinhun.advancedcommands.command.datatype.DataTypeArray;
 import yushijinhun.advancedcommands.command.datatype.DataTypeBoolean;
@@ -89,7 +91,9 @@ public final class AdvancedCommands extends JavaPlugin {
 		registerFunctions();
 		registerConstants();
 
-		getCommand("exp").setExecutor(new CommandExp(this));
+		PluginCommand commandExp = getCommand("exp");
+		commandExp.setExecutor(new CommandExp(this));
+		commandExp.setTabCompleter(new TabCompleterExp(this));
 
 		vardataFile = new File(getDataFolder(), "ac-vars.dat");
 		loadVarData();

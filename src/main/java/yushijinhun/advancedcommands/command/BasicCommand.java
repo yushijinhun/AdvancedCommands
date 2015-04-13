@@ -1,7 +1,5 @@
 package yushijinhun.advancedcommands.command;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandException;
@@ -32,13 +30,4 @@ public abstract class BasicCommand implements CommandExecutor {
 		return true;
 	}
 
-	protected List<String> getStringsStartWith(String head, Iterable<String> strs) {
-		List<String> result = new ArrayList<String>();
-		for (String str : strs) {
-			if (str.startsWith(head)) {
-				result.add(str);
-			}
-		}
-		return result;
-	}
 }

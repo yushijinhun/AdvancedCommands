@@ -1,7 +1,9 @@
 package yushijinhun.advancedcommands.command.nbt;
 
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 import yushijinhun.advancedcommands.AdvancedCommands;
 import yushijinhun.advancedcommands.command.var.Var;
 import com.comphenix.protocol.wrappers.nbt.NbtBase;
@@ -10,14 +12,28 @@ import com.comphenix.protocol.wrappers.nbt.NbtType;
 
 public final class NBTHandler {
 
-	public final Map<String, NBTSource> sources = new LinkedHashMap<String, NBTSource>();
+	public final Map<String, NBTSource> sources = new LinkedHashMap<>();
+	public final Set<String> nbtTypes = new LinkedHashSet<>();
 
 	private AdvancedCommands plugin;
 
 	public NBTHandler(AdvancedCommands plugin) {
 		this.plugin = plugin;
+
 		sources.put("entity", new NBTSourceEntity());
 		sources.put("tile", new NBTSourceTile());
+
+		nbtTypes.add("BYTE");
+		nbtTypes.add("SHORT");
+		nbtTypes.add("INT");
+		nbtTypes.add("LONG");
+		nbtTypes.add("FLOAT");
+		nbtTypes.add("DOUBLE");
+		nbtTypes.add("STRING");
+		nbtTypes.add("LIST");
+		nbtTypes.add("COMPOUND");
+		nbtTypes.add("BYTE[]");
+		nbtTypes.add("INT[]");
 	}
 
 	public NbtBase<?> createTag(String name, Var data) {
