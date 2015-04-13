@@ -13,6 +13,11 @@ public class CommandExp extends BasicCommand {
 	}
 
 	@Override
+	protected String getErrorMessageHead() {
+		return "Failed to handle expression";
+	}
+
+	@Override
 	public void doExecute(CommandSender sender, String[] args) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < args.length; i++) {

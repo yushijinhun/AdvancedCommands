@@ -2,6 +2,7 @@ package yushijinhun.advancedcommands.command.expression;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.EmptyStackException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -102,124 +103,128 @@ public final class ExpressionHandler {
 	}
 
 	public Var computeRPN(Object[] rpn, CommandSender sender) {
-		Stack<IVarWarpper> stack = new Stack<IVarWarpper>();
-		for (Object o : rpn) {
-			if (o instanceof IVarWarpper) {
-				stack.push((IVarWarpper) o);
-			} else {
-				String op = (String) o;
-				if (op.startsWith("()")) {
-					String[] spilted = op.substring(2).split("@", 2);
-					int argLength = Integer.parseInt(spilted[0]);
-					Function function = plugin.functions.get(spilted[1]);
-					Var[] args = new Var[argLength];
-					IVarWarpper[] rawArgs = new IVarWarpper[argLength];
-					for (int i = argLength - 1; i > -1; i--) {
-						rawArgs[i] = stack.pop();
-						args[i] = rawArgs[i].get();
-						if ((args[i] != null) && (args[i].getValue() == null)) {
-							args[i] = null;
-						}
-					}
-					FunctionContext context = new FunctionContext(sender, rawArgs, plugin);
-					Var result;
-					try {
-						result = function.call(args, context);
-					} catch (Exception e) {
-						throw new ExpressionHandlingException("Failed to invoke function " + function.name, e);
-					}
-					stack.push(new VarWarpperConstant(result));
+		try {
+			Stack<IVarWarpper> stack = new Stack<IVarWarpper>();
+			for (Object o : rpn) {
+				if (o instanceof IVarWarpper) {
+					stack.push((IVarWarpper) o);
 				} else {
-					try {
-						Var arg1 = stack.pop().get();
-						Var result = null;
-						boolean pushResult = true;
-						if (op.equals("!")) {
-							result = opNot(arg1);
-						} else if (op.equals("+.")) {
-							result = opUp(arg1);
-						} else if (op.equals("-.")) {
-							result = opDown(arg1);
-						} else if (op.equals("*")) {
-							result = opMultiply(stack.pop().get(), arg1);
-						} else if (op.equals("/")) {
-							result = opDiv(stack.pop().get(), arg1);
-						} else if (op.equals("%")) {
-							result = opMod(stack.pop().get(), arg1);
-						} else if (op.equals("+")) {
-							result = opPlus(stack.pop().get(), arg1);
-						} else if (op.equals("-")) {
-							result = opMinus(stack.pop().get(), arg1);
-						} else if (op.equals("<<")) {
-							result = opLShift(stack.pop().get(), arg1);
-						} else if (op.equals(">>")) {
-							result = opRShift(stack.pop().get(), arg1);
-						} else if (op.equals(">>>")) {
-							result = opNRShift(stack.pop().get(), arg1);
-						} else if (op.equals("<")) {
-							result = opLess(stack.pop().get(), arg1);
-						} else if (op.equals(">")) {
-							result = opLarger(stack.pop().get(), arg1);
-						} else if (op.equals(">=")) {
-							result = opLargerEquals(stack.pop().get(), arg1);
-						} else if (op.equals("<=")) {
-							result = opLessEquals(stack.pop().get(), arg1);
-						} else if (op.equals("==")) {
-							result = opEquals(stack.pop().get(), arg1);
-						} else if (op.equals("!=")) {
-							result = opNotEquals(stack.pop().get(), arg1);
-						} else if (op.equals("&")) {
-							result = opAnd(stack.pop().get(), arg1);
-						} else if (op.equals("|")) {
-							result = opOr(stack.pop().get(), arg1);
-						} else if (op.equals("^")) {
-							result = opXor(stack.pop().get(), arg1);
-						} else if (op.equals("=")) {
-							result = opSet(stack.pop(), arg1);
-						} else if (op.equals("+=")) {
-							result = opSetPlus(stack.pop(), arg1);
-						} else if (op.equals("-=")) {
-							result = opSetMinus(stack.pop(), arg1);
-						} else if (op.equals("*=")) {
-							result = opSetMultiply(stack.pop(), arg1);
-						} else if (op.equals("/=")) {
-							result = opSetDiv(stack.pop(), arg1);
-						} else if (op.equals("%=")) {
-							result = opSetMod(stack.pop(), arg1);
-						} else if (op.equals("<<=")) {
-							result = opSetLShift(stack.pop(), arg1);
-						} else if (op.equals(">>=")) {
-							result = opSetRShift(stack.pop(), arg1);
-						} else if (op.equals(">>>=")) {
-							result = opSetNRShift(stack.pop(), arg1);
-						} else if (op.equals("&=")) {
-							result = opSetAnd(stack.pop(), arg1);
-						} else if (op.equals("|=")) {
-							result = opSetOr(stack.pop(), arg1);
-						} else if (op.equals("^=")) {
-							result = opSetXor(stack.pop(), arg1);
-						} else if (op.equals("[")) {
-							stack.push(opArraySelect(stack.pop(), arg1));
-							pushResult = false;
-						} else if (op.startsWith("(")) {
-							if (op.endsWith(")")) {
-								result = opCast(arg1, op.substring(1, op.length() - 1));
-							} else {
-								throw new ExpressionHandlingException("Unmatched (");
+					String op = (String) o;
+					if (op.startsWith("()")) {
+						String[] spilted = op.substring(2).split("@", 2);
+						int argLength = Integer.parseInt(spilted[0]);
+						Function function = plugin.functions.get(spilted[1]);
+						Var[] args = new Var[argLength];
+						IVarWarpper[] rawArgs = new IVarWarpper[argLength];
+						for (int i = argLength - 1; i > -1; i--) {
+							rawArgs[i] = stack.pop();
+							args[i] = rawArgs[i].get();
+							if ((args[i] != null) && (args[i].getValue() == null)) {
+								args[i] = null;
 							}
-						} else {
-							throw new ExpressionHandlingException("Unmatched op " + op);
 						}
-						if (pushResult) {
-							stack.push(new VarWarpperConstant(result));
+						FunctionContext context = new FunctionContext(sender, rawArgs, plugin);
+						Var result;
+						try {
+							result = function.call(args, context);
+						} catch (Exception e) {
+							throw new ExpressionHandlingException("Failed to invoke function " + function.name, e);
 						}
-					} catch (Exception e) {
-						throw new ExpressionHandlingException("Failed to handle op " + op, e);
+						stack.push(new VarWarpperConstant(result));
+					} else {
+						try {
+							Var arg1 = stack.pop().get();
+							Var result = null;
+							boolean pushResult = true;
+							if (op.equals("!")) {
+								result = opNot(arg1);
+							} else if (op.equals("+.")) {
+								result = opUp(arg1);
+							} else if (op.equals("-.")) {
+								result = opDown(arg1);
+							} else if (op.equals("*")) {
+								result = opMultiply(stack.pop().get(), arg1);
+							} else if (op.equals("/")) {
+								result = opDiv(stack.pop().get(), arg1);
+							} else if (op.equals("%")) {
+								result = opMod(stack.pop().get(), arg1);
+							} else if (op.equals("+")) {
+								result = opPlus(stack.pop().get(), arg1);
+							} else if (op.equals("-")) {
+								result = opMinus(stack.pop().get(), arg1);
+							} else if (op.equals("<<")) {
+								result = opLShift(stack.pop().get(), arg1);
+							} else if (op.equals(">>")) {
+								result = opRShift(stack.pop().get(), arg1);
+							} else if (op.equals(">>>")) {
+								result = opNRShift(stack.pop().get(), arg1);
+							} else if (op.equals("<")) {
+								result = opLess(stack.pop().get(), arg1);
+							} else if (op.equals(">")) {
+								result = opLarger(stack.pop().get(), arg1);
+							} else if (op.equals(">=")) {
+								result = opLargerEquals(stack.pop().get(), arg1);
+							} else if (op.equals("<=")) {
+								result = opLessEquals(stack.pop().get(), arg1);
+							} else if (op.equals("==")) {
+								result = opEquals(stack.pop().get(), arg1);
+							} else if (op.equals("!=")) {
+								result = opNotEquals(stack.pop().get(), arg1);
+							} else if (op.equals("&")) {
+								result = opAnd(stack.pop().get(), arg1);
+							} else if (op.equals("|")) {
+								result = opOr(stack.pop().get(), arg1);
+							} else if (op.equals("^")) {
+								result = opXor(stack.pop().get(), arg1);
+							} else if (op.equals("=")) {
+								result = opSet(stack.pop(), arg1);
+							} else if (op.equals("+=")) {
+								result = opSetPlus(stack.pop(), arg1);
+							} else if (op.equals("-=")) {
+								result = opSetMinus(stack.pop(), arg1);
+							} else if (op.equals("*=")) {
+								result = opSetMultiply(stack.pop(), arg1);
+							} else if (op.equals("/=")) {
+								result = opSetDiv(stack.pop(), arg1);
+							} else if (op.equals("%=")) {
+								result = opSetMod(stack.pop(), arg1);
+							} else if (op.equals("<<=")) {
+								result = opSetLShift(stack.pop(), arg1);
+							} else if (op.equals(">>=")) {
+								result = opSetRShift(stack.pop(), arg1);
+							} else if (op.equals(">>>=")) {
+								result = opSetNRShift(stack.pop(), arg1);
+							} else if (op.equals("&=")) {
+								result = opSetAnd(stack.pop(), arg1);
+							} else if (op.equals("|=")) {
+								result = opSetOr(stack.pop(), arg1);
+							} else if (op.equals("^=")) {
+								result = opSetXor(stack.pop(), arg1);
+							} else if (op.equals("[")) {
+								stack.push(opArraySelect(stack.pop(), arg1));
+								pushResult = false;
+							} else if (op.startsWith("(")) {
+								if (op.endsWith(")")) {
+									result = opCast(arg1, op.substring(1, op.length() - 1));
+								} else {
+									throw new ExpressionHandlingException("Unmatched (");
+								}
+							} else {
+								throw new ExpressionHandlingException("Unmatched op " + op);
+							}
+							if (pushResult) {
+								stack.push(new VarWarpperConstant(result));
+							}
+						} catch (Exception e) {
+							throw new ExpressionHandlingException("Failed to handle op " + op, e);
+						}
 					}
 				}
 			}
+			return stack.pop().get();
+		} catch (EmptyStackException e) {
+			throw new ExpressionHandlingException("No enough operation numbers");
 		}
-		return stack.pop().get();
 	}
 
 	public IVarWarpper opArraySelect(IVarWarpper arg1, Var arg2) {

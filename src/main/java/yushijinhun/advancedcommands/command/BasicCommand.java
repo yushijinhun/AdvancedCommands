@@ -18,13 +18,18 @@ public abstract class BasicCommand implements CommandExecutor {
 
 	protected abstract void doExecute(CommandSender sender, String[] args);
 
+	protected String getErrorMessageHead() {
+		return "Failed to execute command";
+	}
+
 	@Override
 	public boolean onCommand(CommandSender paramCommandSender, Command paramCommand, String paramString,
 			String[] paramArrayOfString) {
 		try {
 			doExecute(paramCommandSender, paramArrayOfString);
 		} catch (Throwable e) {
-			paramCommandSender.sendMessage(ChatColor.RED + ExceptionHelper.getExceptionMessage(e));
+			paramCommandSender.sendMessage(ChatColor.RED
+					+ ExceptionHelper.getExceptionMessage(e, getErrorMessageHead()));
 			throw new CommandException(e.getMessage() == null ? "" : e.getMessage(), e);
 		}
 		return true;

@@ -11,10 +11,15 @@ public final class ExceptionHelper {
 		return out.toString().replace("\t", "    ");
 	}
 
-	public static String getExceptionMessage(Throwable e) {
+	public static String getExceptionMessage(Throwable e, String errorHead) {
 		StringBuilder sb = new StringBuilder();
 		Throwable ex = e;
+		if (errorHead != null) {
+			sb.append(errorHead);
+			sb.append('\n');
+		}
 		do {
+			sb.append("Cause:\n    ");
 			sb.append(ex.getMessage());
 			sb.append('\n');
 		} while ((ex = ex.getCause()) != null);
