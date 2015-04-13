@@ -17,10 +17,8 @@ public class DataTypeBoolean extends DataType {
 	}
 
 	@Override
-	public Object cast(Object src, DataType srcType) {
-		if (src instanceof Boolean) {
-			return src;
-		} else if (src instanceof String) {
+	public Object doCast(Object src, DataType srcType) {
+		if (src instanceof String) {
 			return Boolean.valueOf((String) src);
 		}
 

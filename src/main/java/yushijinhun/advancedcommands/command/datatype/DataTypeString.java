@@ -17,7 +17,7 @@ public class DataTypeString extends DataType {
 	}
 
 	@Override
-	public Object cast(Object src, DataType srcType) {
+	public Object doCast(Object src, DataType srcType) {
 		return String.valueOf(src);
 	}
 

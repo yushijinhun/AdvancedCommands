@@ -16,7 +16,6 @@ import yushijinhun.advancedcommands.command.datatype.DataType;
 import yushijinhun.advancedcommands.command.function.Function;
 import yushijinhun.advancedcommands.command.function.FunctionContext;
 import yushijinhun.advancedcommands.command.var.Var;
-import yushijinhun.advancedcommands.command.var.VarHelper;
 import yushijinhun.advancedcommands.util.SafetyModeManager;
 
 public final class ExpressionHandler {
@@ -699,7 +698,10 @@ public final class ExpressionHandler {
 
 	public Var opCast(Var arg1, String castOp) {
 		DataType dest = plugin.datatypes.get(castOp);
-		return VarHelper.cast(arg1, dest);
+		if (arg1 == null) {
+			return new Var(dest, null);
+		}
+		return arg1.castTo(dest);
 	}
 
 	public DataType getPrecisest(DataType... types) {

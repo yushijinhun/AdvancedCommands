@@ -19,10 +19,7 @@ public class DataTypeArray extends DataType {
 	}
 
 	@Override
-	public Object cast(Object src, DataType srcType) {
-		if (srcType == this) {
-			return src;
-		}
+	public Object doCast(Object src, DataType srcType) {
 		throw new ClassCastException();
 	}
 

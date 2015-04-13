@@ -17,7 +17,7 @@ public class DataTypeLong extends DataType {
 	}
 
 	@Override
-	public Object cast(Object src, DataType srcType) {
+	public Object doCast(Object src, DataType srcType) {
 		if (src instanceof Number) {
 			return ((Number) src).longValue();
 		} else if (src instanceof String) {

@@ -60,6 +60,10 @@ public class Var implements Cloneable {
 		return type;
 	}
 
+	public Var castTo(DataType dest) {
+		return new Var(dest, dest.cast(value, type));
+	}
+
 	public void write(DataOutput out, AdvancedCommands plugin) throws IOException {
 		out.writeBoolean(value == null);
 		out.writeUTF(type.name);

@@ -16,7 +16,7 @@ public abstract class DataType implements Namable {
 
 	public abstract Object getDefaultValue();
 
-	public abstract Object cast(Object src, DataType srcType);
+	public abstract Object doCast(Object src, DataType srcType);
 
 	public abstract void writeValue(Object value, DataOutput out, AdvancedCommands plugin) throws IOException;
 
@@ -28,6 +28,21 @@ public abstract class DataType implements Namable {
 
 	public String valueToString(Object obj) {
 		return String.valueOf(obj);
+	}
+
+	public Object cast(Object src, DataType srcType) {
+		if (src == null) {
+			return null;
+		}
+		if (srcType == this) {
+			return src;
+		}
+		try {
+			return doCast(src, srcType);
+		} catch (ClassCastException e) {
+			return new ClassCastException(e.getMessage() == null ? String.format("%s@%s cannot cast to %s",
+					srcType.name, String.valueOf(src), String.valueOf(name)) : e.getMessage());
+		}
 	}
 
 	@Override

@@ -51,7 +51,13 @@ public class VarData {
 		if (old == null) {
 			throw new IllegalArgumentException(String.format("Var %s not exists", name));
 		}
-		vars.put(name, VarHelper.cast(var, old.getType()));
+		Var varToPut;
+		if (var == null) {
+			varToPut = new Var(old.getType(), null);
+		} else {
+			varToPut = var.castTo(old.getType());
+		}
+		vars.put(name, varToPut);
 		markDirty();
 	}
 

@@ -17,7 +17,7 @@ public class DataTypeShort extends DataType {
 	}
 
 	@Override
-	public Object cast(Object src, DataType srcType) {
+	public Object doCast(Object src, DataType srcType) {
 		if (src instanceof Number) {
 			return ((Number) src).shortValue();
 		} else if (src instanceof String) {
