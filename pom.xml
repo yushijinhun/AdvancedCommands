@@ -5,7 +5,7 @@
 	<artifactId>AdvancedCommands</artifactId>
 	<version>${env.VERSION_PREFIX}${env.TRAVIS_BUILD_NUMBER}</version>
 	<name>AdvancedCommands</name>
-	<description>More commands for Minecraft</description>
+	<description>A programming language based on Minecraft commands.</description>
 	<build>
 		<plugins>
 			<plugin>
