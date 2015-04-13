@@ -32,7 +32,6 @@ public class TabCompleterExp implements TabCompleter {
 		Matcher matcher = wordPattern.matcher(exp);
 		matcher.find();
 		String lastWord = matcher.group();
-		plugin.getLogger().info("lastWord=" + lastWord);
 		String completedWords = exp.substring(0, exp.length() - lastWord.length());
 		for (String str : getAllCompleteWords()) {
 			if (str.startsWith(lastWord)) {
