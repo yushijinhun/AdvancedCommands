@@ -10,6 +10,7 @@ public class FunctionReplaceString extends Function {
 
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
+		throwArgsLengthExceptionIf(args.length != 3);
 		checkType(args, 0, "string");
 		checkType(args, 1, "string");
 		checkType(args, 2, "string");

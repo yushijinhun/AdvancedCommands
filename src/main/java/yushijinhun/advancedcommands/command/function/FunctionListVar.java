@@ -10,6 +10,7 @@ public class FunctionListVar extends Function {
 
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
+		throwArgsLengthExceptionIf(args.length != 0);
 		StringBuilder sb = new StringBuilder();
 		for (String name : context.getPlugin().vardata.varNamesSet()) {
 			Var var = context.getPlugin().vardata.get(name);

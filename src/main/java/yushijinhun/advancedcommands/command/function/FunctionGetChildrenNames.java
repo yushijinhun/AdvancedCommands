@@ -13,6 +13,7 @@ public class FunctionGetChildrenNames extends Function {
 
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
+		throwArgsLengthExceptionIf(args.length != 1);
 		checkType(args, 0, "nbt");
 		if (args[0].getValue() instanceof NbtCompound) {
 			NbtCompound nbt = (NbtCompound) args[0].getValue();

@@ -13,6 +13,7 @@ public class FunctionRemoveChild extends Function {
 
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
+		throwArgsLengthExceptionIf(args.length != 2);
 		checkType(args, 0, "nbt");
 		NbtBase<?> tag = (NbtBase<?>) args[0].getValue();
 		if (tag instanceof NbtCompound) {

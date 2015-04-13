@@ -11,6 +11,7 @@ public class FunctionCreate extends Function {
 
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
+		throwArgsLengthExceptionIf((args.length < 2) || (args.length > 3));
 		checkType(args, 0, "string");
 		checkType(args, 1, "string");
 		String name = (String) args[1].getValue();

@@ -28,4 +28,10 @@ public abstract class Function implements Namable {
 			throw new IllegalArgumentException(String.format("Argument %d must be %s", argid + 1, type));
 		}
 	}
+
+	protected static void throwArgsLengthExceptionIf(boolean expression) {
+		if (expression) {
+			throw new IllegalArgumentException("Wrong arguments length");
+		}
+	}
 }

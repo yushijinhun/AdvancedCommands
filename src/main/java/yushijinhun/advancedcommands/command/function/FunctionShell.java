@@ -10,6 +10,7 @@ public class FunctionShell extends Function {
 
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
+		throwArgsLengthExceptionIf(args.length != 1);
 		ShellHelper.execute(args[0], context);
 		return null;
 	}

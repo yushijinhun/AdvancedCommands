@@ -12,6 +12,7 @@ public class FunctionWriteNBT extends Function {
 
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
+		throwArgsLengthExceptionIf(args.length != 2);
 		checkType(args, 0, "string");
 		checkType(args, 1, "nbt");
 		NBTSourceInfo.parseNBTInfo((String) args[0].getValue(), context.getPlugin()).set((NbtCompound) args[1].getValue());

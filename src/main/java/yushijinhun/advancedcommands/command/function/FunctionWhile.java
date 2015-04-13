@@ -10,6 +10,7 @@ public class FunctionWhile extends Function {
 
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
+		throwArgsLengthExceptionIf(args.length != 2);
 		checkType(args, 0, "string");
 		String bool = (String) args[0].getValue();
 		while ((Boolean) context.getPlugin().expressionHandler.handleExpression(bool, context.getCommandSender()).getValue()) {

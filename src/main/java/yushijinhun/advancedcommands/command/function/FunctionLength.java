@@ -11,6 +11,7 @@ public class FunctionLength extends Function {
 
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
+		throwArgsLengthExceptionIf(args.length != 1);
 		int length;
 		Var var = args[0];
 		if (var.getType().name.equals("array")) {

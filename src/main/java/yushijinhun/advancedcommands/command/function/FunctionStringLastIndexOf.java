@@ -10,6 +10,7 @@ public class FunctionStringLastIndexOf extends Function {
 
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
+		throwArgsLengthExceptionIf(args.length != 2);
 		checkType(args, 0, "string");
 		checkType(args, 1, "string");
 		return new Var(context.getPlugin().datatypes.get("int"),

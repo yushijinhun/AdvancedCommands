@@ -10,6 +10,7 @@ public class FunctionSqrt extends Function {
 
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
+		throwArgsLengthExceptionIf(args.length != 1);
 		Object val = args[0].getValue();
 		if (val instanceof Number) {
 			return new Var(context.getPlugin().datatypes.get("double"), Math.sqrt(((Number) val).doubleValue()));

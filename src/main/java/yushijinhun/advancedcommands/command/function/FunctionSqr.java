@@ -10,6 +10,7 @@ public class FunctionSqr extends Function {
 
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
+		throwArgsLengthExceptionIf(args.length != 1);
 		Object val = args[0].getValue();
 		if ((val instanceof Byte) || (val instanceof Short) || (val instanceof Integer)) {
 			int num = ((Number) val).intValue();

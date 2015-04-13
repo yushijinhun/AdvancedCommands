@@ -10,6 +10,7 @@ public class FunctionSubString extends Function {
 
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
+		throwArgsLengthExceptionIf(args.length != 3);
 		checkType(args, 0, "string");
 		checkType(args, 1, "int");
 		checkType(args, 2, "int");

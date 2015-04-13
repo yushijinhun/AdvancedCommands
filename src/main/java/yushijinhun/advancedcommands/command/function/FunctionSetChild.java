@@ -14,12 +14,14 @@ public class FunctionSetChild extends Function {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
+		throwArgsLengthExceptionIf((args.length < 2) || (args.length > 3));
 		checkType(args, 0, "nbt");
 		checkType(args, 1, "nbt");
 		NbtBase<?> tag = (NbtBase<?>) args[0].getValue();
 		@SuppressWarnings("rawtypes")
 		NbtBase child = (NbtBase<?>) args[1].getValue();
 		if (tag instanceof NbtCompound) {
+			throwArgsLengthExceptionIf(args.length != 3);
 			checkType(args, 2, "string");
 			((NbtCompound) tag).put((String) args[2].getValue(), child);
 		} else if (tag instanceof NbtList<?>) {

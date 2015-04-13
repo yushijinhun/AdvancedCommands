@@ -12,6 +12,7 @@ public class FunctionSelectEntity extends Function {
 
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
+		throwArgsLengthExceptionIf(args.length != 1);
 		checkType(args, 0, "string");
 		List<?> nmsentities = ReflectionHelper.selectEntities(context.getCommandSender(), (String) args[0].getValue());
 

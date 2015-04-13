@@ -11,6 +11,7 @@ public class FunctionMin extends Function {
 
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
+		throwArgsLengthExceptionIf(args.length != 2);
 		boolean larger;
 		DataType type = context.getPlugin().expressionHandler.getPrecisest(args[0].getType(), args[1].getType());
 		Object var1 = type.cast(args[0].getValue(), args[0].getType());
