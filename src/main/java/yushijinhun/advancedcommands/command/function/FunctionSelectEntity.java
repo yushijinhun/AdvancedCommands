@@ -18,11 +18,11 @@ public class FunctionSelectEntity extends Function {
 
 		Var[] result = new Var[nmsentities.size()];
 		for (int i = 0; i < result.length; i++) {
-			result[i] = new Var(context.getPlugin().datatypes.get("string"), ReflectionHelper.getEntityUUID(nmsentities
+			result[i] = new Var(context.getPlugin().getDataTypes().get("string"), ReflectionHelper.getEntityUUID(nmsentities
 					.get(i)).toString());
 		}
 
-		return new Var(context.getPlugin().datatypes.get("array"), result);
+		return new Var(context.getPlugin().getDataTypes().get("array"), result);
 	}
 
 }

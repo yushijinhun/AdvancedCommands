@@ -43,12 +43,12 @@ public class TabCompleterExp implements TabCompleter {
 
 	private Set<String> getAllCompleteWords() {
 		Set<String> words = new LinkedHashSet<>();
-		words.addAll(plugin.vardata.namesSet());
-		for (String function : plugin.functions.namesSet()) {
+		words.addAll(plugin.getVardata().namesSet());
+		for (String function : plugin.getFunctions().namesSet()) {
 			words.add(function + "(");
 		}
-		words.addAll(plugin.nbthandler.nbtTypes);
-		words.addAll(plugin.datatypes.namesSet());
+		words.addAll(plugin.getNbtHandler().nbtTypes);
+		words.addAll(plugin.getDataTypes().namesSet());
 		return words;
 	}
 }

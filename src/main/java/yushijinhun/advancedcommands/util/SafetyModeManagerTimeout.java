@@ -48,7 +48,7 @@ public class SafetyModeManagerTimeout extends SafetyModeManager {
 			}
 		});
 		try {
-			return future.get(plugin.config.safetyTime, TimeUnit.MILLISECONDS);
+			return future.get(plugin.getPluginConfig().safetyTime, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {
 			throw new RuntimeException(e);
 		} catch (ExecutionException e) {
@@ -60,7 +60,7 @@ public class SafetyModeManagerTimeout extends SafetyModeManager {
 			Thread thread = runningThread;
 			if (thread != null) {
 				try {
-					thread.join(plugin.config.cancelWaitTime);
+					thread.join(plugin.getPluginConfig().cancelWaitTime);
 				} catch (InterruptedException e1) {
 					throw new RuntimeException(e1);
 				}
@@ -108,7 +108,7 @@ public class SafetyModeManagerTimeout extends SafetyModeManager {
 
 	@Override
 	public void checkSecurity() {
-		if (plugin.config.safetyMode && Thread.interrupted()) {
+		if (plugin.getPluginConfig().safetyMode && Thread.interrupted()) {
 			plugin.getLogger().warning("Expression handling interrupted because thread has interrupted!");
 			throw new Error("interrupted");
 		}

@@ -66,7 +66,7 @@ public class Var implements Cloneable {
 
 	public void write(DataOutput out, AdvancedCommands plugin) throws IOException {
 		out.writeBoolean(value == null);
-		out.writeUTF(type.name);
+		out.writeUTF(type.getName());
 		if (value != null) {
 			type.writeValue(value, out, plugin);
 		}
@@ -74,7 +74,7 @@ public class Var implements Cloneable {
 
 	public static Var parse(DataInput in, AdvancedCommands plugin) throws IOException {
 		boolean isnull = in.readBoolean();
-		DataType type = plugin.datatypes.get(in.readUTF());
+		DataType type = plugin.getDataTypes().get(in.readUTF());
 		Object value = isnull ? null : type.readValue(in, plugin);
 		return new Var(type, value);
 	}

@@ -12,7 +12,7 @@ public class FunctionCreateArray extends Function {
 	public Var call(Var[] args, FunctionContext context) {
 		throwArgsLengthExceptionIf(args.length != 1);
 		checkType(args, 0, "int");
-		return new Var(context.getPlugin().datatypes.get("array"), new Var[(Integer) args[0].getValue()]);
+		return new Var(context.getPlugin().getDataTypes().get("array"), new Var[(Integer) args[0].getValue()]);
 	}
 
 }

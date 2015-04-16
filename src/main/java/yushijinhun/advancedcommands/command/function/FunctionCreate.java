@@ -15,7 +15,7 @@ public class FunctionCreate extends Function {
 		checkType(args, 0, "string");
 		checkType(args, 1, "string");
 		String name = (String) args[1].getValue();
-		DataType datatype = context.getPlugin().datatypes.get((String) args[0].getValue());
+		DataType datatype = context.getPlugin().getDataTypes().get((String) args[0].getValue());
 		if (datatype == null) {
 			throw new IllegalArgumentException(String.format("Data type %s not exists", args[0].getValue()));
 		}
@@ -29,14 +29,14 @@ public class FunctionCreate extends Function {
 			if (args[2] == null) {
 				value = null;
 			} else {
-				checkType(args, 2, datatype.name);
+				checkType(args, 2, datatype.getName());
 				value = args[2].getValue();
 			}
 		} else {
 			value = datatype.getDefaultValue();
 		}
 
-		context.getPlugin().vardata.add(name, new Var(datatype, value));
+		context.getPlugin().getVardata().add(name, new Var(datatype, value));
 		return null;
 	}
 

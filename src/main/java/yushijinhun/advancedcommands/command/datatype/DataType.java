@@ -8,7 +8,7 @@ import yushijinhun.advancedcommands.util.Namable;
 
 public abstract class DataType implements Namable {
 
-	public final String name;
+	private final String name;
 
 	public DataType(String name) {
 		this.name = name;

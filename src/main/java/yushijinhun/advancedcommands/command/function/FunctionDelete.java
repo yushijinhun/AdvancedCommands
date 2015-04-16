@@ -13,7 +13,7 @@ public class FunctionDelete extends Function {
 		throwArgsLengthExceptionIf(args.length != 1);
 		checkType(args, 0, "string");
 		String var = (String) args[0].getValue();
-		context.getPlugin().vardata.remove(var);
+		context.getPlugin().getVardata().remove(var);
 		return null;
 	}
 

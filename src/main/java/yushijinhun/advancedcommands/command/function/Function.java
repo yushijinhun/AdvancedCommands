@@ -5,7 +5,7 @@ import yushijinhun.advancedcommands.util.Namable;
 
 public abstract class Function implements Namable {
 
-	public final String name;
+	private final String name;
 
 	public Function(String name) {
 		this.name = name;
@@ -24,7 +24,7 @@ public abstract class Function implements Namable {
 	}
 
 	protected static void checkType(Var[] args, int argid, String type) {
-		if (!args[argid].getType().name.equals(type)) {
+		if (!args[argid].getType().getName().equals(type)) {
 			throw new IllegalArgumentException(String.format("Argument %d must be %s", argid + 1, type));
 		}
 	}

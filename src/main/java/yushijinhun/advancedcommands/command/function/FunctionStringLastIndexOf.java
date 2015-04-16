@@ -13,7 +13,7 @@ public class FunctionStringLastIndexOf extends Function {
 		throwArgsLengthExceptionIf(args.length != 2);
 		checkType(args, 0, "string");
 		checkType(args, 1, "string");
-		return new Var(context.getPlugin().datatypes.get("int"),
+		return new Var(context.getPlugin().getDataTypes().get("int"),
 				((String) args[0].getValue()).lastIndexOf((String) args[1].getValue()));
 	}
 

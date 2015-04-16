@@ -13,7 +13,7 @@ public class FunctionCos extends Function {
 		throwArgsLengthExceptionIf(args.length != 1);
 		Object val = args[0].getValue();
 		if (val instanceof Number) {
-			return new Var(context.getPlugin().datatypes.get("double"), Math.cos(((Number) val).doubleValue()));
+			return new Var(context.getPlugin().getDataTypes().get("double"), Math.cos(((Number) val).doubleValue()));
 		}
 
 		throw new IllegalArgumentException("Argument must be a number");

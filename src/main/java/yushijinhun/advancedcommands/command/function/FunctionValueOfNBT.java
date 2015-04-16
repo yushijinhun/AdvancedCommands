@@ -13,7 +13,7 @@ public class FunctionValueOfNBT extends Function {
 	public Var call(Var[] args, FunctionContext context) {
 		throwArgsLengthExceptionIf(args.length != 1);
 		checkType(args, 0, "nbt");
-		return context.getPlugin().nbthandler.valueOf((NbtBase<?>) args[0].getValue());
+		return context.getPlugin().getNbtHandler().valueOf((NbtBase<?>) args[0].getValue());
 	}
 
 }

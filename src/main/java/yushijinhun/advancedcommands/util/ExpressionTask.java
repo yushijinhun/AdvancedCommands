@@ -27,7 +27,7 @@ public class ExpressionTask implements Callable<Var> {
 
 	@Override
 	public Var call() {
-		return plugin.expressionHandler.handleExpression(expression, commandSender);
+		return plugin.getExpressionHandler().handleExpression(expression, commandSender);
 	}
 
 	@Override
