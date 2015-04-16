@@ -26,13 +26,11 @@ public class FunctionCreate extends Function {
 
 		Object value;
 		if (args.length > 2) {
-			Var data = args[2];
-			if ((data == null) || (data.getValue() == null)) {
+			if (args[2] == null) {
 				value = null;
-			} else if (data.getType() == datatype) {
-				value = data.getValue();
 			} else {
-				throw new IllegalArgumentException(String.format("Type %s does not equal %s", data.getType(), datatype));
+				checkType(args, 2, datatype.name);
+				value = args[2].getValue();
 			}
 		} else {
 			value = datatype.getDefaultValue();
