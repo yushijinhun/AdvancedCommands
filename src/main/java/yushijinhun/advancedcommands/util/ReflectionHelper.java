@@ -1,5 +1,6 @@
 package yushijinhun.advancedcommands.util;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Array;
@@ -29,6 +30,64 @@ import com.comphenix.protocol.utility.MinecraftReflection;
 public final class ReflectionHelper {
 
 	@Deprecated
+	public static class IOMethodsFinder extends EmptyClassVisitor {
+
+		public Method readMethod;
+		public Method writeMethod;
+
+		private Class<?> own;
+		private String methodDesc;
+		private String compName;
+		private Class<?> compound;
+
+		public IOMethodsFinder(Class<?> own) {
+			this.own = own;
+			compound = MinecraftReflection.getNBTCompoundClass();
+			compName = getJarName(compound.getName());
+			methodDesc = getMethodDesc(void.class, compound);
+		}
+
+		@Override
+		public MethodVisitor visitMethod(int access, final String name, String desc, String signature,
+				String[] exceptions) {
+			if ((access == Opcodes.ACC_PUBLIC) && methodDesc.equals(desc)) { // public void xxx(NBTTagCompund)
+				return new EmptyMethodVisitor() {
+					int readCount;
+					int writeCount;
+
+					@Override
+					public void visitMethodInsn(int opcode, String owner, String name, String desc) {
+						if ((opcode == Opcodes.INVOKEVIRTUAL) && compName.equals(owner)
+								&& desc.startsWith("(Ljava/lang/String")) { // nbttagcompund.xxx(String,xxx
+							if (desc.endsWith(")V")) { // the method returns void
+								writeCount++;
+							} else { // else, not void
+								readCount++;
+							}
+						}
+					}
+
+					@Override
+					public void visitEnd() {
+						if (readCount > writeCount) {
+							readMethod = Accessors.getMethodAccessor(own, name, compound).getMethod();
+						} else {
+							writeMethod = Accessors.getMethodAccessor(own, name, compound).getMethod();
+						}
+					}
+
+				};
+			}
+			return null;
+		}
+
+		public void find() throws IOException {
+			ClassReader reader = new ClassReader(own.getCanonicalName());
+			reader.accept(this, 0);
+		}
+	}
+
+	@Deprecated
 	public static class ProxiedCommandSenderHandleFinder {
 		public Method method;
 
@@ -36,7 +95,7 @@ public final class ReflectionHelper {
 			try {
 				final Class<?> proxiedCommandSender = s.getClass();
 				final Class<?> icommandlistener = MinecraftReflection.getMinecraftClass("ICommandListener");
-				final String methodDesc = "()L" + icommandlistener.getCanonicalName().replace('.', '/') + ";";
+				final String methodDesc = getMethodDesc(icommandlistener);
 				ClassReader reader = new ClassReader(proxiedCommandSender.getCanonicalName());
 				reader.accept(new EmptyClassVisitor() {
 
@@ -64,7 +123,7 @@ public final class ReflectionHelper {
 			try {
 				final Class<?> world = w.getClass();
 				final Class<?> tileentity = MinecraftReflection.getTileEntityClass();
-				final String methodDesc = "(III)L" + tileentity.getCanonicalName().replace('.', '/') + ";";
+				final String methodDesc = getMethodDesc(tileentity, int.class, int.class, int.class);
 				ClassReader reader = new ClassReader(world.getCanonicalName());
 				reader.accept(new EmptyClassVisitor() {
 
@@ -93,7 +152,7 @@ public final class ReflectionHelper {
 			try {
 				final Class<?> craftMinecart = m.getClass();
 				final Class<?> entityMinecartAbstract = MinecraftReflection.getMinecraftClass("EntityMinecartAbstract");
-				final String methodDesc = "()L" + entityMinecartAbstract.getCanonicalName().replace('.', '/') + ";";
+				final String methodDesc = getMethodDesc(entityMinecartAbstract);
 				ClassReader reader = new ClassReader(craftMinecart.getCanonicalName());
 				reader.accept(new EmptyClassVisitor() {
 
@@ -152,10 +211,17 @@ public final class ReflectionHelper {
 	@Deprecated
 	public static Field serverWorldsArray;
 
+	@Deprecated
+	public static Method tileEntityReadMethod;
+
+	@Deprecated
+	public static Method tileEntityWriteMethod;
+
 	public static void init() {
 		getServerMethod();
-		getGettingEntityMethod();
-		getIOMethods();
+		getGettingEntityByUUIDMethod();
+		getEntityIOMethods();
+		getTileEntityIOMethods();
 		getSelectingEntityMethod();
 		getTileGetCommandBlockLogicMethod();
 		getEntityGetUUIDMethod();
@@ -165,6 +231,22 @@ public final class ReflectionHelper {
 		getServerWorldsArrayField();
 		getCommandSenderGetWorldMethod();
 		getGetRemoteControlCommandListenerMethod();
+	}
+
+	public static void tileRead(Object nmsTile, Object nmsCompound) {
+		try {
+			tileEntityReadMethod.invoke(nmsTile, nmsCompound);
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static void tileWrite(Object nmsTile, Object nmsCompound) {
+		try {
+			tileEntityWriteMethod.invoke(nmsTile, nmsCompound);
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public static Object getRemoteControlCommandListener() {
@@ -333,7 +415,7 @@ public final class ReflectionHelper {
 		try {
 			final Class<?> entity = MinecraftReflection.getEntityClass();
 			final Class<?> uuid = UUID.class;
-			final String methodDesc = "()L" + uuid.getCanonicalName().replace('.', '/') + ";";
+			final String methodDesc = getMethodDesc(uuid);
 			ClassReader reader = new ClassReader(entity.getCanonicalName());
 			reader.accept(new EmptyClassVisitor() {
 
@@ -356,7 +438,7 @@ public final class ReflectionHelper {
 		try {
 			final Class<?> tileEntityCommand = MinecraftReflection.getMinecraftClass("TileEntityCommand");
 			final Class<?> commandBlockLogic = MinecraftReflection.getMinecraftClass("CommandBlockListenerAbstract");
-			final String methodDesc = "()L" + commandBlockLogic.getCanonicalName().replace('.', '/') + ";";
+			final String methodDesc = getMethodDesc(commandBlockLogic);
 			ClassReader reader = new ClassReader(tileEntityCommand.getCanonicalName());
 			reader.accept(new EmptyClassVisitor() {
 
@@ -380,7 +462,7 @@ public final class ReflectionHelper {
 	private static void getServerMethod() {
 		try {
 			final Class<?> serverClass = MinecraftReflection.getMinecraftServerClass();
-			final String methodDesc = "()L" + serverClass.getCanonicalName().replace('.', '/') + ";";
+			final String methodDesc = getMethodDesc(serverClass);
 			ClassReader serverClassReader = new ClassReader(serverClass.getCanonicalName());
 			serverClassReader.accept(new EmptyClassVisitor() {
 
@@ -400,12 +482,12 @@ public final class ReflectionHelper {
 		}
 	}
 
-	private static void getGettingEntityMethod() {
+	private static void getGettingEntityByUUIDMethod() {
 		try {
-			final String entityName = MinecraftReflection.getEntityClass().getCanonicalName();
-			final String uuidName = UUID.class.getCanonicalName();
-			final String methodDesc = "(L" + uuidName.replace('.', '/') + ";)L" + entityName.replace('.', '/') + ";";
 			final Class<?> serverClass = MinecraftReflection.getMinecraftServerClass();
+			final Class<?> entity = MinecraftReflection.getEntityClass();
+			final Class<?> uuid = UUID.class;
+			final String methodDesc = getMethodDesc(entity, uuid);
 			ClassReader serverClassReader = new ClassReader(serverClass.getCanonicalName());
 			serverClassReader.accept(new EmptyClassVisitor() {
 
@@ -413,7 +495,7 @@ public final class ReflectionHelper {
 				public MethodVisitor visitMethod(int access, final String name, String desc, String signature,
 						String[] exceptions) {
 					if ((access == Opcodes.ACC_PUBLIC) && methodDesc.equals(desc)) { // public Entity xxx(UUID)
-						getEntityByUUIDMethod = Accessors.getMethodAccessor(serverClass, name, UUID.class).getMethod();
+						getEntityByUUIDMethod = Accessors.getMethodAccessor(serverClass, name, uuid).getMethod();
 					}
 					return null;
 				}
@@ -424,51 +506,23 @@ public final class ReflectionHelper {
 		}
 	}
 
-	private static void getIOMethods() {
+	private static void getEntityIOMethods() {
 		try {
-			final String compName = MinecraftReflection.getNBTCompoundClass().getCanonicalName().replace('.', '/');
-			final String compDesc = "(L" + compName + ";)V";
-			final Class<?> entityClass = MinecraftReflection.getEntityClass();
-			ClassReader entityClassReader = new ClassReader(entityClass.getCanonicalName());
-			entityClassReader.accept(new EmptyClassVisitor() {
+			IOMethodsFinder finder = new IOMethodsFinder(MinecraftReflection.getEntityClass());
+			finder.find();
+			entityReadMethod = finder.readMethod;
+			entityWriteMethod = finder.writeMethod;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-				@Override
-				public MethodVisitor visitMethod(int access, final String name, String desc, String signature,
-						String[] exceptions) {
-					if ((access == Opcodes.ACC_PUBLIC) && compDesc.equals(desc)) { // public void xxx(NBTTagCompund)
-						return new EmptyMethodVisitor() {
-							int readCount;
-							int writeCount;
-
-							@Override
-							public void visitMethodInsn(int opcode, String owner, String name, String desc) {
-								if ((opcode == Opcodes.INVOKEVIRTUAL) && compName.equals(owner)
-										&& desc.startsWith("(Ljava/lang/String")) { // nbttagcompund.xxx(String,xxx
-									if (desc.endsWith(")V")) { // the method returns void
-										writeCount++;
-									} else { // else, not void
-										readCount++;
-									}
-								}
-							}
-
-							@Override
-							public void visitEnd() {
-								if (readCount > writeCount) {
-									entityReadMethod = Accessors.getMethodAccessor(entityClass, name,
-											MinecraftReflection.getNBTCompoundClass()).getMethod();
-								} else {
-									entityWriteMethod = Accessors.getMethodAccessor(entityClass, name,
-											MinecraftReflection.getNBTCompoundClass()).getMethod();
-								}
-							}
-
-						};
-					}
-					return null;
-				}
-
-			}, 0);
+	private static void getTileEntityIOMethods() {
+		try {
+			IOMethodsFinder finder = new IOMethodsFinder(MinecraftReflection.getTileEntityClass());
+			finder.find();
+			tileEntityReadMethod = finder.readMethod;
+			tileEntityWriteMethod = finder.writeMethod;
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -480,9 +534,7 @@ public final class ReflectionHelper {
 			final Class<?> list = List.class;
 			final Class<?> icommandsender = MinecraftReflection.getMinecraftClass("ICommandListener");
 			final Class<?> string = String.class;
-			final String methodDesc = "(L" + icommandsender.getCanonicalName().replace('.', '/') + ";L"
-					+ string.getCanonicalName().replace('.', '/') + ";)L" + list.getCanonicalName().replace('.', '/')
-					+ ";";
+			final String methodDesc = getMethodDesc(list, icommandsender, string);
 			ClassReader reader = new ClassReader(commandAbstract.getCanonicalName());
 			reader.accept(new EmptyClassVisitor() {
 
@@ -508,8 +560,7 @@ public final class ReflectionHelper {
 			final Class<?> nbtCompressedStreamTools = MinecraftReflection.getNbtCompressedStreamToolsClass();
 			final Class<?> nbtCompound = MinecraftReflection.getNBTCompoundClass();
 			final Class<?> outputStream = OutputStream.class;
-			final String methodDesc = "(L" + nbtCompound.getCanonicalName().replace('.', '/') + ";L"
-					+ outputStream.getCanonicalName().replace('.', '/') + ";)V";
+			final String methodDesc = getMethodDesc(void.class, nbtCompound, outputStream);
 			ClassReader reader = new ClassReader(nbtCompressedStreamTools.getCanonicalName());
 			reader.accept(new EmptyClassVisitor() {
 
@@ -534,8 +585,7 @@ public final class ReflectionHelper {
 			final Class<?> nbtCompressedStreamTools = MinecraftReflection.getNbtCompressedStreamToolsClass();
 			final Class<?> nbtCompound = MinecraftReflection.getNBTCompoundClass();
 			final Class<?> inputStream = InputStream.class;
-			final String methodDesc = "(L" + inputStream.getCanonicalName().replace('.', '/') + ";)L"
-					+ nbtCompound.getCanonicalName().replace('.', '/') + ";";
+			final String methodDesc = getMethodDesc(nbtCompound, inputStream);
 			ClassReader reader = new ClassReader(nbtCompressedStreamTools.getCanonicalName());
 			reader.accept(new EmptyClassVisitor() {
 
@@ -558,7 +608,7 @@ public final class ReflectionHelper {
 		try {
 			final Class<?> minecraftServer = MinecraftReflection.getMinecraftServerClass();
 			final Class<?> list = List.class;
-			final String fieldDesc = "L" + list.getCanonicalName().replace('.', '/') + ";";
+			final String fieldDesc = getTypeDesc(list);
 			ClassReader reader = new ClassReader(minecraftServer.getCanonicalName());
 			reader.accept(new EmptyClassVisitor() {
 
@@ -579,8 +629,8 @@ public final class ReflectionHelper {
 	private static void getServerWorldsArrayField() {
 		try {
 			final Class<?> minecraftServer = MinecraftReflection.getMinecraftServerClass();
-			final Class<?> serverWorld = MinecraftReflection.getWorldServerClass();
-			final String fieldDesc = "[L" + serverWorld.getCanonicalName().replace('.', '/') + ";";
+			final Class<?> serverWorldArray = getArrayClass(MinecraftReflection.getWorldServerClass());
+			final String fieldDesc = getTypeDesc(serverWorldArray);
 			ClassReader reader = new ClassReader(minecraftServer.getCanonicalName());
 			reader.accept(new EmptyClassVisitor() {
 
@@ -602,7 +652,7 @@ public final class ReflectionHelper {
 		try {
 			final Class<?> icommandsender = MinecraftReflection.getMinecraftClass("ICommandListener");
 			final Class<?> world = MinecraftReflection.getNmsWorldClass();
-			final String methodDesc = "()L" + world.getCanonicalName().replace('.', '/') + ";";
+			final String methodDesc = getMethodDesc(world);
 			ClassReader reader = new ClassReader(icommandsender.getCanonicalName());
 			reader.accept(new EmptyClassVisitor() {
 
@@ -625,7 +675,7 @@ public final class ReflectionHelper {
 		try {
 			final Class<?> remoteControlCommandListener = MinecraftReflection
 					.getMinecraftClass("RemoteControlCommandListener");
-			final String methodDesc = "()L" + remoteControlCommandListener.getCanonicalName().replace('.', '/') + ";";
+			final String methodDesc = getMethodDesc(remoteControlCommandListener);
 			ClassReader reader = new ClassReader(remoteControlCommandListener.getCanonicalName());
 			reader.accept(new EmptyClassVisitor() {
 
@@ -644,5 +694,56 @@ public final class ReflectionHelper {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public static String getMethodDesc(Class<?> returnType, Class<?>... args) {
+		StringBuilder sb = new StringBuilder();
+		sb.append('(');
+		for (Class<?> type : args) {
+			sb.append(getTypeDesc(type));
+		}
+		sb.append(')');
+		sb.append(getTypeDesc(returnType));
+		return sb.toString();
+	}
+
+	public static String getJarName(String className) {
+		return className.replace('.', '/');
+	}
+
+	public static String getTypeDesc(Class<?> type) {
+		return getJarName(getTypeName(type));
+	}
+
+	public static String getTypeName(Class<?> type) {
+		if (type == void.class) {
+			return "V";
+		} else if (type == boolean.class) {
+			return "Z";
+		} else if (type == byte.class) {
+			return "B";
+		} else if (type == short.class) {
+			return "S";
+		} else if (type == char.class) {
+			return "C";
+		} else if (type == int.class) {
+			return "I";
+		} else if (type == long.class) {
+			return "J";
+		} else if (type == float.class) {
+			return "F";
+		} else if (type == double.class) {
+			return "D";
+		}
+
+		if (type.isArray()) {
+			return type.getName();
+		}
+
+		return "L" + type.getName() + ";";
+	}
+
+	public static Class<?> getArrayClass(Class<?> base) throws ClassNotFoundException {
+		return Class.forName("[" + getTypeName(base));
 	}
 }

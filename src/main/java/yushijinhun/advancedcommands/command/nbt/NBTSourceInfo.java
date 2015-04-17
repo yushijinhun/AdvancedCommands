@@ -1,5 +1,6 @@
 package yushijinhun.advancedcommands.command.nbt;
 
+import org.bukkit.command.CommandSender;
 import yushijinhun.advancedcommands.AdvancedCommands;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
 
@@ -21,12 +22,12 @@ public class NBTSourceInfo {
 		return source;
 	}
 
-	public NbtCompound get() {
-		return source.get(parm);
+	public NbtCompound get(CommandSender commandSender) {
+		return source.get(parm, commandSender);
 	}
 
-	public void set(NbtCompound nbt) {
-		source.set(parm, nbt);
+	public void set(NbtCompound nbt, CommandSender commandSender) {
+		source.set(parm, nbt, commandSender);
 	}
 
 	public static NBTSourceInfo parseNBTInfo(String str, AdvancedCommands plugin) {

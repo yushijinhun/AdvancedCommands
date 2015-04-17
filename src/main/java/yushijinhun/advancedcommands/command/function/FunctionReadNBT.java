@@ -14,7 +14,7 @@ public class FunctionReadNBT extends Function {
 		throwArgsLengthExceptionIf(args.length != 1);
 		checkType(args, 0, "string");
 		return new Var(context.getPlugin().getDataTypes().get("nbt"), NBTSourceInfo.parseNBTInfo((String) args[0].getValue(),
-				context.getPlugin()).get());
+				context.getPlugin()).get(context.getCommandSender()));
 	}
 
 }
