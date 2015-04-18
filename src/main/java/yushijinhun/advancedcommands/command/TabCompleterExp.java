@@ -15,7 +15,7 @@ public class TabCompleterExp implements TabCompleter {
 
 	private AdvancedCommands plugin;
 
-	private final Pattern wordPattern = Pattern.compile("[0-9A-Za-z\\$]*(\\[(\\])?)?$");
+	private final Pattern wordPattern = Pattern.compile("[0-9A-Za-z\\$_]*(\\[(\\])?)?$");
 
 	public TabCompleterExp(AdvancedCommands plugin) {
 		this.plugin = plugin;
