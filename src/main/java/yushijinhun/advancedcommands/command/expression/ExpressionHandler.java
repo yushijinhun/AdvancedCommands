@@ -775,7 +775,7 @@ public final class ExpressionHandler {
 						throw new ExpressionHandlingException("Unmatched \"");
 					}
 				} else {
-					Var var = plugin.getVardata().get(str);
+					Var var = plugin.getVarTable().get(str);
 					if (var == null) {
 						Function function = plugin.getFunctions().get(str);
 						if (function == null) {

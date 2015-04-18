@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.Set;
 import yushijinhun.advancedcommands.AdvancedCommands;
 
-public class VarData {
+public class VarTable {
 
 	protected final Map<String, Var> vars = new LinkedHashMap<String, Var>();
 	protected final Map<String, Var> constants = new LinkedHashMap<String, Var>();
@@ -19,7 +19,7 @@ public class VarData {
 
 	private AdvancedCommands plugin;
 
-	public VarData(AdvancedCommands plugin) {
+	public VarTable(AdvancedCommands plugin) {
 		this.plugin = plugin;
 	}
 
@@ -68,7 +68,7 @@ public class VarData {
 		}
 		if (!vars.containsKey(name)) {
 			throw new IllegalArgumentException(String.format(
-					"advancedcommands.command.var.notexists", name));
+					"Var %s does not exist", name));
 		}
 		vars.remove(name);
 		names.remove(name);
@@ -108,9 +108,7 @@ public class VarData {
 	public Var putConstant(String name, Var constant) {
 		Objects.requireNonNull(name);
 		Objects.requireNonNull(constant);
-		if (!names.contains(name)) {
-			names.add(name);
-		}
+		names.add(name);
 		return constants.put(name, constant);
 	}
 
@@ -136,6 +134,7 @@ public class VarData {
 		for (int i = 0; i < size; i++) {
 			String key = in.readUTF();
 			vars.put(key, Var.parse(in, plugin));
+			names.add(key);
 		}
 	}
 }

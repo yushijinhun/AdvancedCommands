@@ -56,7 +56,7 @@ import yushijinhun.advancedcommands.command.function.FunctionWhile;
 import yushijinhun.advancedcommands.command.function.FunctionWriteNBT;
 import yushijinhun.advancedcommands.command.nbt.NBTHandler;
 import yushijinhun.advancedcommands.command.var.Var;
-import yushijinhun.advancedcommands.command.var.VarData;
+import yushijinhun.advancedcommands.command.var.VarTable;
 import yushijinhun.advancedcommands.util.ExceptionHelper;
 import yushijinhun.advancedcommands.util.ReflectionHelper;
 import yushijinhun.advancedcommands.util.Register;
@@ -64,13 +64,13 @@ import yushijinhun.advancedcommands.util.Register;
 public final class AdvancedCommands extends JavaPlugin {
 
 	private Config config;
-	private File vardataFile;
+	private File varTableFile;
 
 	private Register<Function> functions;
 	private Register<DataType> dataTypes;
 	private ExpressionHandler expressionHandler;
 	private NBTHandler nbtHandler;
-	private VarData varData;
+	private VarTable varTable;
 
 	@Override
 	public void onEnable() {
@@ -85,7 +85,7 @@ public final class AdvancedCommands extends JavaPlugin {
 		dataTypes = new Register<DataType>("Datatype", this);
 		expressionHandler = new ExpressionHandler(this);
 		nbtHandler = new NBTHandler(this);
-		varData = new VarData(this);
+		varTable = new VarTable(this);
 
 		registerDataTypes();
 		registerFunctions();
@@ -95,23 +95,23 @@ public final class AdvancedCommands extends JavaPlugin {
 		commandExp.setExecutor(new CommandExp(this));
 		commandExp.setTabCompleter(new TabCompleterExp(this));
 
-		vardataFile = new File(getDataFolder(), "ac-vars.dat");
-		loadVarData();
+		varTableFile = new File(getDataFolder(), "ac-vars.dat");
+		loadVarTable();
 
 		getLogger().info("Enabled");
 	}
 
 	@Override
 	public void onDisable() {
-		saveVarData();
+		saveVarTable();
 
 		config = null;
 		functions = null;
 		dataTypes = null;
 		expressionHandler = null;
 		nbtHandler = null;
-		varData = null;
-		vardataFile = null;
+		varTable = null;
+		varTableFile = null;
 
 		getLogger().info("Disabled");
 	}
@@ -148,19 +148,19 @@ public final class AdvancedCommands extends JavaPlugin {
 		return true;
 	}
 
-	public void loadVarData() {
-		try (DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(vardataFile)))) {
-			varData.read(in);
+	public void loadVarTable() {
+		try (DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(varTableFile)))) {
+			varTable.read(in);
 		} catch (Exception e) {
-			getLogger().warning(String.format("Load var data file failed\n%s", ExceptionHelper.exceptionToString(e)));
+			getLogger().warning(String.format("Load var table file failed\n%s", ExceptionHelper.exceptionToString(e)));
 		}
 	}
 
-	public void saveVarData() {
-		try (DataOutputStream out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(vardataFile)))) {
-			varData.write(out);
+	public void saveVarTable() {
+		try (DataOutputStream out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(varTableFile)))) {
+			varTable.write(out);
 		} catch (Exception e) {
-			getLogger().warning(String.format("Save var data file failed\n%s", ExceptionHelper.exceptionToString(e)));
+			getLogger().warning(String.format("Save var table file failed\n%s", ExceptionHelper.exceptionToString(e)));
 		}
 	}
 
@@ -168,8 +168,8 @@ public final class AdvancedCommands extends JavaPlugin {
 		return config;
 	}
 
-	public File getVardataFile() {
-		return vardataFile;
+	public File getVarTableFile() {
+		return varTableFile;
 	}
 
 	public Register<Function> getFunctions() {
@@ -188,8 +188,8 @@ public final class AdvancedCommands extends JavaPlugin {
 		return nbtHandler;
 	}
 
-	public VarData getVardata() {
-		return varData;
+	public VarTable getVarTable() {
+		return varTable;
 	}
 
 	private void registerFunctions() {
@@ -239,27 +239,27 @@ public final class AdvancedCommands extends JavaPlugin {
 	}
 
 	private void registerConstants() {
-		varData.putConstant("true", new Var(dataTypes.get("boolean"), Boolean.TRUE));
-		varData.putConstant("false", new Var(dataTypes.get("boolean"), Boolean.FALSE));
-		varData.putConstant("PI", new Var(dataTypes.get("double"), Math.PI));
-		varData.putConstant("E", new Var(dataTypes.get("double"), Math.E));
-		varData.putConstant("MAX_BYTE", new Var(dataTypes.get("byte"), Byte.MAX_VALUE));
-		varData.putConstant("MIN_BYTE", new Var(dataTypes.get("byte"), Byte.MIN_VALUE));
-		varData.putConstant("MAX_SHORT", new Var(dataTypes.get("short"), Short.MAX_VALUE));
-		varData.putConstant("MIN_SHORT", new Var(dataTypes.get("short"), Short.MIN_VALUE));
-		varData.putConstant("MAX_INT", new Var(dataTypes.get("int"), Integer.MAX_VALUE));
-		varData.putConstant("MIN_INT", new Var(dataTypes.get("int"), Integer.MIN_VALUE));
-		varData.putConstant("MAX_LONG", new Var(dataTypes.get("long"), Long.MAX_VALUE));
-		varData.putConstant("MIN_LONG", new Var(dataTypes.get("long"), Long.MIN_VALUE));
-		varData.putConstant("MAX_FLOAT", new Var(dataTypes.get("float"), Float.MAX_VALUE));
-		varData.putConstant("MIN_FLOAT", new Var(dataTypes.get("float"), Float.MIN_VALUE));
-		varData.putConstant("NaN_FLOAT", new Var(dataTypes.get("float"), Float.NaN));
-		varData.putConstant("NEGATIVE_INFINITY_FLOAT", new Var(dataTypes.get("float"), Float.NEGATIVE_INFINITY));
-		varData.putConstant("POSITIVE_INFINITY_FLOAT", new Var(dataTypes.get("float"), Float.POSITIVE_INFINITY));
-		varData.putConstant("MAX_DOUBLE", new Var(dataTypes.get("double"), Double.MAX_VALUE));
-		varData.putConstant("MIN_DOUBLE", new Var(dataTypes.get("double"), Double.MIN_VALUE));
-		varData.putConstant("NaN_DOUBLE", new Var(dataTypes.get("double"), Double.NaN));
-		varData.putConstant("NEGATIVE_INFINITY_DOUBLE", new Var(dataTypes.get("double"), Double.NEGATIVE_INFINITY));
-		varData.putConstant("POSITIVE_INFINITY_DOUBLE", new Var(dataTypes.get("double"), Double.POSITIVE_INFINITY));
+		varTable.putConstant("true", new Var(dataTypes.get("boolean"), Boolean.TRUE));
+		varTable.putConstant("false", new Var(dataTypes.get("boolean"), Boolean.FALSE));
+		varTable.putConstant("PI", new Var(dataTypes.get("double"), Math.PI));
+		varTable.putConstant("E", new Var(dataTypes.get("double"), Math.E));
+		varTable.putConstant("MAX_BYTE", new Var(dataTypes.get("byte"), Byte.MAX_VALUE));
+		varTable.putConstant("MIN_BYTE", new Var(dataTypes.get("byte"), Byte.MIN_VALUE));
+		varTable.putConstant("MAX_SHORT", new Var(dataTypes.get("short"), Short.MAX_VALUE));
+		varTable.putConstant("MIN_SHORT", new Var(dataTypes.get("short"), Short.MIN_VALUE));
+		varTable.putConstant("MAX_INT", new Var(dataTypes.get("int"), Integer.MAX_VALUE));
+		varTable.putConstant("MIN_INT", new Var(dataTypes.get("int"), Integer.MIN_VALUE));
+		varTable.putConstant("MAX_LONG", new Var(dataTypes.get("long"), Long.MAX_VALUE));
+		varTable.putConstant("MIN_LONG", new Var(dataTypes.get("long"), Long.MIN_VALUE));
+		varTable.putConstant("MAX_FLOAT", new Var(dataTypes.get("float"), Float.MAX_VALUE));
+		varTable.putConstant("MIN_FLOAT", new Var(dataTypes.get("float"), Float.MIN_VALUE));
+		varTable.putConstant("NaN_FLOAT", new Var(dataTypes.get("float"), Float.NaN));
+		varTable.putConstant("NEGATIVE_INFINITY_FLOAT", new Var(dataTypes.get("float"), Float.NEGATIVE_INFINITY));
+		varTable.putConstant("POSITIVE_INFINITY_FLOAT", new Var(dataTypes.get("float"), Float.POSITIVE_INFINITY));
+		varTable.putConstant("MAX_DOUBLE", new Var(dataTypes.get("double"), Double.MAX_VALUE));
+		varTable.putConstant("MIN_DOUBLE", new Var(dataTypes.get("double"), Double.MIN_VALUE));
+		varTable.putConstant("NaN_DOUBLE", new Var(dataTypes.get("double"), Double.NaN));
+		varTable.putConstant("NEGATIVE_INFINITY_DOUBLE", new Var(dataTypes.get("double"), Double.NEGATIVE_INFINITY));
+		varTable.putConstant("POSITIVE_INFINITY_DOUBLE", new Var(dataTypes.get("double"), Double.POSITIVE_INFINITY));
 	}
 }

@@ -12,8 +12,8 @@ public class FunctionListVar extends Function {
 	public Var call(Var[] args, FunctionContext context) {
 		throwArgsLengthExceptionIf(args.length != 0);
 		StringBuilder sb = new StringBuilder();
-		for (String name : context.getPlugin().getVardata().varNamesSet()) {
-			Var var = context.getPlugin().getVardata().get(name);
+		for (String name : context.getPlugin().getVarTable().varNamesSet()) {
+			Var var = context.getPlugin().getVarTable().get(name);
 			sb.append(var.getType());
 			sb.append(' ');
 			sb.append(name);

@@ -20,17 +20,17 @@ public class VarWarpperVar implements IVarWarpper {
 
 	@Override
 	public void set(Var var) {
-		plugin.getVardata().set(name, var);
+		plugin.getVarTable().set(name, var);
 	}
 
 	@Override
 	public Var get() {
-		return plugin.getVardata().get(name);
+		return plugin.getVarTable().get(name);
 	}
 
 	@Override
 	public void changed() {
-		plugin.getVardata().markDirty();
+		plugin.getVarTable().markDirty();
 	}
 
 	@Override

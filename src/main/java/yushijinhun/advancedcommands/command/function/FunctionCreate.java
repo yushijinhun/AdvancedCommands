@@ -36,7 +36,7 @@ public class FunctionCreate extends Function {
 			value = datatype.getDefaultValue();
 		}
 
-		context.getPlugin().getVardata().add(name, new Var(datatype, value));
+		context.getPlugin().getVarTable().add(name, new Var(datatype, value));
 		return null;
 	}
 
