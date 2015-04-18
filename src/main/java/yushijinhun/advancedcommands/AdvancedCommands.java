@@ -37,6 +37,7 @@ import yushijinhun.advancedcommands.command.function.FunctionLength;
 import yushijinhun.advancedcommands.command.function.FunctionListVar;
 import yushijinhun.advancedcommands.command.function.FunctionMax;
 import yushijinhun.advancedcommands.command.function.FunctionMin;
+import yushijinhun.advancedcommands.command.function.FunctionRandom;
 import yushijinhun.advancedcommands.command.function.FunctionReadNBT;
 import yushijinhun.advancedcommands.command.function.FunctionRemoveChild;
 import yushijinhun.advancedcommands.command.function.FunctionReplaceString;
@@ -223,6 +224,7 @@ public final class AdvancedCommands extends JavaPlugin {
 		functions.register(new FunctionShell());
 		functions.register(new FunctionIf());
 		functions.register(new FunctionWhile());
+		functions.register(new FunctionRandom());
 	}
 
 	private void registerDataTypes() {
