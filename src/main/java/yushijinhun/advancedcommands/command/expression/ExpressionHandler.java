@@ -135,81 +135,118 @@ public final class ExpressionHandler {
 							Var arg1 = stack.pop().get();
 							Var result = null;
 							boolean pushResult = true;
-							if (op.equals("!")) {
+							switch (op) {
+							case "!":
 								result = opNot(arg1);
-							} else if (op.equals("+.")) {
+								break;
+							case "+.":
 								result = opUp(arg1);
-							} else if (op.equals("-.")) {
+								break;
+							case "-.":
 								result = opDown(arg1);
-							} else if (op.equals("*")) {
+								break;
+							case "*":
 								result = opMultiply(stack.pop().get(), arg1);
-							} else if (op.equals("/")) {
+								break;
+							case "/":
 								result = opDiv(stack.pop().get(), arg1);
-							} else if (op.equals("%")) {
+								break;
+							case "%":
 								result = opMod(stack.pop().get(), arg1);
-							} else if (op.equals("+")) {
+								break;
+							case "+":
 								result = opPlus(stack.pop().get(), arg1);
-							} else if (op.equals("-")) {
+								break;
+							case "-":
 								result = opMinus(stack.pop().get(), arg1);
-							} else if (op.equals("<<")) {
+								break;
+							case "<<":
 								result = opLShift(stack.pop().get(), arg1);
-							} else if (op.equals(">>")) {
+								break;
+							case ">>":
 								result = opRShift(stack.pop().get(), arg1);
-							} else if (op.equals(">>>")) {
+								break;
+							case ">>>":
 								result = opNRShift(stack.pop().get(), arg1);
-							} else if (op.equals("<")) {
+								break;
+							case "<":
 								result = opLess(stack.pop().get(), arg1);
-							} else if (op.equals(">")) {
+								break;
+							case ">":
 								result = opLarger(stack.pop().get(), arg1);
-							} else if (op.equals(">=")) {
+								break;
+							case ">=":
 								result = opLargerEquals(stack.pop().get(), arg1);
-							} else if (op.equals("<=")) {
+								break;
+							case "<=":
 								result = opLessEquals(stack.pop().get(), arg1);
-							} else if (op.equals("==")) {
+								break;
+							case "==":
 								result = opEquals(stack.pop().get(), arg1);
-							} else if (op.equals("!=")) {
+								break;
+							case "!=":
 								result = opNotEquals(stack.pop().get(), arg1);
-							} else if (op.equals("&")) {
+								break;
+							case "&":
 								result = opAnd(stack.pop().get(), arg1);
-							} else if (op.equals("|")) {
+								break;
+							case "|":
 								result = opOr(stack.pop().get(), arg1);
-							} else if (op.equals("^")) {
+								break;
+							case "^":
 								result = opXor(stack.pop().get(), arg1);
-							} else if (op.equals("=")) {
+								break;
+							case "=":
 								result = opSet(stack.pop(), arg1);
-							} else if (op.equals("+=")) {
+								break;
+							case "+=":
 								result = opSetPlus(stack.pop(), arg1);
-							} else if (op.equals("-=")) {
+								break;
+							case "-=":
 								result = opSetMinus(stack.pop(), arg1);
-							} else if (op.equals("*=")) {
+								break;
+							case "*=":
 								result = opSetMultiply(stack.pop(), arg1);
-							} else if (op.equals("/=")) {
+								break;
+							case "/=":
 								result = opSetDiv(stack.pop(), arg1);
-							} else if (op.equals("%=")) {
+								break;
+							case "%=":
 								result = opSetMod(stack.pop(), arg1);
-							} else if (op.equals("<<=")) {
+								break;
+							case "<<=":
 								result = opSetLShift(stack.pop(), arg1);
-							} else if (op.equals(">>=")) {
+								break;
+							case ">>=":
 								result = opSetRShift(stack.pop(), arg1);
-							} else if (op.equals(">>>=")) {
+								break;
+							case ">>>=":
 								result = opSetNRShift(stack.pop(), arg1);
-							} else if (op.equals("&=")) {
+								break;
+							case "&=":
 								result = opSetAnd(stack.pop(), arg1);
-							} else if (op.equals("|=")) {
+								break;
+							case "|=":
 								result = opSetOr(stack.pop(), arg1);
-							} else if (op.equals("^=")) {
+								break;
+							case "^=":
 								result = opSetXor(stack.pop(), arg1);
-							} else if (op.equals("[")) {
+								break;
+							case "[":
 								stack.push(opArraySelect(stack.pop(), arg1));
 								pushResult = false;
-							} else if (op.startsWith("(")) {
-								if (op.endsWith(")")) {
-									result = opCast(arg1, op.substring(1, op.length() - 1));
+								break;
+							default:
+								if (op.startsWith("(")) {
+									if (op.endsWith(")")) {
+										result = opCast(arg1, op.substring(1, op.length() - 1));
+									} else {
+										throw new ExpressionHandlingException("Unmatched (");
+									}
 								} else {
-									throw new ExpressionHandlingException("Unmatched (");
+									throw new ExpressionHandlingException("Unmatched op " + op);
 								}
-							} else {
-								throw new ExpressionHandlingException("Unmatched op " + op);
+								break;
 							}
 							if (pushResult) {
 								stack.push(new VarWarpperConstant(result));
@@ -283,52 +320,61 @@ public final class ExpressionHandler {
 	}
 
 	public Var opDown(Var arg1) {
-		if (arg1.getValue() instanceof Byte) {
-			return new Var(plugin.getDataTypes().get("byte"), (byte) -((Byte) arg1.getValue()));
-		} else if (arg1.getValue() instanceof Short) {
-			return new Var(plugin.getDataTypes().get("short"), (short) -((Short) arg1.getValue()));
-		} else if (arg1.getValue() instanceof Integer) {
-			return new Var(plugin.getDataTypes().get("int"), -((Integer) arg1.getValue()));
-		} else if (arg1.getValue() instanceof Long) {
-			return new Var(plugin.getDataTypes().get("long"), -((Long) arg1.getValue()));
-		} else if (arg1.getValue() instanceof Float) {
-			return new Var(plugin.getDataTypes().get("float"), -((Float) arg1.getValue()));
-		} else if (arg1.getValue() instanceof Double) {
-			return new Var(plugin.getDataTypes().get("double"), -((Double) arg1.getValue()));
+		Object arg1Val = arg1.getValue();
+		switch (arg1.getType().getName()) {
+		case "byte":
+			return new Var(plugin.getDataTypes().get("byte"), (byte) -((Byte) arg1Val));
+		case "short":
+			return new Var(plugin.getDataTypes().get("short"), (short) -((Short) arg1Val));
+		case "int":
+			return new Var(plugin.getDataTypes().get("int"), -((Integer) arg1Val));
+		case "long":
+			return new Var(plugin.getDataTypes().get("long"), -((Long) arg1Val));
+		case "float":
+			return new Var(plugin.getDataTypes().get("float"), -((Float) arg1Val));
+		case "double":
+			return new Var(plugin.getDataTypes().get("double"), -((Double) arg1Val));
+		default:
+			throw new UnsupportedOperationException("- " + arg1 + " unsupported");
 		}
-		throw new UnsupportedOperationException("- " + arg1 + " unsupported");
 	}
 
 	public Var opUp(Var arg1) {
-		if (arg1.getValue() instanceof Byte) {
-			return new Var(plugin.getDataTypes().get("byte"), (byte) +((Byte) arg1.getValue()));
-		} else if (arg1.getValue() instanceof Short) {
-			return new Var(plugin.getDataTypes().get("short"), (short) +((Short) arg1.getValue()));
-		} else if (arg1.getValue() instanceof Integer) {
-			return new Var(plugin.getDataTypes().get("int"), +((Integer) arg1.getValue()));
-		} else if (arg1.getValue() instanceof Long) {
-			return new Var(plugin.getDataTypes().get("long"), +((Long) arg1.getValue()));
-		} else if (arg1.getValue() instanceof Float) {
-			return new Var(plugin.getDataTypes().get("float"), +((Float) arg1.getValue()));
-		} else if (arg1.getValue() instanceof Double) {
-			return new Var(plugin.getDataTypes().get("double"), +((Double) arg1.getValue()));
+		Object arg1Val = arg1.getValue();
+		switch (arg1.getType().getName()) {
+		case "byte":
+			return new Var(plugin.getDataTypes().get("byte"), (byte) +((Byte) arg1Val));
+		case "short":
+			return new Var(plugin.getDataTypes().get("short"), (short) +((Short) arg1Val));
+		case "int":
+			return new Var(plugin.getDataTypes().get("int"), +((Integer) arg1Val));
+		case "long":
+			return new Var(plugin.getDataTypes().get("long"), +((Long) arg1Val));
+		case "float":
+			return new Var(plugin.getDataTypes().get("float"), +((Float) arg1Val));
+		case "double":
+			return new Var(plugin.getDataTypes().get("double"), +((Double) arg1Val));
+		default:
+			throw new UnsupportedOperationException("+ " + arg1 + " unsupported");
 		}
-		throw new UnsupportedOperationException("+ " + arg1 + " unsupported");
 	}
 
 	public Var opNot(Var arg1) {
-		if (arg1.getValue() instanceof Boolean) {
-			return new Var(plugin.getDataTypes().get("boolean"), !((Boolean) arg1.getValue()));
-		} else if (arg1.getValue() instanceof Byte) {
-			return new Var(plugin.getDataTypes().get("byte"), ~((Byte) arg1.getValue()));
-		} else if (arg1.getValue() instanceof Short) {
-			return new Var(plugin.getDataTypes().get("short"), ~((Short) arg1.getValue()));
-		} else if (arg1.getValue() instanceof Integer) {
-			return new Var(plugin.getDataTypes().get("int"), ~((Integer) arg1.getValue()));
-		} else if (arg1.getValue() instanceof Long) {
-			return new Var(plugin.getDataTypes().get("long"), ~((Long) arg1.getValue()));
+		Object arg1Val = arg1.getValue();
+		switch (arg1.getType().getName()) {
+		case "boolean":
+			return new Var(plugin.getDataTypes().get("boolean"), !((Boolean) arg1Val));
+		case "byte":
+			return new Var(plugin.getDataTypes().get("byte"), ~((Byte) arg1Val));
+		case "short":
+			return new Var(plugin.getDataTypes().get("short"), ~((Short) arg1Val));
+		case "int":
+			return new Var(plugin.getDataTypes().get("int"), ~((Integer) arg1Val));
+		case "long":
+			return new Var(plugin.getDataTypes().get("long"), ~((Long) arg1Val));
+		default:
+			throw new UnsupportedOperationException("! " + arg1 + " unsupported");
 		}
-		throw new UnsupportedOperationException("! " + arg1 + " unsupported");
 	}
 
 	public Var opPlus(Var arg1, Var arg2) {
@@ -341,20 +387,22 @@ public final class ExpressionHandler {
 		}
 		Object var1 = type.cast(arg1.getValue(), arg1.getType());
 		Object var2 = type.cast(arg2.getValue(), arg2.getType());
-		if (type.getName().equals("byte")) {
+		switch (type.getName()) {
+		case "byte":
 			return new Var(plugin.getDataTypes().get("int"), (Byte) var1 + (Byte) var2);
-		} else if (type.getName().equals("short")) {
+		case "short":
 			return new Var(plugin.getDataTypes().get("int"), (Short) var1 + (Short) var2);
-		} else if (type.getName().equals("int")) {
+		case "int":
 			return new Var(plugin.getDataTypes().get("int"), (Integer) var1 + (Integer) var2);
-		} else if (type.getName().equals("long")) {
+		case "long":
 			return new Var(plugin.getDataTypes().get("long"), (Long) var1 + (Long) var2);
-		} else if (type.getName().equals("float")) {
+		case "float":
 			return new Var(plugin.getDataTypes().get("float"), (Float) var1 + (Float) var2);
-		} else if (type.getName().equals("double")) {
+		case "double":
 			return new Var(plugin.getDataTypes().get("double"), (Double) var1 + (Double) var2);
+		default:
+			throw new UnsupportedOperationException(arg1 + " + " + arg2 + " unsupported");
 		}
-		throw new UnsupportedOperationException(arg1 + " + " + arg2 + " unsupported");
 	}
 
 	public Var opMinus(Var arg1, Var arg2) {
@@ -364,20 +412,22 @@ public final class ExpressionHandler {
 		}
 		Object var1 = type.cast(arg1.getValue(), arg1.getType());
 		Object var2 = type.cast(arg2.getValue(), arg2.getType());
-		if (type.getName().equals("byte")) {
+		switch (type.getName()) {
+		case "byte":
 			return new Var(plugin.getDataTypes().get("int"), (Byte) var1 - (Byte) var2);
-		} else if (type.getName().equals("short")) {
+		case "short":
 			return new Var(plugin.getDataTypes().get("int"), (Short) var1 - (Short) var2);
-		} else if (type.getName().equals("int")) {
+		case "int":
 			return new Var(plugin.getDataTypes().get("int"), (Integer) var1 - (Integer) var2);
-		} else if (type.getName().equals("long")) {
+		case "long":
 			return new Var(plugin.getDataTypes().get("long"), (Long) var1 - (Long) var2);
-		} else if (type.getName().equals("float")) {
+		case "float":
 			return new Var(plugin.getDataTypes().get("float"), (Float) var1 - (Float) var2);
-		} else if (type.getName().equals("double")) {
+		case "double":
 			return new Var(plugin.getDataTypes().get("double"), (Double) var1 - (Double) var2);
+		default:
+			throw new UnsupportedOperationException(arg1 + " - " + arg2 + " unsupported");
 		}
-		throw new UnsupportedOperationException(arg1 + " - " + arg2 + " unsupported");
 	}
 
 	public Var opMultiply(Var arg1, Var arg2) {
@@ -387,20 +437,22 @@ public final class ExpressionHandler {
 		}
 		Object var1 = type.cast(arg1.getValue(), arg1.getType());
 		Object var2 = type.cast(arg2.getValue(), arg2.getType());
-		if (type.getName().equals("byte")) {
+		switch (type.getName()) {
+		case "byte":
 			return new Var(plugin.getDataTypes().get("int"), (Byte) var1 * (Byte) var2);
-		} else if (type.getName().equals("short")) {
+		case "short":
 			return new Var(plugin.getDataTypes().get("int"), (Short) var1 * (Short) var2);
-		} else if (type.getName().equals("int")) {
+		case "int":
 			return new Var(plugin.getDataTypes().get("int"), (Integer) var1 * (Integer) var2);
-		} else if (type.getName().equals("long")) {
+		case "long":
 			return new Var(plugin.getDataTypes().get("long"), (Long) var1 * (Long) var2);
-		} else if (type.getName().equals("float")) {
+		case "float":
 			return new Var(plugin.getDataTypes().get("float"), (Float) var1 * (Float) var2);
-		} else if (type.getName().equals("double")) {
+		case "double":
 			return new Var(plugin.getDataTypes().get("double"), (Double) var1 * (Double) var2);
+		default:
+			throw new UnsupportedOperationException(arg1 + " * " + arg2 + " unsupported");
 		}
-		throw new UnsupportedOperationException(arg1 + " * " + arg2 + " unsupported");
 	}
 
 	public Var opDiv(Var arg1, Var arg2) {
@@ -410,20 +462,22 @@ public final class ExpressionHandler {
 		}
 		Object var1 = type.cast(arg1.getValue(), arg1.getType());
 		Object var2 = type.cast(arg2.getValue(), arg2.getType());
-		if (type.getName().equals("byte")) {
+		switch (type.getName()) {
+		case "byte":
 			return new Var(plugin.getDataTypes().get("int"), (Byte) var1 / (Byte) var2);
-		} else if (type.getName().equals("short")) {
+		case "short":
 			return new Var(plugin.getDataTypes().get("int"), (Short) var1 / (Short) var2);
-		} else if (type.getName().equals("int")) {
+		case "int":
 			return new Var(plugin.getDataTypes().get("int"), (Integer) var1 / (Integer) var2);
-		} else if (type.getName().equals("long")) {
+		case "long":
 			return new Var(plugin.getDataTypes().get("long"), (Long) var1 / (Long) var2);
-		} else if (type.getName().equals("float")) {
+		case "float":
 			return new Var(plugin.getDataTypes().get("float"), (Float) var1 / (Float) var2);
-		} else if (type.getName().equals("double")) {
+		case "double":
 			return new Var(plugin.getDataTypes().get("double"), (Double) var1 / (Double) var2);
+		default:
+			throw new UnsupportedOperationException(arg1 + " / " + arg2 + " unsupported");
 		}
-		throw new UnsupportedOperationException(arg1 + " / " + arg2 + " unsupported");
 	}
 
 	public Var opMod(Var arg1, Var arg2) {
@@ -433,20 +487,22 @@ public final class ExpressionHandler {
 		}
 		Object var1 = type.cast(arg1.getValue(), arg1.getType());
 		Object var2 = type.cast(arg2.getValue(), arg2.getType());
-		if (type.getName().equals("byte")) {
+		switch (type.getName()) {
+		case "byte":
 			return new Var(plugin.getDataTypes().get("int"), (Byte) var1 % (Byte) var2);
-		} else if (type.getName().equals("short")) {
+		case "short":
 			return new Var(plugin.getDataTypes().get("int"), (Short) var1 % (Short) var2);
-		} else if (type.getName().equals("int")) {
+		case "int":
 			return new Var(plugin.getDataTypes().get("int"), (Integer) var1 % (Integer) var2);
-		} else if (type.getName().equals("long")) {
+		case "long":
 			return new Var(plugin.getDataTypes().get("long"), (Long) var1 % (Long) var2);
-		} else if (type.getName().equals("float")) {
+		case "float":
 			return new Var(plugin.getDataTypes().get("float"), (Float) var1 % (Float) var2);
-		} else if (type.getName().equals("double")) {
+		case "double":
 			return new Var(plugin.getDataTypes().get("double"), (Double) var1 % (Double) var2);
+		default:
+			throw new UnsupportedOperationException(arg1 + " % " + arg2 + " unsupported");
 		}
-		throw new UnsupportedOperationException(arg1 + " % " + arg2 + " unsupported");
 	}
 
 	public Var opLShift(Var arg1, Var arg2) {
@@ -454,17 +510,18 @@ public final class ExpressionHandler {
 			throw new UnsupportedOperationException(arg1 + " << " + arg2 + " unsupported");
 		}
 		long bits = ((Number) arg2.getValue()).longValue();
-		String type = arg1.getType().getName();
-		if (type.equals("byte")) {
+		switch (arg1.getType().getName()) {
+		case "byte":
 			return new Var(plugin.getDataTypes().get("byte"), (Byte) arg1.getValue() << bits);
-		} else if (type.equals("short")) {
+		case "short":
 			return new Var(plugin.getDataTypes().get("short"), (Short) arg1.getValue() << bits);
-		} else if (type.equals("int")) {
+		case "int":
 			return new Var(plugin.getDataTypes().get("int"), (Integer) arg1.getValue() << bits);
-		} else if (type.equals("long")) {
+		case "long":
 			return new Var(plugin.getDataTypes().get("long"), (Long) arg1.getValue() << bits);
+		default:
+			throw new UnsupportedOperationException(arg1 + " << " + arg2 + " unsupported");
 		}
-		throw new UnsupportedOperationException(arg1 + " << " + arg2 + " unsupported");
 	}
 
 	public Var opRShift(Var arg1, Var arg2) {
@@ -472,17 +529,18 @@ public final class ExpressionHandler {
 			throw new UnsupportedOperationException(arg1 + " >> " + arg2 + " unsupported");
 		}
 		long bits = ((Number) arg2.getValue()).longValue();
-		String type = arg1.getType().getName();
-		if (type.equals("byte")) {
+		switch (arg1.getType().getName()) {
+		case "byte":
 			return new Var(plugin.getDataTypes().get("byte"), (Byte) arg1.getValue() >> bits);
-		} else if (type.equals("short")) {
+		case "short":
 			return new Var(plugin.getDataTypes().get("short"), (Short) arg1.getValue() >> bits);
-		} else if (type.equals("int")) {
+		case "int":
 			return new Var(plugin.getDataTypes().get("int"), (Integer) arg1.getValue() >> bits);
-		} else if (type.equals("long")) {
+		case "long":
 			return new Var(plugin.getDataTypes().get("long"), (Long) arg1.getValue() >> bits);
+		default:
+			throw new UnsupportedOperationException(arg1 + " >> " + arg2 + " unsupported");
 		}
-		throw new UnsupportedOperationException(arg1 + " >> " + arg2 + " unsupported");
 	}
 
 	public Var opNRShift(Var arg1, Var arg2) {
@@ -490,17 +548,18 @@ public final class ExpressionHandler {
 			throw new UnsupportedOperationException(arg1 + " >>> " + arg2 + " unsupported");
 		}
 		long bits = ((Number) arg2.getValue()).longValue();
-		String type = arg1.getType().getName();
-		if (type.equals("byte")) {
+		switch (arg1.getType().getName()) {
+		case "byte":
 			return new Var(plugin.getDataTypes().get("byte"), (Byte) arg1.getValue() >>> bits);
-		} else if (type.equals("short")) {
+		case "short":
 			return new Var(plugin.getDataTypes().get("short"), (Short) arg1.getValue() >>> bits);
-		} else if (type.equals("int")) {
+		case "int":
 			return new Var(plugin.getDataTypes().get("int"), (Integer) arg1.getValue() >>> bits);
-		} else if (type.equals("long")) {
+		case "long":
 			return new Var(plugin.getDataTypes().get("long"), (Long) arg1.getValue() >>> bits);
+		default:
+			throw new UnsupportedOperationException(arg1 + " >>> " + arg2 + " unsupported");
 		}
-		throw new UnsupportedOperationException(arg1 + " >>> " + arg2 + " unsupported");
 	}
 
 	public Var opLess(Var arg1, Var arg2) {
@@ -511,19 +570,26 @@ public final class ExpressionHandler {
 		Object var1 = type.cast(arg1.getValue(), arg1.getType());
 		Object var2 = type.cast(arg2.getValue(), arg2.getType());
 		boolean result;
-		if (type.getName().equals("byte")) {
+		switch(type.getName()){
+		case "byte":
 			result = (Byte) var1 < (Byte) var2;
-		} else if (type.getName().equals("short")) {
+			break;
+		case "short":
 			result = (Short) var1 < (Short) var2;
-		} else if (type.getName().equals("int")) {
+			break;
+		case "int":
 			result = (Integer) var1 < (Integer) var2;
-		} else if (type.getName().equals("long")) {
+			break;
+		case "long":
 			result = (Long) var1 < (Long) var2;
-		} else if (type.getName().equals("float")) {
+			break;
+		case "float":
 			result = (Float) var1 < (Float) var2;
-		} else if (type.getName().equals("double")) {
+			break;
+		case "double":
 			result = (Double) var1 < (Double) var2;
-		} else {
+			break;
+		default:
 			throw new UnsupportedOperationException(arg1 + " < " + arg2 + " unsupported");
 		}
 		return new Var(plugin.getDataTypes().get("boolean"), result);
@@ -537,19 +603,26 @@ public final class ExpressionHandler {
 		Object var1 = type.cast(arg1.getValue(), arg1.getType());
 		Object var2 = type.cast(arg2.getValue(), arg2.getType());
 		boolean result;
-		if (type.getName().equals("byte")) {
+		switch (type.getName()) {
+		case "byte":
 			result = (Byte) var1 > (Byte) var2;
-		} else if (type.getName().equals("short")) {
+			break;
+		case "short":
 			result = (Short) var1 > (Short) var2;
-		} else if (type.getName().equals("int")) {
+			break;
+		case "int":
 			result = (Integer) var1 > (Integer) var2;
-		} else if (type.getName().equals("long")) {
+			break;
+		case "long":
 			result = (Long) var1 > (Long) var2;
-		} else if (type.getName().equals("float")) {
+			break;
+		case "float":
 			result = (Float) var1 > (Float) var2;
-		} else if (type.getName().equals("double")) {
+			break;
+		case "double":
 			result = (Double) var1 > (Double) var2;
-		} else {
+			break;
+		default:
 			throw new UnsupportedOperationException(arg1 + " > " + arg2 + " unsupported");
 		}
 		return new Var(plugin.getDataTypes().get("boolean"), result);
@@ -563,19 +636,26 @@ public final class ExpressionHandler {
 		Object var1 = type.cast(arg1.getValue(), arg1.getType());
 		Object var2 = type.cast(arg2.getValue(), arg2.getType());
 		boolean result;
-		if (type.getName().equals("byte")) {
+		switch (type.getName()) {
+		case "byte":
 			result = (Byte) var1 <= (Byte) var2;
-		} else if (type.getName().equals("short")) {
+			break;
+		case "short":
 			result = (Short) var1 <= (Short) var2;
-		} else if (type.getName().equals("int")) {
+			break;
+		case "int":
 			result = (Integer) var1 <= (Integer) var2;
-		} else if (type.getName().equals("long")) {
+			break;
+		case "long":
 			result = (Long) var1 <= (Long) var2;
-		} else if (type.getName().equals("float")) {
+			break;
+		case "float":
 			result = (Float) var1 <= (Float) var2;
-		} else if (type.getName().equals("double")) {
+			break;
+		case "double":
 			result = (Double) var1 <= (Double) var2;
-		} else {
+			break;
+		default:
 			throw new UnsupportedOperationException(arg1 + " <= " + arg2 + " unsupported");
 		}
 		return new Var(plugin.getDataTypes().get("boolean"), result);
@@ -589,19 +669,26 @@ public final class ExpressionHandler {
 		Object var1 = type.cast(arg1.getValue(), arg1.getType());
 		Object var2 = type.cast(arg2.getValue(), arg2.getType());
 		boolean result;
-		if (type.getName().equals("byte")) {
+		switch (type.getName()) {
+		case "byte":
 			result = (Byte) var1 >= (Byte) var2;
-		} else if (type.getName().equals("short")) {
+			break;
+		case "short":
 			result = (Short) var1 >= (Short) var2;
-		} else if (type.getName().equals("int")) {
+			break;
+		case "int":
 			result = (Integer) var1 >= (Integer) var2;
-		} else if (type.getName().equals("long")) {
+			break;
+		case "long":
 			result = (Long) var1 >= (Long) var2;
-		} else if (type.getName().equals("float")) {
+			break;
+		case "float":
 			result = (Float) var1 >= (Float) var2;
-		} else if (type.getName().equals("double")) {
+			break;
+		case "double":
 			result = (Double) var1 >= (Double) var2;
-		} else {
+			break;
+		default:
 			throw new UnsupportedOperationException(arg1 + " >= " + arg2 + " unsupported");
 		}
 		return new Var(plugin.getDataTypes().get("boolean"), result);
@@ -628,7 +715,7 @@ public final class ExpressionHandler {
 	}
 
 	public Var opAnd(Var arg1, Var arg2) {
-		if ((arg1.getValue() instanceof Boolean) && (arg2.getValue() instanceof Boolean)) {
+		if ((arg1.getType().getName().equals("boolean")) && (arg2.getType().getName().equals("boolean"))) {
 			return new Var(plugin.getDataTypes().get("boolean"), (Boolean) arg1.getValue() && (Boolean) arg2.getValue());
 		}
 		DataType type = getPrecisest(arg1.getType(), arg2.getType());
@@ -637,20 +724,22 @@ public final class ExpressionHandler {
 		}
 		Object var1 = type.cast(arg1.getValue(), arg1.getType());
 		Object var2 = type.cast(arg2.getValue(), arg2.getType());
-		if (type.getName().equals("byte")) {
+		switch (type.getName()) {
+		case "byte":
 			return new Var(plugin.getDataTypes().get("byte"), (Byte) var1 & (Byte) var2);
-		} else if (type.getName().equals("short")) {
+		case "short":
 			return new Var(plugin.getDataTypes().get("short"), (Short) var1 & (Short) var2);
-		} else if (type.getName().equals("int")) {
+		case "int":
 			return new Var(plugin.getDataTypes().get("int"), (Integer) var1 & (Integer) var2);
-		} else if (type.getName().equals("long")) {
+		case "long":
 			return new Var(plugin.getDataTypes().get("long"), (Long) var1 & (Long) var2);
+		default:
+			throw new UnsupportedOperationException(arg1 + " & " + arg2 + " unsupported");
 		}
-		throw new UnsupportedOperationException(arg1 + " & " + arg2 + " unsupported");
 	}
 
 	public Var opOr(Var arg1, Var arg2) {
-		if ((arg1.getValue() instanceof Boolean) && (arg2.getValue() instanceof Boolean)) {
+		if ((arg1.getType().getName().equals("boolean")) && (arg2.getType().getName().equals("boolean"))) {
 			return new Var(plugin.getDataTypes().get("boolean"), (Boolean) arg1.getValue() || (Boolean) arg2.getValue());
 		}
 		DataType type = getPrecisest(arg1.getType(), arg2.getType());
@@ -659,20 +748,22 @@ public final class ExpressionHandler {
 		}
 		Object var1 = type.cast(arg1.getValue(), arg1.getType());
 		Object var2 = type.cast(arg2.getValue(), arg2.getType());
-		if (type.getName().equals("byte")) {
+		switch (type.getName()) {
+		case "byte":
 			return new Var(plugin.getDataTypes().get("byte"), (Byte) var1 | (Byte) var2);
-		} else if (type.getName().equals("short")) {
+		case "short":
 			return new Var(plugin.getDataTypes().get("short"), (Short) var1 | (Short) var2);
-		} else if (type.getName().equals("int")) {
+		case "int":
 			return new Var(plugin.getDataTypes().get("int"), (Integer) var1 | (Integer) var2);
-		} else if (type.getName().equals("long")) {
+		case "long":
 			return new Var(plugin.getDataTypes().get("long"), (Long) var1 | (Long) var2);
+		default:
+			throw new UnsupportedOperationException(arg1 + " | " + arg2 + " unsupported");
 		}
-		throw new UnsupportedOperationException(arg1 + " | " + arg2 + " unsupported");
 	}
 
 	public Var opXor(Var arg1, Var arg2) {
-		if ((arg1.getValue() instanceof Boolean) && (arg2.getValue() instanceof Boolean)) {
+		if ((arg1.getType().getName().equals("boolean")) && (arg2.getType().getName().equals("boolean"))) {
 			return new Var(plugin.getDataTypes().get("boolean"), (Boolean) arg1.getValue() ^ (Boolean) arg2.getValue());
 		}
 		DataType type = getPrecisest(arg1.getType(), arg2.getType());
@@ -681,16 +772,18 @@ public final class ExpressionHandler {
 		}
 		Object var1 = type.cast(arg1.getValue(), arg1.getType());
 		Object var2 = type.cast(arg2.getValue(), arg2.getType());
-		if (type.getName().equals("byte")) {
+		switch (type.getName()) {
+		case "byte":
 			return new Var(plugin.getDataTypes().get("byte"), (Byte) var1 ^ (Byte) var2);
-		} else if (type.getName().equals("short")) {
+		case "short":
 			return new Var(plugin.getDataTypes().get("short"), (Short) var1 ^ (Short) var2);
-		} else if (type.getName().equals("int")) {
+		case "int":
 			return new Var(plugin.getDataTypes().get("int"), (Integer) var1 ^ (Integer) var2);
-		} else if (type.getName().equals("long")) {
+		case "long":
 			return new Var(plugin.getDataTypes().get("long"), (Long) var1 ^ (Long) var2);
+		default:
+			throw new UnsupportedOperationException(arg1 + " ^ " + arg2 + " unsupported");
 		}
-		throw new UnsupportedOperationException(arg1 + " ^ " + arg2 + " unsupported");
 	}
 
 	public Var opCast(Var arg1, String castOp) {
@@ -734,7 +827,7 @@ public final class ExpressionHandler {
 					while (!stack.isEmpty()) {
 						String str2 = stack.pop();
 						if (str2.equals("(")) {
-							if (stack.peek().startsWith("()")) {
+							if (!stack.isEmpty() && stack.peek().startsWith("()")) {
 								result.add(stack.pop());
 							}
 							break;
@@ -751,7 +844,8 @@ public final class ExpressionHandler {
 					}
 					result.add("[");
 				} else {
-					if (((i==0)||(isOp(exps[i-1])&&!(exps[i - 1].equals(")")||exps[i - 1].equals("]"))))&& (str.equals("+") || str.equals("-"))) {
+					if (((i == 0) || (isOp(exps[i - 1]) && !(exps[i - 1].equals(")") || exps[i - 1].equals("]"))))
+							&& (str.equals("+") || str.equals("-"))) {
 						str += ".";
 					}
 					while (!stack.isEmpty() &&
@@ -797,21 +891,49 @@ public final class ExpressionHandler {
 							}
 							String spilted = str.substring(0, str.length() - 1);
 							Var constant;
+							char end = str.charAt(str.length() - 1);
 							try {
-								if (str.endsWith("b") || str.endsWith("B")) {
+								switch (end) {
+								case 'B':
+								case 'b':
 									constant = new Var(plugin.getDataTypes().get("byte"), Byte.valueOf(spilted, radix));
-								} else if (str.endsWith("s") || str.endsWith("S")) {
-									constant = new Var(plugin.getDataTypes().get("short"), Short.valueOf(spilted, radix));
-								} else if (str.endsWith("l") || str.endsWith("L")) {
+									break;
+
+								case 's':
+								case 'S':
+									constant = new Var(plugin.getDataTypes().get("short"),
+											Short.valueOf(spilted, radix));
+									break;
+
+								case 'l':
+								case 'L':
 									constant = new Var(plugin.getDataTypes().get("long"), Long.valueOf(spilted, radix));
-								} else if ((radix == 10) && (str.endsWith("f") || str.endsWith("F"))) {
+									break;
+
+								case 'f':
+								case 'F':
+									if (radix != 10) {
+										throw new ExpressionHandlingException("The radix of a float number must be 10");
+									}
 									constant = new Var(plugin.getDataTypes().get("float"), Float.valueOf(spilted));
-								} else if ((radix == 10) && (str.endsWith("d") || str.endsWith("D"))) {
+									break;
+
+								case 'd':
+								case 'D':
+									if (radix != 10) {
+										throw new ExpressionHandlingException("The radix of a double number must be 10");
+									}
 									constant = new Var(plugin.getDataTypes().get("double"), Double.valueOf(spilted));
-								} else if (str.contains(".")) {
-									constant = new Var(plugin.getDataTypes().get("double"), Double.valueOf(str));
-								} else {
-									constant = new Var(plugin.getDataTypes().get("int"), Integer.valueOf(str, radix));
+									break;
+
+								default:
+									if (str.contains(".")) {
+										constant = new Var(plugin.getDataTypes().get("double"), Double.valueOf(str));
+									} else {
+										constant = new Var(plugin.getDataTypes().get("int"),
+												Integer.valueOf(str, radix));
+									}
+									break;
 								}
 							} catch (NumberFormatException e) {
 								throw new ExpressionHandlingException("Failed to handle " + str, e);
@@ -856,32 +978,33 @@ public final class ExpressionHandler {
 	}
 
 	public String[] spiltExpression(String exp) {
+		int length = exp.length();
 		List<String> result = new ArrayList<String>();
-		for (int i = 0; i < exp.length(); i++) {
+		for (int i = 0; i < length; i++) {
 			char ch = exp.charAt(i);
 			if (ch == '(') {
-				StringBuilder sub = new StringBuilder();
-				int l;
-				for (l = i + 1; l < exp.length(); l++) {
-					char ch2 = exp.charAt(l);
-					if (ch2 == ')') {
-						break;
+				boolean unmatched = true;
+				for (String type : plugin.getDataTypes().namesSet()) {
+					int endIndex = i + type.length() + 1;
+					if (endIndex < length) {
+						String in = exp.substring(i + 1, endIndex);
+						if ((exp.charAt(endIndex) == ')') && type.equals(in)) {
+							result.add("(" + in + ")");
+							i = endIndex;
+							unmatched = false;
+							break;
+						}
 					}
-					sub.append(ch2);
 				}
-				String ssub = sub.toString();
-				if (plugin.getDataTypes().isRegistered(ssub)) {
-					i = l;
-					result.add("(" + ssub + ")");
-				} else {
+				if (unmatched) {
 					result.add("(");
 				}
 			} else if (ch == '"') {
-				StringBuilder s = new StringBuilder();
+				StringBuilder s = new StringBuilder(length - i);
 				int l;
 				boolean escape = false;
 				s.append('"');
-				for (l = i + 1; l < exp.length(); l++) {
+				for (l = i + 1; l < length; l++) {
 					char ch2 = exp.charAt(l);
 					if ((ch2 == '\\') && !escape) {
 						escape = true;
@@ -906,22 +1029,20 @@ public final class ExpressionHandler {
 				result.add(s.toString());
 				i = l;
 			} else {
-				boolean found = false;
+				boolean unmatched = true;
 				for (String op : ops) {
-					if ((i + op.length()) > exp.length()) {
-						continue;
-					}
-					if (exp.substring(i, i + op.length()).equals(op)) {
+					int endIndex = op.length() + i;
+					if ((length >= endIndex) && op.equals(exp.substring(i, endIndex))) {
 						result.add(op);
-						i += op.length() - 1;
-						found = true;
+						i = endIndex - 1;
+						unmatched = false;
 						break;
 					}
 				}
-				if (!found) {
-					StringBuilder id = new StringBuilder();
-					int l;
-					for (l = i; l < exp.length(); l++) {
+				if (unmatched) {
+					StringBuilder id = new StringBuilder(length - i);
+					int l = i;
+					for (; l < length; l++) {
 						char ch2 = exp.charAt(l);
 						if (isOpChar(ch2)) {
 							break;

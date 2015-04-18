@@ -88,103 +88,83 @@ public final class ReflectionHelper {
 		}
 	}
 
-	@Deprecated
-	public static class ProxiedCommandSenderHandleFinder {
+	public static class NormalMethodFinder extends EmptyClassVisitor {
+
 		public Method method;
 
-		public void find(ProxiedCommandSender s) {
+		private final int access;
+		private final String methodDesc;
+		private final Class<?>[] args;
+		private final Class<?> own;
+
+		public NormalMethodFinder(int access, Class<?> own, Class<?> returnType, Class<?>... args) {
+			this.own = own;
+			this.access = access;
+			this.args = args;
+			methodDesc = getMethodDesc(returnType, args);
+		}
+
+		@Override
+		public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
+			if ((access == this.access) && methodDesc.equals(desc)) {
+				method = Accessors.getMethodAccessor(own, name, args).getMethod();
+			}
+			return null;
+		}
+
+		public void find() throws IOException {
+			new ClassReader(own.getCanonicalName()).accept(this, 0);
+		}
+
+		public static Method findMethod(int access, Class<?> own, Class<?> returnType, Class<?>... args) {
+			NormalMethodFinder finder = new NormalMethodFinder(access, own, returnType, args);
 			try {
-				final Class<?> proxiedCommandSender = s.getClass();
-				final Class<?> icommandlistener = MinecraftReflection.getMinecraftClass("ICommandListener");
-				final String methodDesc = getMethodDesc(icommandlistener);
-				ClassReader reader = new ClassReader(proxiedCommandSender.getCanonicalName());
-				reader.accept(new EmptyClassVisitor() {
-
-					@Override
-					public MethodVisitor visitMethod(int access, String name, String desc, String signature,
-							String[] exceptions) {
-						if ((access == Opcodes.ACC_PUBLIC) && methodDesc.equals(desc)) {
-							method = Accessors.getMethodAccessor(proxiedCommandSender, name).getMethod();
-						}
-						return null;
-					}
-
-				}, 0);
+				finder.find();
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
+			return finder.method;
 		}
 	}
 
-	@Deprecated
-	public static class GetTileEntityMethodFinder {
-		public Method method;
+	public static class NormalFieldFinder extends EmptyClassVisitor {
 
-		public void find(World w) {
-			try {
-				final Class<?> world = w.getClass();
-				final Class<?> tileentity = MinecraftReflection.getTileEntityClass();
-				final String methodDesc = getMethodDesc(tileentity, int.class, int.class, int.class);
-				ClassReader reader = new ClassReader(world.getCanonicalName());
-				reader.accept(new EmptyClassVisitor() {
-
-					@Override
-					public MethodVisitor visitMethod(int access, String name, String desc, String signature,
-							String[] exceptions) {
-						if ((access == Opcodes.ACC_PUBLIC) && methodDesc.equals(desc)) {
-							method = Accessors.getMethodAccessor(world, name, int.class, int.class, int.class)
-									.getMethod();
-						}
-						return null;
-					}
-
-				}, 0);
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-		}
-	}
-
-	@Deprecated
-	public static class GetMinecartEntityMethodFinder {
-		public Method method;
-
-		public void find(CommandMinecart m) {
-			try {
-				final Class<?> craftMinecart = m.getClass();
-				final Class<?> entityMinecartAbstract = MinecraftReflection.getMinecraftClass("EntityMinecartAbstract");
-				final String methodDesc = getMethodDesc(entityMinecartAbstract);
-				ClassReader reader = new ClassReader(craftMinecart.getCanonicalName());
-				reader.accept(new EmptyClassVisitor() {
-
-					@Override
-					public MethodVisitor visitMethod(int access, String name, String desc, String signature,
-							String[] exceptions) {
-						if ((access == Opcodes.ACC_PUBLIC) && methodDesc.equals(desc)) {
-							method = Accessors.getMethodAccessor(craftMinecart, name).getMethod();
-						}
-						return null;
-					}
-
-				}, 0);
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-		}
-	}
-
-	@Deprecated
-	public static class WorldFieldFinder {
 		public Field field;
 
-		public void find(World w) {
+		private final int access;
+		private final String fieldDesc;
+		private final Class<?> own;
+
+		public NormalFieldFinder(int access, Class<?> own, Class<?> type) {
+			this.access = access;
+			this.own = own;
+			fieldDesc = getTypeDesc(type);
+		}
+
+		@Override
+		public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
+			if ((this.access == access) && fieldDesc.equals(desc)) {
+				try {
+					field = own.getField(name);
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			}
+			return null;
+		}
+
+		public void find() throws IOException {
+			new ClassReader(own.getCanonicalName()).accept(this, 0);
+		}
+
+		public static Field findField(int access, Class<?> own, Class<?> type) {
+			NormalFieldFinder finder = new NormalFieldFinder(access, own, type);
 			try {
-				final Class<?> world = w.getClass();
-				final Class<?> worldServer = MinecraftReflection.getWorldServerClass();
-				field = Accessors.getFieldAccessor(world, worldServer, true).getField();
-			} catch (Exception e) {
+				finder.find();
+			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
+			return finder.field;
 		}
 	}
 
@@ -242,6 +222,21 @@ public final class ReflectionHelper {
 	@Deprecated
 	public static Constructor<?> blockPositionConstructor;
 
+	@Deprecated
+	public static Field craftWorldNMSWorldField;
+
+	@Deprecated
+	public static Method craftEntityGetNMSEntityMethod;
+
+	@Deprecated
+	public static Method craftWorldGetTileEntityMethod;
+
+	@Deprecated
+	public static Method entityGetCommandBlockLogicMethod;
+
+	@Deprecated
+	public static Method craftProxiedCommandSenderGetHandlerMethod;
+
 	public static void init() {
 		getServerMethod();
 		getGettingEntityByUUIDMethod();
@@ -259,13 +254,16 @@ public final class ReflectionHelper {
 		getTileEntityUpdateMethod();
 		getWorldNotifyMethod();
 		getBlockPositionConstructor();
+		getCraftWorldNMSWorldField();
+		getCraftEntityGetNMSEntityMethod();
+		getCraftWorldGetTileEntityMethod();
+		getEntityGetCommandBlockLogicMethod();
+		getCraftProxiedCommandSenderGetHandlerMethod();
 	}
 
 	public static Object toNMSWorld(World world) {
 		try {
-			WorldFieldFinder finder = new WorldFieldFinder();
-			finder.find(world);
-			return finder.field.get(world);
+			return craftWorldNMSWorldField.get(world);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -415,10 +413,8 @@ public final class ReflectionHelper {
 	}
 
 	public static Object getTileEntity(Block block) {
-		GetTileEntityMethodFinder tilefinder = new GetTileEntityMethodFinder();
-		tilefinder.find(block.getWorld());
 		try {
-			return tilefinder.method.invoke(block.getWorld(), block.getX(), block.getY(), block.getZ());
+			return craftWorldGetTileEntityMethod.invoke(block.getWorld(), block.getX(), block.getY(), block.getZ());
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new RuntimeException(e);
 		}
@@ -434,19 +430,23 @@ public final class ReflectionHelper {
 
 	public static Object getCommandBlockLogic(CommandMinecart sender) {
 		try {
-			GetMinecartEntityMethodFinder handlerFinder = new GetMinecartEntityMethodFinder();
-			handlerFinder.find(sender);
-			return tileGetCommandBlockLogicMethod.invoke(handlerFinder.method);
+			return entityGetCommandBlockLogicMethod.invoke(toNMSEntity(sender));
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	public static Object getProxiedCommandSender(ProxiedCommandSender s) {
-		ProxiedCommandSenderHandleFinder finder = new ProxiedCommandSenderHandleFinder();
-		finder.find(s);
 		try {
-			return finder.method.invoke(s);
+			return craftProxiedCommandSenderGetHandlerMethod.invoke(s);
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static Object toNMSEntity(Entity entity) {
+		try {
+			return craftEntityGetNMSEntityMethod.invoke(entity);
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new RuntimeException(e);
 		}
@@ -459,7 +459,7 @@ public final class ReflectionHelper {
 			} else if (s instanceof ConsoleCommandSender) {
 				return getServer();
 			} else if (s instanceof RemoteConsoleCommandSender) {
-
+				return getRemoteControlCommandListener();
 			} else if (s instanceof ProxiedCommandSender) {
 				return getProxiedCommandSender((ProxiedCommandSender) s);
 			} else if (s instanceof BlockCommandSender) {
@@ -473,99 +473,31 @@ public final class ReflectionHelper {
 		}
 	}
 
-	private static void getEntityGetUUIDMethod() {
-		try {
-			final Class<?> entity = MinecraftReflection.getEntityClass();
-			final Class<?> uuid = UUID.class;
-			final String methodDesc = getMethodDesc(uuid);
-			ClassReader reader = new ClassReader(entity.getCanonicalName());
-			reader.accept(new EmptyClassVisitor() {
+	private static void getCraftWorldGetTileEntityMethod() {
+		craftWorldGetTileEntityMethod = NormalMethodFinder.findMethod(Opcodes.ACC_PUBLIC,
+				MinecraftReflection.getCraftWorldClass(), MinecraftReflection.getTileEntityClass(), int.class,
+				int.class, int.class);
+	}
 
-				@Override
-				public MethodVisitor visitMethod(int access, String name, String desc, String signature,
-						String[] exceptions) {
-					// public UUID xxx()
-					if ((access == Opcodes.ACC_PUBLIC) && methodDesc.equals(desc)) {
-						entityGetUUIDMethod = Accessors.getMethodAccessor(entity, name).getMethod();
-					}
-					return null;
-				}
-			}, 0);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+	private static void getEntityGetUUIDMethod() {
+		entityGetUUIDMethod = NormalMethodFinder.findMethod(Opcodes.ACC_PUBLIC, MinecraftReflection.getEntityClass(),
+				UUID.class);
 	}
 
 	private static void getTileGetCommandBlockLogicMethod() {
-		try {
-			final Class<?> tileEntityCommand = MinecraftReflection.getMinecraftClass("TileEntityCommand");
-			final Class<?> commandBlockLogic = MinecraftReflection.getMinecraftClass("CommandBlockListenerAbstract");
-			final String methodDesc = getMethodDesc(commandBlockLogic);
-			ClassReader reader = new ClassReader(tileEntityCommand.getCanonicalName());
-			reader.accept(new EmptyClassVisitor() {
-
-				@Override
-				public MethodVisitor visitMethod(int access, String name, String desc, String signature,
-						String[] exceptions) {
-					// public CommandBlockLogic xxx()
-					if ((access == Opcodes.ACC_PUBLIC) && methodDesc.equals(desc)) {
-						tileGetCommandBlockLogicMethod = Accessors.getMethodAccessor(tileEntityCommand, name)
-								.getMethod();
-					}
-					return null;
-				}
-
-			}, 0);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		tileGetCommandBlockLogicMethod = NormalMethodFinder.findMethod(Opcodes.ACC_PUBLIC,
+				MinecraftReflection.getMinecraftClass("TileEntityCommand"),
+				MinecraftReflection.getMinecraftClass("CommandBlockListenerAbstract"));
 	}
 
 	private static void getServerMethod() {
-		try {
-			final Class<?> serverClass = MinecraftReflection.getMinecraftServerClass();
-			final String methodDesc = getMethodDesc(serverClass);
-			ClassReader serverClassReader = new ClassReader(serverClass.getCanonicalName());
-			serverClassReader.accept(new EmptyClassVisitor() {
-
-				@Override
-				public MethodVisitor visitMethod(int access, String name, String desc, String signature,
-						String[] exceptions) {
-					if ((access == (Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC)) && methodDesc.equals(desc)) {
-						getServerMethod = Accessors.getMethodAccessor(serverClass, name).getMethod();
-					}
-					return null;
-				}
-
-			}, 0);
-
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		getServerMethod = NormalMethodFinder.findMethod(Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC,
+				MinecraftReflection.getMinecraftServerClass(), MinecraftReflection.getMinecraftServerClass());
 	}
 
 	private static void getGettingEntityByUUIDMethod() {
-		try {
-			final Class<?> serverClass = MinecraftReflection.getMinecraftServerClass();
-			final Class<?> entity = MinecraftReflection.getEntityClass();
-			final Class<?> uuid = UUID.class;
-			final String methodDesc = getMethodDesc(entity, uuid);
-			ClassReader serverClassReader = new ClassReader(serverClass.getCanonicalName());
-			serverClassReader.accept(new EmptyClassVisitor() {
-
-				@Override
-				public MethodVisitor visitMethod(int access, final String name, String desc, String signature,
-						String[] exceptions) {
-					if ((access == Opcodes.ACC_PUBLIC) && methodDesc.equals(desc)) { // public Entity xxx(UUID)
-						getEntityByUUIDMethod = Accessors.getMethodAccessor(serverClass, name, uuid).getMethod();
-					}
-					return null;
-				}
-			}, 0);
-
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		getEntityByUUIDMethod = NormalMethodFinder.findMethod(Opcodes.ACC_PUBLIC,
+				MinecraftReflection.getMinecraftServerClass(), MinecraftReflection.getEntityClass(), UUID.class);
 	}
 
 	private static void getEntityIOMethods() {
@@ -591,171 +523,43 @@ public final class ReflectionHelper {
 	}
 
 	private static void getSelectingEntityMethod() {
-		try {
-			final Class<?> commandAbstract = MinecraftReflection.getMinecraftClass("CommandAbstract");
-			final Class<?> list = List.class;
-			final Class<?> icommandsender = MinecraftReflection.getMinecraftClass("ICommandListener");
-			final Class<?> string = String.class;
-			final String methodDesc = getMethodDesc(list, icommandsender, string);
-			ClassReader reader = new ClassReader(commandAbstract.getCanonicalName());
-			reader.accept(new EmptyClassVisitor() {
-
-				@Override
-				public MethodVisitor visitMethod(int access, String name, String desc, String signature,
-						String[] exceptions) {
-					if ((access == (Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC)) && methodDesc.equals(desc)) {
-						selectingEntitiesMethod = Accessors.getMethodAccessor(commandAbstract, name, icommandsender,
-								string).getMethod();
-					}
-					return null;
-				}
-
-			}, 0);
-
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		selectingEntitiesMethod = NormalMethodFinder.findMethod(Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC,
+				MinecraftReflection.getMinecraftClass("CommandAbstract"), List.class,
+				MinecraftReflection.getMinecraftClass("ICommandListener"), String.class);
 	}
 
 	private static void getNBTWriteMethod() {
-		try {
-			final Class<?> nbtCompressedStreamTools = MinecraftReflection.getNbtCompressedStreamToolsClass();
-			final Class<?> nbtCompound = MinecraftReflection.getNBTCompoundClass();
-			final Class<?> outputStream = OutputStream.class;
-			final String methodDesc = getMethodDesc(void.class, nbtCompound, outputStream);
-			ClassReader reader = new ClassReader(nbtCompressedStreamTools.getCanonicalName());
-			reader.accept(new EmptyClassVisitor() {
-
-				@Override
-				public MethodVisitor visitMethod(int access, String name, String desc, String signature,
-						String[] exceptions) {
-					if ((access == (Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC)) && methodDesc.equals(desc)) {
-						nbtWrite = Accessors.getMethodAccessor(nbtCompressedStreamTools, name, nbtCompound,
-								outputStream).getMethod();
-					}
-					return null;
-				}
-
-			}, 0);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		nbtWrite = NormalMethodFinder.findMethod(Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC,
+				MinecraftReflection.getNbtCompressedStreamToolsClass(), void.class,
+				MinecraftReflection.getNBTCompoundClass(), OutputStream.class);
 	}
 
 	private static void getNBTReadMethod() {
-		try {
-			final Class<?> nbtCompressedStreamTools = MinecraftReflection.getNbtCompressedStreamToolsClass();
-			final Class<?> nbtCompound = MinecraftReflection.getNBTCompoundClass();
-			final Class<?> inputStream = InputStream.class;
-			final String methodDesc = getMethodDesc(nbtCompound, inputStream);
-			ClassReader reader = new ClassReader(nbtCompressedStreamTools.getCanonicalName());
-			reader.accept(new EmptyClassVisitor() {
-
-				@Override
-				public MethodVisitor visitMethod(int access, String name, String desc, String signature,
-						String[] exceptions) {
-					if ((access == (Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC)) && methodDesc.equals(desc)) {
-						nbtRead = Accessors.getMethodAccessor(nbtCompressedStreamTools, name, inputStream).getMethod();
-					}
-					return null;
-				}
-
-			}, 0);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		nbtRead = NormalMethodFinder.findMethod(Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC,
+				MinecraftReflection.getNbtCompressedStreamToolsClass(), MinecraftReflection.getNBTCompoundClass(),
+				InputStream.class);
 	}
 
 	private static void getServerWorldsField() {
-		try {
-			final Class<?> minecraftServer = MinecraftReflection.getMinecraftServerClass();
-			final Class<?> list = List.class;
-			final String fieldDesc = getTypeDesc(list);
-			ClassReader reader = new ClassReader(minecraftServer.getCanonicalName());
-			reader.accept(new EmptyClassVisitor() {
-
-				@Override
-				public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
-					if ((access == Opcodes.ACC_PUBLIC) && fieldDesc.equals(desc)) {
-						serverWorlds = Accessors.getFieldAccessor(minecraftServer, name, true).getField();
-					}
-					return null;
-				}
-
-			}, 0);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		serverWorlds = NormalFieldFinder.findField(Opcodes.ACC_PUBLIC, MinecraftReflection.getMinecraftServerClass(),
+				List.class);
 	}
 
 	private static void getServerWorldsArrayField() {
-		try {
-			final Class<?> minecraftServer = MinecraftReflection.getMinecraftServerClass();
-			final Class<?> serverWorldArray = getArrayClass(MinecraftReflection.getWorldServerClass());
-			final String fieldDesc = getTypeDesc(serverWorldArray);
-			ClassReader reader = new ClassReader(minecraftServer.getCanonicalName());
-			reader.accept(new EmptyClassVisitor() {
-
-				@Override
-				public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
-					if ((access == Opcodes.ACC_PUBLIC) && fieldDesc.equals(desc)) {
-						serverWorldsArray = Accessors.getFieldAccessor(minecraftServer, name, true).getField();
-					}
-					return null;
-				}
-
-			}, 0);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		serverWorldsArray = NormalFieldFinder
+				.findField(Opcodes.ACC_PUBLIC, MinecraftReflection.getMinecraftServerClass(),
+						getArrayClass(MinecraftReflection.getWorldServerClass()));
 	}
 
 	private static void getCommandSenderGetWorldMethod() {
-		try {
-			final Class<?> icommandsender = MinecraftReflection.getMinecraftClass("ICommandListener");
-			final Class<?> world = MinecraftReflection.getNmsWorldClass();
-			final String methodDesc = getMethodDesc(world);
-			ClassReader reader = new ClassReader(icommandsender.getCanonicalName());
-			reader.accept(new EmptyClassVisitor() {
-
-				@Override
-				public MethodVisitor visitMethod(int access, String name, String desc, String signature,
-						String[] exceptions) {
-					if ((access == (Opcodes.ACC_PUBLIC + Opcodes.ACC_ABSTRACT)) && methodDesc.equals(desc)) {
-						commandSenderGetWorldMethod = Accessors.getMethodAccessor(icommandsender, name).getMethod();
-					}
-					return null;
-				}
-
-			}, 0);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		commandSenderGetWorldMethod = NormalMethodFinder.findMethod(Opcodes.ACC_PUBLIC + Opcodes.ACC_ABSTRACT,
+				MinecraftReflection.getMinecraftClass("ICommandListener"), MinecraftReflection.getNmsWorldClass());
 	}
 
 	private static void getGetRemoteControlCommandListenerMethod() {
-		try {
-			final Class<?> remoteControlCommandListener = MinecraftReflection
-					.getMinecraftClass("RemoteControlCommandListener");
-			final String methodDesc = getMethodDesc(remoteControlCommandListener);
-			ClassReader reader = new ClassReader(remoteControlCommandListener.getCanonicalName());
-			reader.accept(new EmptyClassVisitor() {
-
-				@Override
-				public MethodVisitor visitMethod(int access, String name, String desc, String signature,
-						String[] exceptions) {
-					if ((access == (Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC)) && methodDesc.equals(desc)) {
-						getRemoteControlCommandListenerMethod = Accessors.getMethodAccessor(
-								remoteControlCommandListener, name).getMethod();
-					}
-					return null;
-				}
-
-			}, 0);
-
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		getRemoteControlCommandListenerMethod = NormalMethodFinder.findMethod(Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC,
+				MinecraftReflection.getMinecraftClass("RemoteControlCommandListener"),
+				MinecraftReflection.getMinecraftClass("RemoteControlCommandListener"));
 	}
 
 	private static void getTileEntityUpdateMethod() {
@@ -784,6 +588,28 @@ public final class ReflectionHelper {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	private static void getCraftWorldNMSWorldField() {
+		craftWorldNMSWorldField = Accessors.getFieldAccessor(MinecraftReflection.getCraftWorldClass(),
+				MinecraftReflection.getWorldServerClass(), true).getField();
+	}
+
+	private static void getCraftEntityGetNMSEntityMethod() {
+		craftEntityGetNMSEntityMethod = NormalMethodFinder.findMethod(Opcodes.ACC_PUBLIC,
+				MinecraftReflection.getCraftEntityClass(), MinecraftReflection.getEntityClass());
+	}
+
+	private static void getEntityGetCommandBlockLogicMethod() {
+		entityGetCommandBlockLogicMethod = NormalMethodFinder.findMethod(Opcodes.ACC_PUBLIC,
+				MinecraftReflection.getMinecraftClass("EntityMinecartCommandBlock"),
+				MinecraftReflection.getMinecraftClass("CommandBlockListenerAbstract"));
+	}
+
+	private static void getCraftProxiedCommandSenderGetHandlerMethod() {
+		craftProxiedCommandSenderGetHandlerMethod = NormalMethodFinder.findMethod(Opcodes.ACC_PUBLIC,
+				MinecraftReflection.getCraftBukkitClass("command.ProxiedNativeCommandSender"),
+				MinecraftReflection.getMinecraftClass("ICommandListener"));
 	}
 
 	public static String getMethodDesc(Class<?> returnType, Class<?>... args) {
@@ -833,7 +659,11 @@ public final class ReflectionHelper {
 		return "L" + type.getName() + ";";
 	}
 
-	public static Class<?> getArrayClass(Class<?> base) throws ClassNotFoundException {
-		return Class.forName("[" + getTypeName(base));
+	public static Class<?> getArrayClass(Class<?> base) {
+		try {
+			return Class.forName("[" + getTypeName(base));
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }
