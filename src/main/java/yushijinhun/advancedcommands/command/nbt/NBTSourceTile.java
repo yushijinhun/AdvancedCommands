@@ -28,8 +28,10 @@ public class NBTSourceTile implements NBTSource {
 
 	@Override
 	public void set(String id, NbtCompound nbt, CommandSender commandSender) {
-		ReflectionHelper.tileRead(ReflectionHelper.getTileEntity(parseId(id, commandSender)), NbtFactory.fromBase(nbt)
-				.getHandle());
+		Block block = parseId(id, commandSender);
+		Object tileEntity = ReflectionHelper.getTileEntity(block);
+		ReflectionHelper.tileRead(tileEntity, NbtFactory.fromBase(nbt).getHandle());
+		ReflectionHelper.notifyBlock(ReflectionHelper.toNMSWorld(block.getWorld()), block.getX(), block.getY(), block.getZ());
 	}
 
 	@Override

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -173,6 +174,21 @@ public final class ReflectionHelper {
 	}
 
 	@Deprecated
+	public static class WorldFieldFinder {
+		public Field field;
+
+		public void find(World w) {
+			try {
+				final Class<?> world = w.getClass();
+				final Class<?> worldServer = MinecraftReflection.getWorldServerClass();
+				field = Accessors.getFieldAccessor(world, worldServer, true).getField();
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
+	}
+
+	@Deprecated
 	public static Method entityReadMethod;
 
 	@Deprecated
@@ -217,6 +233,15 @@ public final class ReflectionHelper {
 	@Deprecated
 	public static Method tileEntityWriteMethod;
 
+	@Deprecated
+	public static Method tileEntityUpdateMethod;
+
+	@Deprecated
+	public static Method worldNotifyMethod;
+
+	@Deprecated
+	public static Constructor<?> blockPositionConstructor;
+
 	public static void init() {
 		getServerMethod();
 		getGettingEntityByUUIDMethod();
@@ -231,6 +256,43 @@ public final class ReflectionHelper {
 		getServerWorldsArrayField();
 		getCommandSenderGetWorldMethod();
 		getGetRemoteControlCommandListenerMethod();
+		getTileEntityUpdateMethod();
+		getWorldNotifyMethod();
+		getBlockPositionConstructor();
+	}
+
+	public static Object toNMSWorld(World world) {
+		try {
+			WorldFieldFinder finder = new WorldFieldFinder();
+			finder.find(world);
+			return finder.field.get(world);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static Object newBlockPosition(int x, int y, int z) {
+		try {
+			return blockPositionConstructor.newInstance(x, y, z);
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static void notifyBlock(Object nmsWorld, int x, int y, int z) {
+		try {
+			worldNotifyMethod.invoke(nmsWorld, newBlockPosition(x, y, z));
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static void updateTileEntity(Object nmsTileEntity) {
+		try {
+			tileEntityUpdateMethod.invoke(nmsTileEntity);
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public static void tileRead(Object nmsTile, Object nmsCompound) {
@@ -691,6 +753,34 @@ public final class ReflectionHelper {
 
 			}, 0);
 
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private static void getTileEntityUpdateMethod() {
+		try {
+			// TODO: Use ASM to find method if you can
+			tileEntityUpdateMethod = MinecraftReflection.getTileEntityClass().getMethod("update");
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private static void getWorldNotifyMethod() {
+		try {
+			// TODO: Use ASM to find method if you can
+			worldNotifyMethod = MinecraftReflection.getNmsWorldClass().getMethod("notify",
+					MinecraftReflection.getBlockPositionClass());
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private static void getBlockPositionConstructor() {
+		try {
+			blockPositionConstructor = MinecraftReflection.getBlockPositionClass().getConstructor(int.class, int.class,
+					int.class);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
