@@ -450,58 +450,55 @@ public final class ExpressionHandler {
 	}
 
 	public Var opLShift(Var arg1, Var arg2) {
-		DataType type = getPrecisest(arg1.getType(), arg2.getType());
-		if (type == null) {
+		if (!(arg2.getValue() instanceof Number)) {
 			throw new UnsupportedOperationException(arg1 + " << " + arg2 + " unsupported");
 		}
-		Object var1 = type.cast(arg1.getValue(), arg1.getType());
-		Object var2 = plugin.getDataTypes().get("long").cast(arg2.getValue(), arg1.getType());
-		if (type.getName().equals("byte")) {
-			return new Var(plugin.getDataTypes().get("byte"), (Byte) var1 << (Long) var2);
-		} else if (type.getName().equals("short")) {
-			return new Var(plugin.getDataTypes().get("short"), (Short) var1 << (Long) var2);
-		} else if (type.getName().equals("int")) {
-			return new Var(plugin.getDataTypes().get("int"), (Integer) var1 << (Long) var2);
-		} else if (type.getName().equals("long")) {
-			return new Var(plugin.getDataTypes().get("long"), (Long) var1 << (Long) var2);
+		long bits = ((Number) arg2.getValue()).longValue();
+		String type = arg1.getType().getName();
+		if (type.equals("byte")) {
+			return new Var(plugin.getDataTypes().get("byte"), (Byte) arg1.getValue() << bits);
+		} else if (type.equals("short")) {
+			return new Var(plugin.getDataTypes().get("short"), (Short) arg1.getValue() << bits);
+		} else if (type.equals("int")) {
+			return new Var(plugin.getDataTypes().get("int"), (Integer) arg1.getValue() << bits);
+		} else if (type.equals("long")) {
+			return new Var(plugin.getDataTypes().get("long"), (Long) arg1.getValue() << bits);
 		}
 		throw new UnsupportedOperationException(arg1 + " << " + arg2 + " unsupported");
 	}
 
 	public Var opRShift(Var arg1, Var arg2) {
-		DataType type = getPrecisest(arg1.getType(), arg2.getType());
-		if (type == null) {
+		if (!(arg2.getValue() instanceof Number)) {
 			throw new UnsupportedOperationException(arg1 + " >> " + arg2 + " unsupported");
 		}
-		Object var1 = type.cast(arg1.getValue(), arg1.getType());
-		Object var2 = plugin.getDataTypes().get("long").cast(arg2.getValue(), arg1.getType());
-		if (type.getName().equals("byte")) {
-			return new Var(plugin.getDataTypes().get("byte"), (Byte) var1 >> (Long) var2);
-		} else if (type.getName().equals("short")) {
-			return new Var(plugin.getDataTypes().get("short"), (Short) var1 >> (Long) var2);
-		} else if (type.getName().equals("int")) {
-			return new Var(plugin.getDataTypes().get("int"), (Integer) var1 >> (Long) var2);
-		} else if (type.getName().equals("long")) {
-			return new Var(plugin.getDataTypes().get("long"), (Long) var1 >> (Long) var2);
+		long bits = ((Number) arg2.getValue()).longValue();
+		String type = arg1.getType().getName();
+		if (type.equals("byte")) {
+			return new Var(plugin.getDataTypes().get("byte"), (Byte) arg1.getValue() >> bits);
+		} else if (type.equals("short")) {
+			return new Var(plugin.getDataTypes().get("short"), (Short) arg1.getValue() >> bits);
+		} else if (type.equals("int")) {
+			return new Var(plugin.getDataTypes().get("int"), (Integer) arg1.getValue() >> bits);
+		} else if (type.equals("long")) {
+			return new Var(plugin.getDataTypes().get("long"), (Long) arg1.getValue() >> bits);
 		}
 		throw new UnsupportedOperationException(arg1 + " >> " + arg2 + " unsupported");
 	}
 
 	public Var opNRShift(Var arg1, Var arg2) {
-		DataType type = getPrecisest(arg1.getType(), arg2.getType());
-		if (type == null) {
+		if (!(arg2.getValue() instanceof Number)) {
 			throw new UnsupportedOperationException(arg1 + " >>> " + arg2 + " unsupported");
 		}
-		Object var1 = type.cast(arg1.getValue(), arg1.getType());
-		Object var2 = plugin.getDataTypes().get("long").cast(arg2.getValue(), arg1.getType());
-		if (type.getName().equals("byte")) {
-			return new Var(plugin.getDataTypes().get("byte"), (Byte) var1 >>> (Long) var2);
-		} else if (type.getName().equals("short")) {
-			return new Var(plugin.getDataTypes().get("short"), (Short) var1 >>> (Long) var2);
-		} else if (type.getName().equals("int")) {
-			return new Var(plugin.getDataTypes().get("int"), (Integer) var1 >>> (Long) var2);
-		} else if (type.getName().equals("long")) {
-			return new Var(plugin.getDataTypes().get("long"), (Long) var1 >>> (Long) var2);
+		long bits = ((Number) arg2.getValue()).longValue();
+		String type = arg1.getType().getName();
+		if (type.equals("byte")) {
+			return new Var(plugin.getDataTypes().get("byte"), (Byte) arg1.getValue() >>> bits);
+		} else if (type.equals("short")) {
+			return new Var(plugin.getDataTypes().get("short"), (Short) arg1.getValue() >>> bits);
+		} else if (type.equals("int")) {
+			return new Var(plugin.getDataTypes().get("int"), (Integer) arg1.getValue() >>> bits);
+		} else if (type.equals("long")) {
+			return new Var(plugin.getDataTypes().get("long"), (Long) arg1.getValue() >>> bits);
 		}
 		throw new UnsupportedOperationException(arg1 + " >>> " + arg2 + " unsupported");
 	}
