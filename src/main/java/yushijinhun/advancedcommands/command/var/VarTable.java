@@ -3,6 +3,7 @@ package yushijinhun.advancedcommands.command.var;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -10,7 +11,7 @@ import java.util.Objects;
 import java.util.Set;
 import yushijinhun.advancedcommands.AdvancedCommands;
 
-public class VarTable {
+public class VarTable implements Cloneable {
 
 	protected final Map<String, Var> vars = new LinkedHashMap<String, Var>();
 	protected final Map<String, Var> constants = new LinkedHashMap<String, Var>();
@@ -130,11 +131,33 @@ public class VarTable {
 	}
 
 	public void read(DataInput in) throws IOException {
+		clearVars();
 		int size = in.readInt();
 		for (int i = 0; i < size; i++) {
 			String key = in.readUTF();
 			vars.put(key, Var.parse(in, plugin));
 			names.add(key);
 		}
+	}
+
+	public void markNotDirty() {
+		dirty = false;
+	}
+
+	public void clearVars() {
+		Set<String> names = new HashSet<>(varNamesSet());
+		for (String var : names) {
+			remove(var);
+		}
+	}
+
+	@Override
+	public VarTable clone() {
+		VarTable another = new VarTable(plugin);
+		another.dirty = dirty;
+		another.constants.putAll(constants);
+		another.vars.putAll(vars);
+		another.names.addAll(names);
+		return another;
 	}
 }

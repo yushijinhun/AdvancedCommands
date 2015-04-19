@@ -10,7 +10,9 @@ import java.io.FileOutputStream;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 import yushijinhun.advancedcommands.command.CommandExp;
+import yushijinhun.advancedcommands.command.CommandVarTable;
 import yushijinhun.advancedcommands.command.TabCompleterExp;
+import yushijinhun.advancedcommands.command.TabCompleterVarTable;
 import yushijinhun.advancedcommands.command.datatype.DataType;
 import yushijinhun.advancedcommands.command.datatype.DataTypeArray;
 import yushijinhun.advancedcommands.command.datatype.DataTypeBoolean;
@@ -96,15 +98,27 @@ public final class AdvancedCommands extends JavaPlugin {
 		commandExp.setExecutor(new CommandExp(this));
 		commandExp.setTabCompleter(new TabCompleterExp(this));
 
+		PluginCommand commandVarTable = getCommand("varTable");
+		commandVarTable.setExecutor(new CommandVarTable(this));
+		commandVarTable.setTabCompleter(new TabCompleterVarTable());
+
 		varTableFile = new File(getDataFolder(), "ac-vars.dat");
-		loadVarTable();
+		try {
+			loadVarTable(false);
+		} catch (Exception e) {
+			;
+		}
 
 		getLogger().info("Enabled");
 	}
 
 	@Override
 	public void onDisable() {
-		saveVarTable();
+		try {
+			saveVarTable();
+		} catch (Exception e) {
+			;
+		}
 
 		config = null;
 		functions = null;
@@ -149,19 +163,38 @@ public final class AdvancedCommands extends JavaPlugin {
 		return true;
 	}
 
-	public void loadVarTable() {
+	public void loadVarTable(boolean rollback) {
+		getLogger().info("Loading the var table");
+		if (varTable.isDirty()) {
+			getLogger().warning("The var table is modify, and not saved. It will lose all the change!");
+		}
+		VarTable backup = null;
+		if (rollback) {
+			backup = varTable.clone();
+		}
 		try (DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(varTableFile)))) {
 			varTable.read(in);
+			varTable.markNotDirty();
+			getLogger().info("Loaded the var table");
 		} catch (Exception e) {
-			getLogger().warning(String.format("Load var table file failed\n%s", ExceptionHelper.exceptionToString(e)));
+			getLogger().severe(String.format("Load var table file failed\n%s", ExceptionHelper.exceptionToString(e)));
+			if (rollback) {
+				varTable = backup;
+				getLogger().severe("The var table has rolled back.");
+			}
+			throw new RuntimeException("Load var table file failed", e);
 		}
 	}
 
 	public void saveVarTable() {
+		getLogger().info("Saving the var table");
 		try (DataOutputStream out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(varTableFile)))) {
 			varTable.write(out);
+			varTable.markNotDirty();
+			getLogger().info("Saved the var table");
 		} catch (Exception e) {
-			getLogger().warning(String.format("Save var table file failed\n%s", ExceptionHelper.exceptionToString(e)));
+			getLogger().severe(String.format("Save var table file failed\n%s", ExceptionHelper.exceptionToString(e)));
+			throw new RuntimeException("Save var table file failed", e);
 		}
 	}
 
