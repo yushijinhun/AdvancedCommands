@@ -22,14 +22,14 @@ public class NBTSourceTile implements NBTSource {
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}
-		ReflectionHelper.tileWrite(ReflectionHelper.getTileEntity(parseId(id, commandSender)), nmsnbt);
+		ReflectionHelper.tileWrite(getTileEntity(parseId(id, commandSender)), nmsnbt);
 		return NbtFactory.fromNMSCompound(nmsnbt);
 	}
 
 	@Override
 	public void set(String id, NbtCompound nbt, CommandSender commandSender) {
 		Block block = parseId(id, commandSender);
-		Object tileEntity = ReflectionHelper.getTileEntity(block);
+		Object tileEntity = getTileEntity(block);
 		ReflectionHelper.tileRead(tileEntity, NbtFactory.fromBase(nbt).getHandle());
 		ReflectionHelper.notifyBlock(ReflectionHelper.toNMSWorld(block.getWorld()), block.getX(), block.getY(), block.getZ());
 	}
@@ -61,6 +61,14 @@ public class NBTSourceTile implements NBTSource {
 			}
 		}
 		return world.getBlockAt(x, y, z);
+	}
+
+	private Object getTileEntity(Block block) {
+		Object tileEntity = ReflectionHelper.getTileEntity(block);
+		if (tileEntity == null) {
+			throw new IllegalArgumentException(String.format("No TileEntity found at %s", block));
+		}
+		return tileEntity;
 	}
 
 	private World getWorldByCommandSender(CommandSender sender) {

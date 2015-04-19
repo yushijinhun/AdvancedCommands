@@ -31,7 +31,10 @@ public class NBTSourceInfo {
 	}
 
 	public static NBTSourceInfo parseNBTInfo(String str, AdvancedCommands plugin) {
-		String[] strs = str.split("@");
+		String[] strs = str.split("@", 2);
+		if (strs.length < 2) {
+			throw new IllegalArgumentException("Arguments length too short");
+		}
 		NBTSource source = plugin.getNbtHandler().sources.get(strs[0]);
 		if (source == null) {
 			throw new IllegalArgumentException("Unknow nbt source");
