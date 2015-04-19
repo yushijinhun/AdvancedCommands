@@ -127,7 +127,7 @@ public final class ExpressionHandler {
 						try {
 							result = function.call(args, context);
 						} catch (Exception e) {
-							throw new ExpressionHandlingException("Failed to invoke function " + function.getName(), e);
+							throw new ExpressionHandlingException(String.format("Failed to invoke function %s", function.getName()), e);
 						}
 						stack.push(new VarWarpperConstant(result));
 					} else {
@@ -244,7 +244,7 @@ public final class ExpressionHandler {
 										throw new ExpressionHandlingException("Unmatched (");
 									}
 								} else {
-									throw new ExpressionHandlingException("Unmatched op " + op);
+									throw new ExpressionHandlingException(String.format("Unmatched operation %s", op));
 								}
 								break;
 							}
@@ -252,7 +252,7 @@ public final class ExpressionHandler {
 								stack.push(new VarWarpperConstant(result));
 							}
 						} catch (Exception e) {
-							throw new ExpressionHandlingException("Failed to handle op " + op, e);
+							throw new ExpressionHandlingException(String.format("Failed to handle operation %s", op));
 						}
 					}
 				}
@@ -871,7 +871,7 @@ public final class ExpressionHandler {
 						Function function = plugin.getFunctions().get(str);
 						if (function == null) {
 							int radix = 10;
-							if (str.startsWith("0") && (str.length() > 1)) {
+							if ((str.charAt(0) == '0') && (str.length() > 1)) {
 								switch (str.charAt(1)) {
 								case 'b':
 								case 'B':
@@ -936,7 +936,7 @@ public final class ExpressionHandler {
 									break;
 								}
 							} catch (NumberFormatException e) {
-								throw new ExpressionHandlingException("Failed to handle " + str, e);
+								throw new ExpressionHandlingException(String.format("Failed to handle '%s'", str), e);
 							}
 							result.add(new VarWarpperConstant(constant));
 						} else {
@@ -1005,23 +1005,23 @@ public final class ExpressionHandler {
 				boolean escape = false;
 				s.append('"');
 				for (l = i + 1; l < length; l++) {
-					char ch2 = exp.charAt(l);
-					if ((ch2 == '\\') && !escape) {
+					char charInStr = exp.charAt(l);
+					if ((charInStr == '\\') && !escape) {
 						escape = true;
 					} else if (escape) {
-						if (ch2 == 'n') {
+						if (charInStr == 'n') {
 							s.append('\n');
-						} else if (ch2 == '"') {
+						} else if (charInStr == '"') {
 							s.append('"');
-						} else if (ch2 == '\\') {
+						} else if (charInStr == '\\') {
 							s.append('\\');
 						} else {
-							throw new ExpressionHandlingException("Unknow escaped char " + ch2);
+							throw new ExpressionHandlingException(String.format("Unknow escaped char '%s'", charInStr));
 						}
 						escape = false;
 					} else {
-						s.append(ch2);
-						if (ch2 == '"') {
+						s.append(charInStr);
+						if (charInStr == '"') {
 							break;
 						}
 					}
@@ -1040,16 +1040,16 @@ public final class ExpressionHandler {
 					}
 				}
 				if (unmatched) {
-					StringBuilder id = new StringBuilder(length - i);
+					StringBuilder str = new StringBuilder(length - i);
 					int l = i;
 					for (; l < length; l++) {
-						char ch2 = exp.charAt(l);
-						if (isOpChar(ch2)) {
+						char charInStr = exp.charAt(l);
+						if (isOpChar(charInStr)) {
 							break;
 						}
-						id.append(ch2);
+						str.append(charInStr);
 					}
-					result.add(id.toString());
+					result.add(str.toString());
 					i = l - 1;
 				}
 			}
