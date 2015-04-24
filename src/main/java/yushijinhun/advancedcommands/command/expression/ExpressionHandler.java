@@ -1053,7 +1053,7 @@ public class ExpressionHandler {
 							if (deep == 0) {
 								end = true;
 							}
-						} else if ((ch2 == ',') && (deep == 1)) {
+						} else if ((ch2 == ';') && (deep == 1)) {
 							deep = 0;
 						}
 						if (deep == 0) {
