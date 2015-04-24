@@ -1001,11 +1001,10 @@ public final class ExpressionHandler {
 				}
 			} else if (ch == '"') {
 				StringBuilder s = new StringBuilder(length - i);
-				int l;
 				boolean escape = false;
 				s.append('"');
-				for (l = i + 1; l < length; l++) {
-					char charInStr = exp.charAt(l);
+				for (i++; i < length; i++) {
+					char charInStr = exp.charAt(i);
 					if ((charInStr == '\\') && !escape) {
 						escape = true;
 					} else if (escape) {
@@ -1027,8 +1026,41 @@ public final class ExpressionHandler {
 					}
 				}
 				result.add(s.toString());
-				i = l;
-			} else {
+			} else if (ch=='{'){
+				result.add("arrayOf");
+				result.add("(");
+				for (i++; i < length;) {
+					StringBuilder sb = new StringBuilder("\"");
+					int deep = 1;
+					boolean end = false;
+					for (; i < length; i++) {
+						char ch2 = exp.charAt(i);
+						if (ch2 == '{') {
+							deep++;
+						} else if (ch2 == '}') {
+							deep--;
+							if (deep == 0) {
+								end = true;
+							}
+						} else if ((ch2 == ',') && (deep == 1)) {
+							deep = 0;
+						}
+						if (deep == 0) {
+							i++;
+							break;
+						}
+						sb.append(ch2);
+					}
+					sb.append('"');
+					result.add(sb.toString());
+					result.add(",");
+					if (end) {
+						break;
+					}
+				}
+				result.remove(result.size() - 1); // remove the "," at the top of the list
+				result.add(")");
+			}else {
 				boolean unmatched = true;
 				for (String op : ops) {
 					int endIndex = op.length() + i;
@@ -1041,16 +1073,15 @@ public final class ExpressionHandler {
 				}
 				if (unmatched) {
 					StringBuilder str = new StringBuilder(length - i);
-					int l = i;
-					for (; l < length; l++) {
-						char charInStr = exp.charAt(l);
+					for (; i < length; i++) {
+						char charInStr = exp.charAt(i);
 						if (isOpChar(charInStr)) {
 							break;
 						}
 						str.append(charInStr);
 					}
 					result.add(str.toString());
-					i = l - 1;
+					i--;
 				}
 			}
 		}
