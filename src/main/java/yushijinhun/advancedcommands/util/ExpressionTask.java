@@ -2,19 +2,19 @@ package yushijinhun.advancedcommands.util;
 
 import java.util.concurrent.Callable;
 import org.bukkit.command.CommandSender;
-import yushijinhun.advancedcommands.AdvancedCommands;
+import yushijinhun.advancedcommands.command.CommandContext;
 import yushijinhun.advancedcommands.command.var.Var;
 
 public class ExpressionTask implements Callable<Var> {
 
 	private final String expression;
 	private final CommandSender commandSender;
-	private AdvancedCommands plugin;
+	private CommandContext commandContext;
 
-	public ExpressionTask(String experssion, CommandSender commandSender, AdvancedCommands plugin) {
+	public ExpressionTask(String experssion, CommandSender commandSender, CommandContext commandContext) {
 		this.expression = experssion;
 		this.commandSender = commandSender;
-		this.plugin = plugin;
+		this.commandContext = commandContext;
 	}
 
 	public String getExperssion() {
@@ -27,7 +27,7 @@ public class ExpressionTask implements Callable<Var> {
 
 	@Override
 	public Var call() {
-		return plugin.getExpressionHandler().handleExpression(expression, commandSender);
+		return commandContext.getExpressionHandler().handleExpression(expression, commandSender);
 	}
 
 	@Override

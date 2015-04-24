@@ -10,7 +10,7 @@ public class FunctionArrayOf extends Function {
 
 	@Override
 	public Var call(Var[] args, FunctionContext context) {
-		return new Var(context.getPlugin().getDataTypes().get("array"), args);
+		return new Var(context.getCommandContext().getDataTypes().get("array"), args);
 	}
 
 }

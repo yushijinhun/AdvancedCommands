@@ -4,7 +4,7 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.util.Objects;
-import yushijinhun.advancedcommands.AdvancedCommands;
+import yushijinhun.advancedcommands.command.CommandContext;
 import yushijinhun.advancedcommands.command.datatype.DataType;
 
 public class Var implements Cloneable {
@@ -64,18 +64,18 @@ public class Var implements Cloneable {
 		return new Var(dest, dest.cast(value, type));
 	}
 
-	public void write(DataOutput out, AdvancedCommands plugin) throws IOException {
+	public void write(DataOutput out, CommandContext commandContext) throws IOException {
 		out.writeBoolean(value == null);
 		out.writeUTF(type.getName());
 		if (value != null) {
-			type.writeValue(value, out, plugin);
+			type.writeValue(value, out, commandContext);
 		}
 	}
 
-	public static Var parse(DataInput in, AdvancedCommands plugin) throws IOException {
+	public static Var parse(DataInput in, CommandContext commandContext) throws IOException {
 		boolean isnull = in.readBoolean();
-		DataType type = plugin.getDataTypes().get(in.readUTF());
-		Object value = isnull ? null : type.readValue(in, plugin);
+		DataType type = commandContext.getDataTypes().get(in.readUTF());
+		Object value = isnull ? null : type.readValue(in, commandContext);
 		return new Var(type, value);
 	}
 }

@@ -9,7 +9,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import yushijinhun.advancedcommands.AdvancedCommands;
+import yushijinhun.advancedcommands.command.CommandContext;
 
 public class VarTable implements Cloneable {
 
@@ -18,10 +18,10 @@ public class VarTable implements Cloneable {
 	protected final Set<String> names = new LinkedHashSet<String>();
 	protected boolean dirty = false;
 
-	private AdvancedCommands plugin;
+	private CommandContext commandContext;
 
-	public VarTable(AdvancedCommands plugin) {
-		this.plugin = plugin;
+	public VarTable(CommandContext commandContext) {
+		this.commandContext = commandContext;
 	}
 
 	public Var get(String name) {
@@ -126,7 +126,7 @@ public class VarTable implements Cloneable {
 		out.writeInt(vars.size());
 		for (String key : vars.keySet()) {
 			out.writeUTF(key);
-			vars.get(key).write(out, plugin);
+			vars.get(key).write(out, commandContext);
 		}
 	}
 
@@ -135,7 +135,7 @@ public class VarTable implements Cloneable {
 		int size = in.readInt();
 		for (int i = 0; i < size; i++) {
 			String key = in.readUTF();
-			vars.put(key, Var.parse(in, plugin));
+			vars.put(key, Var.parse(in, commandContext));
 			names.add(key);
 		}
 	}
@@ -153,7 +153,7 @@ public class VarTable implements Cloneable {
 
 	@Override
 	public VarTable clone() {
-		VarTable another = new VarTable(plugin);
+		VarTable another = new VarTable(commandContext);
 		another.dirty = dirty;
 		another.constants.putAll(constants);
 		another.vars.putAll(vars);

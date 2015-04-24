@@ -13,7 +13,7 @@ public class FunctionSin extends Function {
 		throwArgsLengthExceptionIf(args.length != 1);
 		Object val = args[0].getValue();
 		if (val instanceof Number) {
-			return new Var(context.getPlugin().getDataTypes().get("double"), Math.sin(((Number) val).doubleValue()));
+			return new Var(context.getCommandContext().getDataTypes().get("double"), Math.sin(((Number) val).doubleValue()));
 		}
 
 		throw new IllegalArgumentException("Argument must be a number");

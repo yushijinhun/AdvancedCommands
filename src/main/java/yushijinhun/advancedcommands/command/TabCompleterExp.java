@@ -9,16 +9,15 @@ import java.util.regex.Pattern;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import yushijinhun.advancedcommands.AdvancedCommands;
 
 public class TabCompleterExp implements TabCompleter {
 
-	private AdvancedCommands plugin;
+	private CommandContext commandContext;
 
 	private final Pattern wordPattern = Pattern.compile("[0-9A-Za-z\\$_]*(\\[(\\])?)?$");
 
-	public TabCompleterExp(AdvancedCommands plugin) {
-		this.plugin = plugin;
+	public TabCompleterExp(CommandContext commandContext) {
+		this.commandContext = commandContext;
 	}
 
 	@Override
@@ -43,12 +42,12 @@ public class TabCompleterExp implements TabCompleter {
 
 	private Set<String> getAllCompleteWords() {
 		Set<String> words = new LinkedHashSet<>();
-		words.addAll(plugin.getVarTable().namesSet());
-		for (String function : plugin.getFunctions().namesSet()) {
+		words.addAll(commandContext.getVarTable().namesSet());
+		for (String function : commandContext.getFunctions().namesSet()) {
 			words.add(function + "(");
 		}
-		words.addAll(plugin.getNbtHandler().nbtTypes);
-		words.addAll(plugin.getDataTypes().namesSet());
+		words.addAll(commandContext.getNbtHandler().nbtTypes);
+		words.addAll(commandContext.getDataTypes().namesSet());
 		return words;
 	}
 }

@@ -20,9 +20,9 @@ public class FunctionGetChildrenNames extends Function {
 			Set<String> names = nbt.getKeys();
 			Set<Var> vars = new LinkedHashSet<Var>();
 			for (String s : names) {
-				vars.add(new Var(context.getPlugin().getDataTypes().get("string"), s));
+				vars.add(new Var(context.getCommandContext().getDataTypes().get("string"), s));
 			}
-			return new Var(context.getPlugin().getDataTypes().get("nbt"), vars.toArray(new Var[vars.size()]));
+			return new Var(context.getCommandContext().getDataTypes().get("nbt"), vars.toArray(new Var[vars.size()]));
 		}
 		throw new IllegalArgumentException("Cannot fetch children of " + args[0]);
 	}

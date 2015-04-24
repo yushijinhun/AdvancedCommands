@@ -33,7 +33,7 @@ public final class Config {
 
 	public void afterLoadConfig() {
 		if (safetyMode) {
-			SafetyModeManager.setManager(new SafetyModeManagerTimeout(safetyTime, cancelWaitTime, plugin));
+			SafetyModeManager.setManager(new SafetyModeManagerTimeout(safetyTime, cancelWaitTime, plugin.getLogger()));
 		} else {
 			SafetyModeManager.setManager(new SafetyModeManagerNo());
 		}

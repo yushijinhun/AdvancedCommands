@@ -5,7 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-import yushijinhun.advancedcommands.AdvancedCommands;
+import yushijinhun.advancedcommands.command.CommandContext;
 import yushijinhun.advancedcommands.util.ReflectionHelper;
 import com.comphenix.protocol.wrappers.nbt.NbtBase;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
@@ -42,7 +42,7 @@ public class DataTypeNBT extends DataType {
 	}
 
 	@Override
-	public void writeValue(Object value, DataOutput out, AdvancedCommands plugin) throws IOException {
+	public void writeValue(Object value, DataOutput out, CommandContext commandContext) throws IOException {
 		NbtCompound comp = NbtFactory.ofCompound("");
 		comp.put("data", (NbtBase<?>) value);
 		ByteArrayOutputStream memoryOut = new ByteArrayOutputStream();
@@ -53,7 +53,7 @@ public class DataTypeNBT extends DataType {
 	}
 
 	@Override
-	public Object readValue(DataInput in, AdvancedCommands plugin) throws IOException {
+	public Object readValue(DataInput in, CommandContext commandContext) throws IOException {
 		byte[] bytes = new byte[in.readInt()];
 		in.readFully(bytes);
 		ByteArrayInputStream memoryIn = new ByteArrayInputStream(bytes);

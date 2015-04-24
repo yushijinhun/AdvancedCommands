@@ -15,12 +15,12 @@ public class FunctionCreate extends Function {
 		checkType(args, 0, "string");
 		checkType(args, 1, "string");
 		String name = (String) args[1].getValue();
-		DataType datatype = context.getPlugin().getDataTypes().get((String) args[0].getValue());
+		DataType datatype = context.getCommandContext().getDataTypes().get((String) args[0].getValue());
 		if (datatype == null) {
 			throw new IllegalArgumentException(String.format("Data type %s not exists", args[0].getValue()));
 		}
 
-		if (!context.getPlugin().isValidIdentifier(name)) {
+		if (!context.getCommandContext().isValidIdentifier(name)) {
 			throw new IllegalArgumentException(String.format("%s is not a valid identifier", name));
 		}
 
@@ -36,7 +36,7 @@ public class FunctionCreate extends Function {
 			value = datatype.getDefaultValue();
 		}
 
-		context.getPlugin().getVarTable().add(name, new Var(datatype, value));
+		context.getCommandContext().getVarTable().add(name, new Var(datatype, value));
 		return null;
 	}
 

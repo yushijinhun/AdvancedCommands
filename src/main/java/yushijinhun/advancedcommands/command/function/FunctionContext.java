@@ -1,19 +1,19 @@
 package yushijinhun.advancedcommands.command.function;
 
 import org.bukkit.command.CommandSender;
-import yushijinhun.advancedcommands.AdvancedCommands;
+import yushijinhun.advancedcommands.command.CommandContext;
 import yushijinhun.advancedcommands.command.expression.IVarWarpper;
 
 public class FunctionContext {
 
 	private final CommandSender commandSender;
 	private final IVarWarpper[] rawArgs;
-	private final AdvancedCommands plugin;
+	private final CommandContext commandContext;
 
-	public FunctionContext(CommandSender commandSender, IVarWarpper[] rawArgs, AdvancedCommands plugin) {
+	public FunctionContext(CommandSender commandSender, IVarWarpper[] rawArgs, CommandContext commandContext) {
 		this.commandSender = commandSender;
 		this.rawArgs = rawArgs;
-		this.plugin = plugin;
+		this.commandContext = commandContext;
 	}
 
 	public CommandSender getCommandSender() {
@@ -24,7 +24,7 @@ public class FunctionContext {
 		return rawArgs;
 	}
 
-	public AdvancedCommands getPlugin() {
-		return plugin;
+	public CommandContext getCommandContext() {
+		return commandContext;
 	}
 }

@@ -4,7 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import yushijinhun.advancedcommands.AdvancedCommands;
+import yushijinhun.advancedcommands.command.CommandContext;
 import yushijinhun.advancedcommands.command.var.Var;
 import com.comphenix.protocol.wrappers.nbt.NbtBase;
 import com.comphenix.protocol.wrappers.nbt.NbtFactory;
@@ -15,10 +15,10 @@ public final class NBTHandler {
 	public final Map<String, NBTSource> sources = new LinkedHashMap<>();
 	public final Set<String> nbtTypes = new LinkedHashSet<>();
 
-	private AdvancedCommands plugin;
+	private CommandContext commandContext;
 
-	public NBTHandler(AdvancedCommands plugin) {
-		this.plugin = plugin;
+	public NBTHandler(CommandContext commandContext) {
+		this.commandContext = commandContext;
 
 		sources.put("entity", new NBTSourceEntity());
 		sources.put("tile", new NBTSourceTile());
@@ -86,33 +86,33 @@ public final class NBTHandler {
 
 	public Var valueOf(NbtBase<?> nbt) {
 		if (nbt.getType() == NbtType.TAG_BYTE) {
-			return new Var(plugin.getDataTypes().get("byte"), nbt.getValue());
+			return new Var(commandContext.getDataTypes().get("byte"), nbt.getValue());
 		} else if (nbt.getType() == NbtType.TAG_SHORT) {
-			return new Var(plugin.getDataTypes().get("short"), nbt.getValue());
+			return new Var(commandContext.getDataTypes().get("short"), nbt.getValue());
 		} else if (nbt.getType() == NbtType.TAG_INT) {
-			return new Var(plugin.getDataTypes().get("int"), nbt.getValue());
+			return new Var(commandContext.getDataTypes().get("int"), nbt.getValue());
 		} else if (nbt.getType() == NbtType.TAG_LONG) {
-			return new Var(plugin.getDataTypes().get("long"), nbt.getValue());
+			return new Var(commandContext.getDataTypes().get("long"), nbt.getValue());
 		} else if (nbt.getType() == NbtType.TAG_FLOAT) {
-			return new Var(plugin.getDataTypes().get("float"), nbt.getValue());
+			return new Var(commandContext.getDataTypes().get("float"), nbt.getValue());
 		} else if (nbt.getType() == NbtType.TAG_DOUBLE) {
-			return new Var(plugin.getDataTypes().get("double"), nbt.getValue());
+			return new Var(commandContext.getDataTypes().get("double"), nbt.getValue());
 		} else if (nbt.getType() == NbtType.TAG_STRING) {
-			return new Var(plugin.getDataTypes().get("string"), nbt.getValue());
+			return new Var(commandContext.getDataTypes().get("string"), nbt.getValue());
 		} else if (nbt.getType() == NbtType.TAG_BYTE_ARRAY) {
 			byte[] bytes = (byte[]) nbt.getValue();
 			Var[] vars = new Var[bytes.length];
 			for (int i = 0; i < bytes.length; i++) {
-				vars[i] = new Var(plugin.getDataTypes().get("byte"), bytes[i]);
+				vars[i] = new Var(commandContext.getDataTypes().get("byte"), bytes[i]);
 			}
-			return new Var(plugin.getDataTypes().get("array"), vars);
+			return new Var(commandContext.getDataTypes().get("array"), vars);
 		} else if (nbt.getType() == NbtType.TAG_INT_ARRAY) {
 			int[] ints = (int[]) nbt.getValue();
 			Var[] vars = new Var[ints.length];
 			for (int i = 0; i < ints.length; i++) {
-				vars[i] = new Var(plugin.getDataTypes().get("int"), ints[i]);
+				vars[i] = new Var(commandContext.getDataTypes().get("int"), ints[i]);
 			}
-			return new Var(plugin.getDataTypes().get("array"), vars);
+			return new Var(commandContext.getDataTypes().get("array"), vars);
 		} else {
 			throw new IllegalArgumentException(String.format("Unknow nbt type %s", nbt.getName()));
 		}

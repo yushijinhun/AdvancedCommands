@@ -4,7 +4,7 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.util.Arrays;
-import yushijinhun.advancedcommands.AdvancedCommands;
+import yushijinhun.advancedcommands.command.CommandContext;
 import yushijinhun.advancedcommands.command.var.Var;
 
 public class DataTypeArray extends DataType {
@@ -39,19 +39,19 @@ public class DataTypeArray extends DataType {
 	}
 
 	@Override
-	public void writeValue(Object value, DataOutput out, AdvancedCommands plugin) throws IOException {
+	public void writeValue(Object value, DataOutput out, CommandContext commandContext) throws IOException {
 		Var[] vars = (Var[]) value;
 		out.writeInt(vars.length);
 		for (Var var : vars) {
-			var.write(out, plugin);
+			var.write(out, commandContext);
 		}
 	}
 
 	@Override
-	public Object readValue(DataInput in, AdvancedCommands plugin) throws IOException {
+	public Object readValue(DataInput in, CommandContext commandContext) throws IOException {
 		Var[] vars = new Var[in.readInt()];
 		for (int i = 0; i < vars.length; i++) {
-			vars[i] = Var.parse(in, plugin);
+			vars[i] = Var.parse(in, commandContext);
 		}
 		return vars;
 	}

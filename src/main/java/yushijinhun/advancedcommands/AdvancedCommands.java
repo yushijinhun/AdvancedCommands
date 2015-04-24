@@ -9,6 +9,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
+import yushijinhun.advancedcommands.command.CommandContext;
 import yushijinhun.advancedcommands.command.CommandExp;
 import yushijinhun.advancedcommands.command.CommandVarTable;
 import yushijinhun.advancedcommands.command.TabCompleterExp;
@@ -64,7 +65,7 @@ import yushijinhun.advancedcommands.util.ExceptionHelper;
 import yushijinhun.advancedcommands.util.ReflectionHelper;
 import yushijinhun.advancedcommands.util.Register;
 
-public final class AdvancedCommands extends JavaPlugin {
+public final class AdvancedCommands extends JavaPlugin implements CommandContext {
 
 	private Config config;
 	private File varTableFile;
@@ -84,8 +85,8 @@ public final class AdvancedCommands extends JavaPlugin {
 		config.saveConfig(getConfig());
 		saveConfig();
 
-		functions = new Register<Function>("Function", this);
-		dataTypes = new Register<DataType>("Datatype", this);
+		functions = new Register<Function>("Function", getLogger());
+		dataTypes = new Register<DataType>("Datatype", getLogger());
 		expressionHandler = new ExpressionHandler(this);
 		nbtHandler = new NBTHandler(this);
 		varTable = new VarTable(this);
@@ -131,6 +132,7 @@ public final class AdvancedCommands extends JavaPlugin {
 		getLogger().info("Disabled");
 	}
 
+	@Override
 	public boolean isValidIdentifier(String name) {
 		if ((name == null) || (name.length() == 0) || name.equals("null")) {
 			return false;
@@ -206,22 +208,27 @@ public final class AdvancedCommands extends JavaPlugin {
 		return varTableFile;
 	}
 
+	@Override
 	public Register<Function> getFunctions() {
 		return functions;
 	}
 
+	@Override
 	public Register<DataType> getDataTypes() {
 		return dataTypes;
 	}
 
+	@Override
 	public ExpressionHandler getExpressionHandler() {
 		return expressionHandler;
 	}
 
+	@Override
 	public NBTHandler getNbtHandler() {
 		return nbtHandler;
 	}
 
+	@Override
 	public VarTable getVarTable() {
 		return varTable;
 	}

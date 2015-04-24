@@ -29,7 +29,7 @@ public class FunctionGetChild extends Function {
 		if (child == null) {
 			return null;
 		}
-		return new Var(context.getPlugin().getDataTypes().get("nbt"), child);
+		return new Var(context.getCommandContext().getDataTypes().get("nbt"), child);
 	}
 
 }

@@ -13,7 +13,7 @@ public class FunctionMin extends Function {
 	public Var call(Var[] args, FunctionContext context) {
 		throwArgsLengthExceptionIf(args.length != 2);
 		boolean larger;
-		DataType type = context.getPlugin().getExpressionHandler().getPrecisest(args[0].getType(), args[1].getType());
+		DataType type = context.getCommandContext().getExpressionHandler().getPrecisest(args[0].getType(), args[1].getType());
 		Object var1 = type.cast(args[0].getValue(), args[0].getType());
 		Object var2 = type.cast(args[1].getValue(), args[1].getType());
 		if (type.getName().equals("byte")) {

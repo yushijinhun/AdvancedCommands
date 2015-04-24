@@ -1,16 +1,16 @@
 package yushijinhun.advancedcommands.command.expression;
 
-import yushijinhun.advancedcommands.AdvancedCommands;
+import yushijinhun.advancedcommands.command.CommandContext;
 import yushijinhun.advancedcommands.command.var.Var;
 
 public class VarWarpperVar implements IVarWarpper {
 
 	private final String name;
-	private AdvancedCommands plugin;
+	private CommandContext commandContext;
 
-	public VarWarpperVar(String name, AdvancedCommands plugin) {
+	public VarWarpperVar(String name, CommandContext commandContext) {
 		this.name = name;
-		this.plugin = plugin;
+		this.commandContext = commandContext;
 	}
 
 	@Override
@@ -20,17 +20,17 @@ public class VarWarpperVar implements IVarWarpper {
 
 	@Override
 	public void set(Var var) {
-		plugin.getVarTable().set(name, var);
+		commandContext.getVarTable().set(name, var);
 	}
 
 	@Override
 	public Var get() {
-		return plugin.getVarTable().get(name);
+		return commandContext.getVarTable().get(name);
 	}
 
 	@Override
 	public void changed() {
-		plugin.getVarTable().markDirty();
+		commandContext.getVarTable().markDirty();
 	}
 
 	@Override

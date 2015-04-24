@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
 import org.bukkit.command.CommandSender;
-import yushijinhun.advancedcommands.AdvancedCommands;
+import yushijinhun.advancedcommands.command.CommandContext;
 import yushijinhun.advancedcommands.command.datatype.DataType;
 import yushijinhun.advancedcommands.command.function.Function;
 import yushijinhun.advancedcommands.command.function.FunctionContext;
@@ -39,7 +39,7 @@ public final class ExpressionHandler {
 
 	});
 
-	private AdvancedCommands plugin;
+	private CommandContext commandContext;
 
 	{
 		registerOp("(", Integer.MIN_VALUE, false);
@@ -88,8 +88,8 @@ public final class ExpressionHandler {
 		precision.put("double", 6);
 	}
 
-	public ExpressionHandler(AdvancedCommands plugin) {
-		this.plugin = plugin;
+	public ExpressionHandler(CommandContext commandContext) {
+		this.commandContext = commandContext;
 	}
 
 	public void registerOp(String op, int priority, boolean leftAssoc) {
@@ -112,7 +112,7 @@ public final class ExpressionHandler {
 					if (op.startsWith("()")) {
 						String[] spilted = op.substring(2).split("@", 2);
 						int argLength = Integer.parseInt(spilted[0]);
-						Function function = plugin.getFunctions().get(spilted[1]);
+						Function function = commandContext.getFunctions().get(spilted[1]);
 						Var[] args = new Var[argLength];
 						IVarWarpper[] rawArgs = new IVarWarpper[argLength];
 						for (int i = argLength - 1; i > -1; i--) {
@@ -122,7 +122,7 @@ public final class ExpressionHandler {
 								args[i] = null;
 							}
 						}
-						FunctionContext context = new FunctionContext(sender, rawArgs, plugin);
+						FunctionContext context = new FunctionContext(sender, rawArgs, commandContext);
 						Var result;
 						try {
 							result = function.call(args, context);
@@ -323,17 +323,17 @@ public final class ExpressionHandler {
 		Object arg1Val = arg1.getValue();
 		switch (arg1.getType().getName()) {
 		case "byte":
-			return new Var(plugin.getDataTypes().get("byte"), (byte) -((Byte) arg1Val));
+			return new Var(commandContext.getDataTypes().get("byte"), (byte) -((Byte) arg1Val));
 		case "short":
-			return new Var(plugin.getDataTypes().get("short"), (short) -((Short) arg1Val));
+			return new Var(commandContext.getDataTypes().get("short"), (short) -((Short) arg1Val));
 		case "int":
-			return new Var(plugin.getDataTypes().get("int"), -((Integer) arg1Val));
+			return new Var(commandContext.getDataTypes().get("int"), -((Integer) arg1Val));
 		case "long":
-			return new Var(plugin.getDataTypes().get("long"), -((Long) arg1Val));
+			return new Var(commandContext.getDataTypes().get("long"), -((Long) arg1Val));
 		case "float":
-			return new Var(plugin.getDataTypes().get("float"), -((Float) arg1Val));
+			return new Var(commandContext.getDataTypes().get("float"), -((Float) arg1Val));
 		case "double":
-			return new Var(plugin.getDataTypes().get("double"), -((Double) arg1Val));
+			return new Var(commandContext.getDataTypes().get("double"), -((Double) arg1Val));
 		default:
 			throw new UnsupportedOperationException("- " + arg1 + " unsupported");
 		}
@@ -343,17 +343,17 @@ public final class ExpressionHandler {
 		Object arg1Val = arg1.getValue();
 		switch (arg1.getType().getName()) {
 		case "byte":
-			return new Var(plugin.getDataTypes().get("byte"), (byte) +((Byte) arg1Val));
+			return new Var(commandContext.getDataTypes().get("byte"), (byte) +((Byte) arg1Val));
 		case "short":
-			return new Var(plugin.getDataTypes().get("short"), (short) +((Short) arg1Val));
+			return new Var(commandContext.getDataTypes().get("short"), (short) +((Short) arg1Val));
 		case "int":
-			return new Var(plugin.getDataTypes().get("int"), +((Integer) arg1Val));
+			return new Var(commandContext.getDataTypes().get("int"), +((Integer) arg1Val));
 		case "long":
-			return new Var(plugin.getDataTypes().get("long"), +((Long) arg1Val));
+			return new Var(commandContext.getDataTypes().get("long"), +((Long) arg1Val));
 		case "float":
-			return new Var(plugin.getDataTypes().get("float"), +((Float) arg1Val));
+			return new Var(commandContext.getDataTypes().get("float"), +((Float) arg1Val));
 		case "double":
-			return new Var(plugin.getDataTypes().get("double"), +((Double) arg1Val));
+			return new Var(commandContext.getDataTypes().get("double"), +((Double) arg1Val));
 		default:
 			throw new UnsupportedOperationException("+ " + arg1 + " unsupported");
 		}
@@ -363,15 +363,15 @@ public final class ExpressionHandler {
 		Object arg1Val = arg1.getValue();
 		switch (arg1.getType().getName()) {
 		case "boolean":
-			return new Var(plugin.getDataTypes().get("boolean"), !((Boolean) arg1Val));
+			return new Var(commandContext.getDataTypes().get("boolean"), !((Boolean) arg1Val));
 		case "byte":
-			return new Var(plugin.getDataTypes().get("byte"), ~((Byte) arg1Val));
+			return new Var(commandContext.getDataTypes().get("byte"), ~((Byte) arg1Val));
 		case "short":
-			return new Var(plugin.getDataTypes().get("short"), ~((Short) arg1Val));
+			return new Var(commandContext.getDataTypes().get("short"), ~((Short) arg1Val));
 		case "int":
-			return new Var(plugin.getDataTypes().get("int"), ~((Integer) arg1Val));
+			return new Var(commandContext.getDataTypes().get("int"), ~((Integer) arg1Val));
 		case "long":
-			return new Var(plugin.getDataTypes().get("long"), ~((Long) arg1Val));
+			return new Var(commandContext.getDataTypes().get("long"), ~((Long) arg1Val));
 		default:
 			throw new UnsupportedOperationException("! " + arg1 + " unsupported");
 		}
@@ -379,7 +379,7 @@ public final class ExpressionHandler {
 
 	public Var opPlus(Var arg1, Var arg2) {
 		if ((arg1.getType().getName().equals("string")) && (arg2.getType().getName().equals("string"))) {
-			return new Var(plugin.getDataTypes().get("string"), (String) arg1.getValue() + (String) arg2.getValue());
+			return new Var(commandContext.getDataTypes().get("string"), (String) arg1.getValue() + (String) arg2.getValue());
 		}
 		DataType type = getPrecisest(arg1.getType(), arg2.getType());
 		if (type == null) {
@@ -389,17 +389,17 @@ public final class ExpressionHandler {
 		Object var2 = type.cast(arg2.getValue(), arg2.getType());
 		switch (type.getName()) {
 		case "byte":
-			return new Var(plugin.getDataTypes().get("int"), (Byte) var1 + (Byte) var2);
+			return new Var(commandContext.getDataTypes().get("int"), (Byte) var1 + (Byte) var2);
 		case "short":
-			return new Var(plugin.getDataTypes().get("int"), (Short) var1 + (Short) var2);
+			return new Var(commandContext.getDataTypes().get("int"), (Short) var1 + (Short) var2);
 		case "int":
-			return new Var(plugin.getDataTypes().get("int"), (Integer) var1 + (Integer) var2);
+			return new Var(commandContext.getDataTypes().get("int"), (Integer) var1 + (Integer) var2);
 		case "long":
-			return new Var(plugin.getDataTypes().get("long"), (Long) var1 + (Long) var2);
+			return new Var(commandContext.getDataTypes().get("long"), (Long) var1 + (Long) var2);
 		case "float":
-			return new Var(plugin.getDataTypes().get("float"), (Float) var1 + (Float) var2);
+			return new Var(commandContext.getDataTypes().get("float"), (Float) var1 + (Float) var2);
 		case "double":
-			return new Var(plugin.getDataTypes().get("double"), (Double) var1 + (Double) var2);
+			return new Var(commandContext.getDataTypes().get("double"), (Double) var1 + (Double) var2);
 		default:
 			throw new UnsupportedOperationException(arg1 + " + " + arg2 + " unsupported");
 		}
@@ -414,17 +414,17 @@ public final class ExpressionHandler {
 		Object var2 = type.cast(arg2.getValue(), arg2.getType());
 		switch (type.getName()) {
 		case "byte":
-			return new Var(plugin.getDataTypes().get("int"), (Byte) var1 - (Byte) var2);
+			return new Var(commandContext.getDataTypes().get("int"), (Byte) var1 - (Byte) var2);
 		case "short":
-			return new Var(plugin.getDataTypes().get("int"), (Short) var1 - (Short) var2);
+			return new Var(commandContext.getDataTypes().get("int"), (Short) var1 - (Short) var2);
 		case "int":
-			return new Var(plugin.getDataTypes().get("int"), (Integer) var1 - (Integer) var2);
+			return new Var(commandContext.getDataTypes().get("int"), (Integer) var1 - (Integer) var2);
 		case "long":
-			return new Var(plugin.getDataTypes().get("long"), (Long) var1 - (Long) var2);
+			return new Var(commandContext.getDataTypes().get("long"), (Long) var1 - (Long) var2);
 		case "float":
-			return new Var(plugin.getDataTypes().get("float"), (Float) var1 - (Float) var2);
+			return new Var(commandContext.getDataTypes().get("float"), (Float) var1 - (Float) var2);
 		case "double":
-			return new Var(plugin.getDataTypes().get("double"), (Double) var1 - (Double) var2);
+			return new Var(commandContext.getDataTypes().get("double"), (Double) var1 - (Double) var2);
 		default:
 			throw new UnsupportedOperationException(arg1 + " - " + arg2 + " unsupported");
 		}
@@ -439,17 +439,17 @@ public final class ExpressionHandler {
 		Object var2 = type.cast(arg2.getValue(), arg2.getType());
 		switch (type.getName()) {
 		case "byte":
-			return new Var(plugin.getDataTypes().get("int"), (Byte) var1 * (Byte) var2);
+			return new Var(commandContext.getDataTypes().get("int"), (Byte) var1 * (Byte) var2);
 		case "short":
-			return new Var(plugin.getDataTypes().get("int"), (Short) var1 * (Short) var2);
+			return new Var(commandContext.getDataTypes().get("int"), (Short) var1 * (Short) var2);
 		case "int":
-			return new Var(plugin.getDataTypes().get("int"), (Integer) var1 * (Integer) var2);
+			return new Var(commandContext.getDataTypes().get("int"), (Integer) var1 * (Integer) var2);
 		case "long":
-			return new Var(plugin.getDataTypes().get("long"), (Long) var1 * (Long) var2);
+			return new Var(commandContext.getDataTypes().get("long"), (Long) var1 * (Long) var2);
 		case "float":
-			return new Var(plugin.getDataTypes().get("float"), (Float) var1 * (Float) var2);
+			return new Var(commandContext.getDataTypes().get("float"), (Float) var1 * (Float) var2);
 		case "double":
-			return new Var(plugin.getDataTypes().get("double"), (Double) var1 * (Double) var2);
+			return new Var(commandContext.getDataTypes().get("double"), (Double) var1 * (Double) var2);
 		default:
 			throw new UnsupportedOperationException(arg1 + " * " + arg2 + " unsupported");
 		}
@@ -464,17 +464,17 @@ public final class ExpressionHandler {
 		Object var2 = type.cast(arg2.getValue(), arg2.getType());
 		switch (type.getName()) {
 		case "byte":
-			return new Var(plugin.getDataTypes().get("int"), (Byte) var1 / (Byte) var2);
+			return new Var(commandContext.getDataTypes().get("int"), (Byte) var1 / (Byte) var2);
 		case "short":
-			return new Var(plugin.getDataTypes().get("int"), (Short) var1 / (Short) var2);
+			return new Var(commandContext.getDataTypes().get("int"), (Short) var1 / (Short) var2);
 		case "int":
-			return new Var(plugin.getDataTypes().get("int"), (Integer) var1 / (Integer) var2);
+			return new Var(commandContext.getDataTypes().get("int"), (Integer) var1 / (Integer) var2);
 		case "long":
-			return new Var(plugin.getDataTypes().get("long"), (Long) var1 / (Long) var2);
+			return new Var(commandContext.getDataTypes().get("long"), (Long) var1 / (Long) var2);
 		case "float":
-			return new Var(plugin.getDataTypes().get("float"), (Float) var1 / (Float) var2);
+			return new Var(commandContext.getDataTypes().get("float"), (Float) var1 / (Float) var2);
 		case "double":
-			return new Var(plugin.getDataTypes().get("double"), (Double) var1 / (Double) var2);
+			return new Var(commandContext.getDataTypes().get("double"), (Double) var1 / (Double) var2);
 		default:
 			throw new UnsupportedOperationException(arg1 + " / " + arg2 + " unsupported");
 		}
@@ -489,17 +489,17 @@ public final class ExpressionHandler {
 		Object var2 = type.cast(arg2.getValue(), arg2.getType());
 		switch (type.getName()) {
 		case "byte":
-			return new Var(plugin.getDataTypes().get("int"), (Byte) var1 % (Byte) var2);
+			return new Var(commandContext.getDataTypes().get("int"), (Byte) var1 % (Byte) var2);
 		case "short":
-			return new Var(plugin.getDataTypes().get("int"), (Short) var1 % (Short) var2);
+			return new Var(commandContext.getDataTypes().get("int"), (Short) var1 % (Short) var2);
 		case "int":
-			return new Var(plugin.getDataTypes().get("int"), (Integer) var1 % (Integer) var2);
+			return new Var(commandContext.getDataTypes().get("int"), (Integer) var1 % (Integer) var2);
 		case "long":
-			return new Var(plugin.getDataTypes().get("long"), (Long) var1 % (Long) var2);
+			return new Var(commandContext.getDataTypes().get("long"), (Long) var1 % (Long) var2);
 		case "float":
-			return new Var(plugin.getDataTypes().get("float"), (Float) var1 % (Float) var2);
+			return new Var(commandContext.getDataTypes().get("float"), (Float) var1 % (Float) var2);
 		case "double":
-			return new Var(plugin.getDataTypes().get("double"), (Double) var1 % (Double) var2);
+			return new Var(commandContext.getDataTypes().get("double"), (Double) var1 % (Double) var2);
 		default:
 			throw new UnsupportedOperationException(arg1 + " % " + arg2 + " unsupported");
 		}
@@ -512,13 +512,13 @@ public final class ExpressionHandler {
 		long bits = ((Number) arg2.getValue()).longValue();
 		switch (arg1.getType().getName()) {
 		case "byte":
-			return new Var(plugin.getDataTypes().get("byte"), (Byte) arg1.getValue() << bits);
+			return new Var(commandContext.getDataTypes().get("byte"), (Byte) arg1.getValue() << bits);
 		case "short":
-			return new Var(plugin.getDataTypes().get("short"), (Short) arg1.getValue() << bits);
+			return new Var(commandContext.getDataTypes().get("short"), (Short) arg1.getValue() << bits);
 		case "int":
-			return new Var(plugin.getDataTypes().get("int"), (Integer) arg1.getValue() << bits);
+			return new Var(commandContext.getDataTypes().get("int"), (Integer) arg1.getValue() << bits);
 		case "long":
-			return new Var(plugin.getDataTypes().get("long"), (Long) arg1.getValue() << bits);
+			return new Var(commandContext.getDataTypes().get("long"), (Long) arg1.getValue() << bits);
 		default:
 			throw new UnsupportedOperationException(arg1 + " << " + arg2 + " unsupported");
 		}
@@ -531,13 +531,13 @@ public final class ExpressionHandler {
 		long bits = ((Number) arg2.getValue()).longValue();
 		switch (arg1.getType().getName()) {
 		case "byte":
-			return new Var(plugin.getDataTypes().get("byte"), (Byte) arg1.getValue() >> bits);
+			return new Var(commandContext.getDataTypes().get("byte"), (Byte) arg1.getValue() >> bits);
 		case "short":
-			return new Var(plugin.getDataTypes().get("short"), (Short) arg1.getValue() >> bits);
+			return new Var(commandContext.getDataTypes().get("short"), (Short) arg1.getValue() >> bits);
 		case "int":
-			return new Var(plugin.getDataTypes().get("int"), (Integer) arg1.getValue() >> bits);
+			return new Var(commandContext.getDataTypes().get("int"), (Integer) arg1.getValue() >> bits);
 		case "long":
-			return new Var(plugin.getDataTypes().get("long"), (Long) arg1.getValue() >> bits);
+			return new Var(commandContext.getDataTypes().get("long"), (Long) arg1.getValue() >> bits);
 		default:
 			throw new UnsupportedOperationException(arg1 + " >> " + arg2 + " unsupported");
 		}
@@ -550,13 +550,13 @@ public final class ExpressionHandler {
 		long bits = ((Number) arg2.getValue()).longValue();
 		switch (arg1.getType().getName()) {
 		case "byte":
-			return new Var(plugin.getDataTypes().get("byte"), (Byte) arg1.getValue() >>> bits);
+			return new Var(commandContext.getDataTypes().get("byte"), (Byte) arg1.getValue() >>> bits);
 		case "short":
-			return new Var(plugin.getDataTypes().get("short"), (Short) arg1.getValue() >>> bits);
+			return new Var(commandContext.getDataTypes().get("short"), (Short) arg1.getValue() >>> bits);
 		case "int":
-			return new Var(plugin.getDataTypes().get("int"), (Integer) arg1.getValue() >>> bits);
+			return new Var(commandContext.getDataTypes().get("int"), (Integer) arg1.getValue() >>> bits);
 		case "long":
-			return new Var(plugin.getDataTypes().get("long"), (Long) arg1.getValue() >>> bits);
+			return new Var(commandContext.getDataTypes().get("long"), (Long) arg1.getValue() >>> bits);
 		default:
 			throw new UnsupportedOperationException(arg1 + " >>> " + arg2 + " unsupported");
 		}
@@ -592,7 +592,7 @@ public final class ExpressionHandler {
 		default:
 			throw new UnsupportedOperationException(arg1 + " < " + arg2 + " unsupported");
 		}
-		return new Var(plugin.getDataTypes().get("boolean"), result);
+		return new Var(commandContext.getDataTypes().get("boolean"), result);
 	}
 
 	public Var opLarger(Var arg1, Var arg2) {
@@ -625,7 +625,7 @@ public final class ExpressionHandler {
 		default:
 			throw new UnsupportedOperationException(arg1 + " > " + arg2 + " unsupported");
 		}
-		return new Var(plugin.getDataTypes().get("boolean"), result);
+		return new Var(commandContext.getDataTypes().get("boolean"), result);
 	}
 
 	public Var opLessEquals(Var arg1, Var arg2) {
@@ -658,7 +658,7 @@ public final class ExpressionHandler {
 		default:
 			throw new UnsupportedOperationException(arg1 + " <= " + arg2 + " unsupported");
 		}
-		return new Var(plugin.getDataTypes().get("boolean"), result);
+		return new Var(commandContext.getDataTypes().get("boolean"), result);
 	}
 
 	public Var opLargerEquals(Var arg1, Var arg2) {
@@ -691,7 +691,7 @@ public final class ExpressionHandler {
 		default:
 			throw new UnsupportedOperationException(arg1 + " >= " + arg2 + " unsupported");
 		}
-		return new Var(plugin.getDataTypes().get("boolean"), result);
+		return new Var(commandContext.getDataTypes().get("boolean"), result);
 	}
 
 	public Var opEquals(Var arg1, Var arg2) {
@@ -705,7 +705,7 @@ public final class ExpressionHandler {
 			var1 = type.cast(arg1.getValue(), arg1.getType());
 			var2 = type.cast(arg2.getValue(), arg2.getType());
 		}
-		return new Var(plugin.getDataTypes().get("boolean"), var1.equals(var2));
+		return new Var(commandContext.getDataTypes().get("boolean"), var1.equals(var2));
 	}
 
 	public Var opNotEquals(Var arg1, Var arg2) {
@@ -716,7 +716,7 @@ public final class ExpressionHandler {
 
 	public Var opAnd(Var arg1, Var arg2) {
 		if ((arg1.getType().getName().equals("boolean")) && (arg2.getType().getName().equals("boolean"))) {
-			return new Var(plugin.getDataTypes().get("boolean"), (Boolean) arg1.getValue() && (Boolean) arg2.getValue());
+			return new Var(commandContext.getDataTypes().get("boolean"), (Boolean) arg1.getValue() && (Boolean) arg2.getValue());
 		}
 		DataType type = getPrecisest(arg1.getType(), arg2.getType());
 		if (type == null) {
@@ -726,13 +726,13 @@ public final class ExpressionHandler {
 		Object var2 = type.cast(arg2.getValue(), arg2.getType());
 		switch (type.getName()) {
 		case "byte":
-			return new Var(plugin.getDataTypes().get("byte"), (Byte) var1 & (Byte) var2);
+			return new Var(commandContext.getDataTypes().get("byte"), (Byte) var1 & (Byte) var2);
 		case "short":
-			return new Var(plugin.getDataTypes().get("short"), (Short) var1 & (Short) var2);
+			return new Var(commandContext.getDataTypes().get("short"), (Short) var1 & (Short) var2);
 		case "int":
-			return new Var(plugin.getDataTypes().get("int"), (Integer) var1 & (Integer) var2);
+			return new Var(commandContext.getDataTypes().get("int"), (Integer) var1 & (Integer) var2);
 		case "long":
-			return new Var(plugin.getDataTypes().get("long"), (Long) var1 & (Long) var2);
+			return new Var(commandContext.getDataTypes().get("long"), (Long) var1 & (Long) var2);
 		default:
 			throw new UnsupportedOperationException(arg1 + " & " + arg2 + " unsupported");
 		}
@@ -740,7 +740,7 @@ public final class ExpressionHandler {
 
 	public Var opOr(Var arg1, Var arg2) {
 		if ((arg1.getType().getName().equals("boolean")) && (arg2.getType().getName().equals("boolean"))) {
-			return new Var(plugin.getDataTypes().get("boolean"), (Boolean) arg1.getValue() || (Boolean) arg2.getValue());
+			return new Var(commandContext.getDataTypes().get("boolean"), (Boolean) arg1.getValue() || (Boolean) arg2.getValue());
 		}
 		DataType type = getPrecisest(arg1.getType(), arg2.getType());
 		if (type == null) {
@@ -750,13 +750,13 @@ public final class ExpressionHandler {
 		Object var2 = type.cast(arg2.getValue(), arg2.getType());
 		switch (type.getName()) {
 		case "byte":
-			return new Var(plugin.getDataTypes().get("byte"), (Byte) var1 | (Byte) var2);
+			return new Var(commandContext.getDataTypes().get("byte"), (Byte) var1 | (Byte) var2);
 		case "short":
-			return new Var(plugin.getDataTypes().get("short"), (Short) var1 | (Short) var2);
+			return new Var(commandContext.getDataTypes().get("short"), (Short) var1 | (Short) var2);
 		case "int":
-			return new Var(plugin.getDataTypes().get("int"), (Integer) var1 | (Integer) var2);
+			return new Var(commandContext.getDataTypes().get("int"), (Integer) var1 | (Integer) var2);
 		case "long":
-			return new Var(plugin.getDataTypes().get("long"), (Long) var1 | (Long) var2);
+			return new Var(commandContext.getDataTypes().get("long"), (Long) var1 | (Long) var2);
 		default:
 			throw new UnsupportedOperationException(arg1 + " | " + arg2 + " unsupported");
 		}
@@ -764,7 +764,7 @@ public final class ExpressionHandler {
 
 	public Var opXor(Var arg1, Var arg2) {
 		if ((arg1.getType().getName().equals("boolean")) && (arg2.getType().getName().equals("boolean"))) {
-			return new Var(plugin.getDataTypes().get("boolean"), (Boolean) arg1.getValue() ^ (Boolean) arg2.getValue());
+			return new Var(commandContext.getDataTypes().get("boolean"), (Boolean) arg1.getValue() ^ (Boolean) arg2.getValue());
 		}
 		DataType type = getPrecisest(arg1.getType(), arg2.getType());
 		if (type == null) {
@@ -774,20 +774,20 @@ public final class ExpressionHandler {
 		Object var2 = type.cast(arg2.getValue(), arg2.getType());
 		switch (type.getName()) {
 		case "byte":
-			return new Var(plugin.getDataTypes().get("byte"), (Byte) var1 ^ (Byte) var2);
+			return new Var(commandContext.getDataTypes().get("byte"), (Byte) var1 ^ (Byte) var2);
 		case "short":
-			return new Var(plugin.getDataTypes().get("short"), (Short) var1 ^ (Short) var2);
+			return new Var(commandContext.getDataTypes().get("short"), (Short) var1 ^ (Short) var2);
 		case "int":
-			return new Var(plugin.getDataTypes().get("int"), (Integer) var1 ^ (Integer) var2);
+			return new Var(commandContext.getDataTypes().get("int"), (Integer) var1 ^ (Integer) var2);
 		case "long":
-			return new Var(plugin.getDataTypes().get("long"), (Long) var1 ^ (Long) var2);
+			return new Var(commandContext.getDataTypes().get("long"), (Long) var1 ^ (Long) var2);
 		default:
 			throw new UnsupportedOperationException(arg1 + " ^ " + arg2 + " unsupported");
 		}
 	}
 
 	public Var opCast(Var arg1, String castOp) {
-		DataType dest = plugin.getDataTypes().get(castOp);
+		DataType dest = commandContext.getDataTypes().get(castOp);
 		if (arg1 == null) {
 			return new Var(dest, null);
 		}
@@ -860,15 +860,15 @@ public final class ExpressionHandler {
 					result.add(new VarWarpperConstant(null));
 				} else if (str.startsWith("\"")) {
 					if (str.endsWith("\"")) {
-						result.add(new VarWarpperConstant(new Var(plugin.getDataTypes().get("string"), str.substring(1,
+						result.add(new VarWarpperConstant(new Var(commandContext.getDataTypes().get("string"), str.substring(1,
 								str.length() - 1))));
 					} else {
 						throw new ExpressionHandlingException("Unmatched \"");
 					}
 				} else {
-					Var var = plugin.getVarTable().get(str);
+					Var var = commandContext.getVarTable().get(str);
 					if (var == null) {
-						Function function = plugin.getFunctions().get(str);
+						Function function = commandContext.getFunctions().get(str);
 						if (function == null) {
 							int radix = 10;
 							if ((str.charAt(0) == '0') && (str.length() > 1)) {
@@ -896,18 +896,18 @@ public final class ExpressionHandler {
 								switch (end) {
 								case 'B':
 								case 'b':
-									constant = new Var(plugin.getDataTypes().get("byte"), Byte.valueOf(spilted, radix));
+									constant = new Var(commandContext.getDataTypes().get("byte"), Byte.valueOf(spilted, radix));
 									break;
 
 								case 's':
 								case 'S':
-									constant = new Var(plugin.getDataTypes().get("short"),
+									constant = new Var(commandContext.getDataTypes().get("short"),
 											Short.valueOf(spilted, radix));
 									break;
 
 								case 'l':
 								case 'L':
-									constant = new Var(plugin.getDataTypes().get("long"), Long.valueOf(spilted, radix));
+									constant = new Var(commandContext.getDataTypes().get("long"), Long.valueOf(spilted, radix));
 									break;
 
 								case 'f':
@@ -915,7 +915,7 @@ public final class ExpressionHandler {
 									if (radix != 10) {
 										throw new ExpressionHandlingException("The radix of a float number must be 10");
 									}
-									constant = new Var(plugin.getDataTypes().get("float"), Float.valueOf(spilted));
+									constant = new Var(commandContext.getDataTypes().get("float"), Float.valueOf(spilted));
 									break;
 
 								case 'd':
@@ -923,14 +923,14 @@ public final class ExpressionHandler {
 									if (radix != 10) {
 										throw new ExpressionHandlingException("The radix of a double number must be 10");
 									}
-									constant = new Var(plugin.getDataTypes().get("double"), Double.valueOf(spilted));
+									constant = new Var(commandContext.getDataTypes().get("double"), Double.valueOf(spilted));
 									break;
 
 								default:
 									if (str.contains(".")) {
-										constant = new Var(plugin.getDataTypes().get("double"), Double.valueOf(str));
+										constant = new Var(commandContext.getDataTypes().get("double"), Double.valueOf(str));
 									} else {
-										constant = new Var(plugin.getDataTypes().get("int"),
+										constant = new Var(commandContext.getDataTypes().get("int"),
 												Integer.valueOf(str, radix));
 									}
 									break;
@@ -963,7 +963,7 @@ public final class ExpressionHandler {
 							stack.push("()" + parmCount + "@" + str);
 						}
 					} else {
-						result.add(new VarWarpperVar(str, plugin));
+						result.add(new VarWarpperVar(str, commandContext));
 					}
 				}
 			}
@@ -984,7 +984,7 @@ public final class ExpressionHandler {
 			char ch = exp.charAt(i);
 			if (ch == '(') {
 				boolean unmatched = true;
-				for (String type : plugin.getDataTypes().namesSet()) {
+				for (String type : commandContext.getDataTypes().namesSet()) {
 					int endIndex = i + type.length() + 1;
 					if (endIndex < length) {
 						String in = exp.substring(i + 1, endIndex);

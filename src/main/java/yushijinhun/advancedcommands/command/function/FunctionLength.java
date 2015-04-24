@@ -23,7 +23,7 @@ public class FunctionLength extends Function {
 		} else {
 			throw new IllegalArgumentException("Cannot fetch length of " + var);
 		}
-		return new Var(context.getPlugin().getDataTypes().get("int"), length);
+		return new Var(context.getCommandContext().getDataTypes().get("int"), length);
 	}
 
 }

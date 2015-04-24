@@ -12,7 +12,7 @@ public class FunctionCreateNBT extends Function{
 	public Var call(Var[] args, FunctionContext context) {
 		throwArgsLengthExceptionIf((args.length < 1) || (args.length > 2));
 		checkType(args, 0, "string");
-		return new Var(context.getPlugin().getDataTypes().get("nbt"), context.getPlugin().getNbtHandler().createTag(
+		return new Var(context.getCommandContext().getDataTypes().get("nbt"), context.getCommandContext().getNbtHandler().createTag(
 				(String) args[0].getValue(), args.length > 1 ? args[1] : null));
 	}
 
