@@ -16,9 +16,11 @@ import yushijinhun.advancedcommands.command.datatype.DataType;
 import yushijinhun.advancedcommands.command.function.Function;
 import yushijinhun.advancedcommands.command.function.FunctionContext;
 import yushijinhun.advancedcommands.command.var.Var;
+import yushijinhun.advancedcommands.util.Caches;
+import yushijinhun.advancedcommands.util.DataConverter;
 import yushijinhun.advancedcommands.util.SafetyModeManager;
 
-public final class ExpressionHandler {
+public class ExpressionHandler {
 
 	public final Map<String, Integer> priority = new HashMap<String, Integer>();
 	public final Map<String, Integer> precision = new HashMap<String, Integer>();
@@ -35,6 +37,15 @@ public final class ExpressionHandler {
 				return -1;
 			}
 			return 1;
+		}
+
+	});
+
+	public Caches<String, Object[]> caches = new Caches<>(new DataConverter<String, Object[]>() {
+
+		@Override
+		public Object[] convert(String src) {
+			return toRPN(spiltExpression(src));
 		}
 
 	});
@@ -1112,6 +1123,7 @@ public final class ExpressionHandler {
 
 	public Var handleExpression(String expression, CommandSender sender) {
 		SafetyModeManager.getManager().checkSecurity();
-		return computeRPN(toRPN(spiltExpression(expression)), sender);
+		return computeRPN(caches.get(expression), sender);
 	}
+
 }

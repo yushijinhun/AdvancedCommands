@@ -10,7 +10,7 @@ import com.comphenix.protocol.wrappers.nbt.NbtBase;
 import com.comphenix.protocol.wrappers.nbt.NbtFactory;
 import com.comphenix.protocol.wrappers.nbt.NbtType;
 
-public final class NBTHandler {
+public class NBTHandler {
 
 	public final Map<String, NBTSource> sources = new LinkedHashMap<>();
 	public final Set<String> nbtTypes = new LinkedHashSet<>();
