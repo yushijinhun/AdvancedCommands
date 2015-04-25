@@ -29,7 +29,11 @@ public class VarTable implements Cloneable {
 		if (constant != null) {
 			return constant;
 		}
-		return vars.get(name);
+		Var var = vars.get(name);
+		if (var != null) {
+			return var;
+		}
+		throw new IllegalArgumentException(String.format("Var %s not exists", name));
 	}
 
 	public void add(String name, Var var) {

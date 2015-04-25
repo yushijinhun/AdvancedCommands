@@ -20,7 +20,12 @@ public class VarWarpperArrayElement implements IVarWarpper {
 	@Override
 	public void set(Var var) {
 		if (canWrite()) {
-			((Var[]) this.var.get().getValue())[index] = var;
+			Var[] array = getVarArray();
+			if (index < array.length) {
+				array[index] = var;
+			} else {
+				throw new IndexOutOfBoundsException(String.format("Index out of bounds: %d", index));
+			}
 			this.var.changed();
 		} else {
 			throw new IllegalStateException("Cannot be set");
@@ -29,7 +34,11 @@ public class VarWarpperArrayElement implements IVarWarpper {
 
 	@Override
 	public Var get() {
-		return ((Var[]) this.var.get().getValue())[index];
+		Var[] array = getVarArray();
+		if (index < array.length) {
+			return array[index];
+		}
+		throw new IndexOutOfBoundsException(String.format("Index out of bounds: %d", index));
 	}
 
 	@Override
@@ -40,5 +49,13 @@ public class VarWarpperArrayElement implements IVarWarpper {
 	@Override
 	public String toString() {
 		return var + "[" + index + "]";
+	}
+
+	private Var[] getVarArray() {
+		Object val = this.var.get().getValue();
+		if (val instanceof Var[]) {
+			return (Var[]) val;
+		}
+		throw new IllegalArgumentException("Cannot get an element of a non-array var");
 	}
 }

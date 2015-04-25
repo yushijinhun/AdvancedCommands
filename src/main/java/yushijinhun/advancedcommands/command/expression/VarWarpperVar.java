@@ -15,7 +15,7 @@ public class VarWarpperVar implements IVarWarpper {
 
 	@Override
 	public boolean canWrite() {
-		return true;
+		return commandContext.getVarTable().isVar(name);
 	}
 
 	@Override

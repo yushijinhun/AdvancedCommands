@@ -263,7 +263,7 @@ public class ExpressionHandler {
 								stack.push(new VarWarpperConstant(result));
 							}
 						} catch (Exception e) {
-							throw new ExpressionHandlingException(String.format("Failed to handle operation %s", op));
+							throw new ExpressionHandlingException(String.format("Failed to handle operation %s", op), e);
 						}
 					}
 				}
@@ -876,106 +876,108 @@ public class ExpressionHandler {
 					} else {
 						throw new ExpressionHandlingException("Unmatched \"");
 					}
-				} else {
-					Var var = commandContext.getVarTable().get(str);
-					if (var == null) {
-						Function function = commandContext.getFunctions().get(str);
-						if (function == null) {
-							int radix = 10;
-							if ((str.charAt(0) == '0') && (str.length() > 1)) {
-								switch (str.charAt(1)) {
-								case 'b':
-								case 'B':
-									radix = 2;
-									str = str.substring(2);
-									break;
-								case 'x':
-								case 'X':
-									radix = 16;
-									str = str.substring(2);
-									break;
-								default:
-									radix = 8;
-									str = str.substring(1);
-									break;
-								}
-							}
-							String spilted = str.substring(0, str.length() - 1);
-							Var constant;
-							char end = str.charAt(str.length() - 1);
-							try {
-								switch (end) {
-								case 'B':
-								case 'b':
-									constant = new Var(commandContext.getDataTypes().get("byte"), Byte.valueOf(spilted, radix));
-									break;
-
-								case 's':
-								case 'S':
-									constant = new Var(commandContext.getDataTypes().get("short"),
-											Short.valueOf(spilted, radix));
-									break;
-
-								case 'l':
-								case 'L':
-									constant = new Var(commandContext.getDataTypes().get("long"), Long.valueOf(spilted, radix));
-									break;
-
-								case 'f':
-								case 'F':
-									if (radix != 10) {
-										throw new ExpressionHandlingException("The radix of a float number must be 10");
-									}
-									constant = new Var(commandContext.getDataTypes().get("float"), Float.valueOf(spilted));
-									break;
-
-								case 'd':
-								case 'D':
-									if (radix != 10) {
-										throw new ExpressionHandlingException("The radix of a double number must be 10");
-									}
-									constant = new Var(commandContext.getDataTypes().get("double"), Double.valueOf(spilted));
-									break;
-
-								default:
-									if (str.contains(".")) {
-										constant = new Var(commandContext.getDataTypes().get("double"), Double.valueOf(str));
-									} else {
-										constant = new Var(commandContext.getDataTypes().get("int"),
-												Integer.valueOf(str, radix));
-									}
-									break;
-								}
-							} catch (NumberFormatException e) {
-								throw new ExpressionHandlingException(String.format("Failed to handle '%s'", str), e);
-							}
-							result.add(new VarWarpperConstant(constant));
-						} else {
-							int deep = 0;
-							int parmCount;
-							if (exps[i + 1].equals("(") && exps[i + 2].equals(")")) {
-								parmCount = 0;
-							} else {
-								parmCount = 1;
-								for (int k = i + 1; k < exps.length; k++) {
-									String ex = exps[k];
-									if (ex.equals("(")) {
-										deep++;
-									} else if (ex.equals(")")) {
-										deep--;
-									} else if (ex.equals(",") && (deep == 1)) {
-										parmCount++;
-									}
-									if (deep == 0) {
-										break;
-									}
-								}
-							}
-							stack.push("()" + parmCount + "@" + str);
-						}
-					} else {
-						result.add(new VarWarpperVar(str, commandContext));
+				} else if (((i + 1) < exps.length) && exps[i + 1].equals("(")) { // function
+					int deep = 0;
+					int parmCount;
+					if ((i + 2) >= exps.length) {
+						throw new ExpressionHandlingException("Unmatched (");
 					}
+					if (exps[i + 2].equals(")")) {
+						parmCount = 0;
+					} else {
+						parmCount = 1;
+						boolean unmatched = true;
+						for (int k = i + 1; k < exps.length; k++) {
+							String ex = exps[k];
+							if (ex.equals("(")) {
+								deep++;
+							} else if (ex.equals(")")) {
+								deep--;
+							} else if (ex.equals(",") && (deep == 1)) {
+								parmCount++;
+							}
+							if (deep == 0) {
+								unmatched = false;
+								break;
+							}
+						}
+						if (unmatched) {
+							throw new ExpressionHandlingException("Unmatched (");
+						}
+					}
+					stack.push("()" + parmCount + "@" + str);
+				} else if (Character.isDigit(str.charAt(0))) { // number
+					int radix = 10;
+					if ((str.charAt(0) == '0') && (str.length() > 1)) {
+						switch (str.charAt(1)) {
+						case 'b':
+						case 'B':
+							radix = 2;
+							str = str.substring(2);
+							break;
+						case 'x':
+						case 'X':
+							radix = 16;
+							str = str.substring(2);
+							break;
+						default:
+							radix = 8;
+							str = str.substring(1);
+							break;
+						}
+					}
+					String spilted = str.substring(0, str.length() - 1);
+					Var constant;
+					char end = str.charAt(str.length() - 1);
+					try {
+						switch (end) {
+						case 'B':
+						case 'b':
+							constant = new Var(commandContext.getDataTypes().get("byte"), Byte.valueOf(spilted, radix));
+							break;
+
+						case 's':
+						case 'S':
+							constant = new Var(commandContext.getDataTypes().get("short"),
+									Short.valueOf(spilted, radix));
+							break;
+
+						case 'l':
+						case 'L':
+							constant = new Var(commandContext.getDataTypes().get("long"), Long.valueOf(spilted, radix));
+							break;
+
+						case 'f':
+						case 'F':
+							if (radix != 10) {
+								throw new ExpressionHandlingException("The radix of a float number must be 10");
+							}
+							constant = new Var(commandContext.getDataTypes().get("float"), Float.valueOf(spilted));
+							break;
+
+						case 'd':
+						case 'D':
+							if (radix != 10) {
+								throw new ExpressionHandlingException("The radix of a double number must be 10");
+							}
+							constant = new Var(commandContext.getDataTypes().get("double"), Double.valueOf(spilted));
+							break;
+
+						default:
+							if (str.contains(".")) {
+								constant = new Var(commandContext.getDataTypes().get("double"), Double.valueOf(str));
+							} else {
+								constant = new Var(commandContext.getDataTypes().get("int"),
+										Integer.valueOf(str, radix));
+							}
+							break;
+						}
+					} catch (NumberFormatException e) {
+						throw new ExpressionHandlingException(String.format("Failed to handle '%s'", str), e);
+					}
+					result.add(new VarWarpperConstant(constant));
+				} else { // var
+					result.add(new VarWarpperVar(str, commandContext));
 				}
 			}
 		}
