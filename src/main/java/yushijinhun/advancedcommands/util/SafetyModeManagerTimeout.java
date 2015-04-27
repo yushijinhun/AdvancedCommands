@@ -10,6 +10,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Logger;
+import org.bukkit.ChatColor;
 import yushijinhun.advancedcommands.command.var.Var;
 
 public class SafetyModeManagerTimeout extends SafetyModeManager {
@@ -64,17 +65,20 @@ public class SafetyModeManagerTimeout extends SafetyModeManager {
 				} catch (InterruptedException e1) {
 					throw new RuntimeException(e1);
 				}
-				if (runningThread == null) {
-					logger.warning("Expression handling cancelled");
-				} else {
+				if (runningThread != null) {
 					logger.warning("Expression handling cancelling time out, killing thread");
 					runningThread.stop();
 					createThread();
+					logger.warning("Thread stopped");
+					logger.severe("If you notice more problems, please restart the server");
+					task.getCommandSender().sendMessage(ChatColor.RED + "Expression handing time out, killed.");
+					task.getCommandSender().sendMessage(ChatColor.RED + "If you notice more problems, please restart the server.");
+					throw new RuntimeException("Expression handing time out, killed", e);
 				}
-			} else {
-				logger.warning("Expression handling cancelled");
 			}
-			throw new RuntimeException(e);
+			logger.warning("Expression handling cancelled");
+			task.getCommandSender().sendMessage(ChatColor.RED + "Expression handing time out, cancelled.");
+			throw new RuntimeException("Expression handing time out, cancelled", e);
 		}
 	}
 

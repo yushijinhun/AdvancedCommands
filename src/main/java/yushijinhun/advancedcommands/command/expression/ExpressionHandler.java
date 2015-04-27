@@ -1054,6 +1054,7 @@ public class ExpressionHandler {
 							deep--;
 							if (deep == 0) {
 								end = true;
+								break;
 							}
 						} else if ((ch2 == ';') && (deep == 1)) {
 							deep = 0;
