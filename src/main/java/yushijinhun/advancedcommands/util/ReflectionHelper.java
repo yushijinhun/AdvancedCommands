@@ -82,9 +82,14 @@ public final class ReflectionHelper {
 			return null;
 		}
 
-		public void find() throws IOException {
+		public void find() throws IOException, NoSuchMethodException {
 			ClassReader reader = new ClassReader(own.getCanonicalName());
 			reader.accept(this, 0);
+			if (readMethod == null) {
+				throw new NoSuchMethodException("read method");
+			} else if (writeMethod == null) {
+				throw new NoSuchMethodException("write method");
+			}
 		}
 	}
 
@@ -112,8 +117,11 @@ public final class ReflectionHelper {
 			return null;
 		}
 
-		public void find() throws IOException {
+		public void find() throws IOException, NoSuchMethodException {
 			new ClassReader(own.getCanonicalName()).accept(this, 0);
+			if (method == null) {
+				throw new NoSuchMethodException("read method");
+			}
 		}
 
 		public static Method findMethod(int access, Class<?> own, Class<?> returnType, Class<?>... args) {
@@ -238,27 +246,31 @@ public final class ReflectionHelper {
 	public static Method craftProxiedCommandSenderGetHandlerMethod;
 
 	public static void init() {
-		getServerMethod();
-		getGettingEntityByUUIDMethod();
-		getEntityIOMethods();
-		getTileEntityIOMethods();
-		getSelectingEntityMethod();
-		getTileGetCommandBlockLogicMethod();
-		getEntityGetUUIDMethod();
-		getNBTReadMethod();
-		getNBTWriteMethod();
-		getServerWorldsField();
-		getServerWorldsArrayField();
-		getCommandSenderGetWorldMethod();
-		getGetRemoteControlCommandListenerMethod();
-		getTileEntityUpdateMethod();
-		getWorldNotifyMethod();
-		getBlockPositionConstructor();
-		getCraftWorldNMSWorldField();
-		getCraftEntityGetNMSEntityMethod();
-		getCraftWorldGetTileEntityMethod();
-		getEntityGetCommandBlockLogicMethod();
-		getCraftProxiedCommandSenderGetHandlerMethod();
+		try {
+			getServerMethod();
+			getGettingEntityByUUIDMethod();
+			getEntityIOMethods();
+			getTileEntityIOMethods();
+			getSelectingEntityMethod();
+			getTileGetCommandBlockLogicMethod();
+			getEntityGetUUIDMethod();
+			getNBTReadMethod();
+			getNBTWriteMethod();
+			getServerWorldsField();
+			getServerWorldsArrayField();
+			getCommandSenderGetWorldMethod();
+			getGetRemoteControlCommandListenerMethod();
+			getTileEntityUpdateMethod();
+			getWorldNotifyMethod();
+			getBlockPositionConstructor();
+			getCraftWorldNMSWorldField();
+			getCraftEntityGetNMSEntityMethod();
+			getCraftWorldGetTileEntityMethod();
+			getEntityGetCommandBlockLogicMethod();
+			getCraftProxiedCommandSenderGetHandlerMethod();
+		} catch (Exception e) {
+			throw new RuntimeException("Cannot init ReflectionHelper", e);
+		}
 	}
 
 	public static Object toNMSWorld(World world) {
