@@ -35,6 +35,8 @@ import yushijinhun.advancedcommands.command.function.FunctionCreateNBT;
 import yushijinhun.advancedcommands.command.function.FunctionDelete;
 import yushijinhun.advancedcommands.command.function.FunctionGetChild;
 import yushijinhun.advancedcommands.command.function.FunctionGetChildrenNames;
+import yushijinhun.advancedcommands.command.function.FunctionGetFullTime;
+import yushijinhun.advancedcommands.command.function.FunctionGetTime;
 import yushijinhun.advancedcommands.command.function.FunctionIf;
 import yushijinhun.advancedcommands.command.function.FunctionLength;
 import yushijinhun.advancedcommands.command.function.FunctionListVar;
@@ -265,6 +267,8 @@ public final class AdvancedCommands extends JavaPlugin implements CommandContext
 		functions.register(new FunctionIf());
 		functions.register(new FunctionWhile());
 		functions.register(new FunctionRandom());
+		functions.register(new FunctionGetTime());
+		functions.register(new FunctionGetFullTime());
 	}
 
 	private void registerDataTypes() {

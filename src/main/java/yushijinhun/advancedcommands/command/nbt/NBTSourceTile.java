@@ -3,10 +3,8 @@ package yushijinhun.advancedcommands.command.nbt;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ProxiedCommandSender;
-import org.bukkit.entity.Entity;
+import yushijinhun.advancedcommands.command.CommandHelper;
 import yushijinhun.advancedcommands.util.ReflectionHelper;
 import com.comphenix.protocol.utility.MinecraftReflection;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
@@ -54,7 +52,7 @@ public class NBTSourceTile implements NBTSource {
 				throw new IllegalArgumentException(String.format("World %s not found", spilted[3]));
 			}
 		} else {
-			world = getWorldByCommandSender(commandSender);
+			world = CommandHelper.getWorldByCommandSender(commandSender);
 			if (world == null) {
 				throw new IllegalArgumentException(String.format("Cannot get world from CommandSender %s",
 						commandSender));
@@ -69,17 +67,5 @@ public class NBTSourceTile implements NBTSource {
 			throw new IllegalArgumentException(String.format("No TileEntity found at %s", block));
 		}
 		return tileEntity;
-	}
-
-	private World getWorldByCommandSender(CommandSender sender) {
-		if (sender instanceof Entity) {
-			return ((Entity) sender).getWorld();
-		} else if (sender instanceof BlockCommandSender) {
-			return ((BlockCommandSender) sender).getBlock().getWorld();
-		} else if (sender instanceof ProxiedCommandSender) {
-			return getWorldByCommandSender(((ProxiedCommandSender) sender).getCaller());
-		} else {
-			return null;
-		}
 	}
 }
