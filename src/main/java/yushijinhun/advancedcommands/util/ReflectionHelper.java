@@ -161,15 +161,18 @@ public final class ReflectionHelper {
 			return null;
 		}
 
-		public void find() throws IOException {
+		public void find() throws IOException, NoSuchFieldException {
 			new ClassReader(own.getCanonicalName()).accept(this, 0);
+			if (field == null) {
+				throw new NoSuchFieldException();
+			}
 		}
 
 		public static Field findField(int access, Class<?> own, Class<?> type) {
 			NormalFieldFinder finder = new NormalFieldFinder(access, own, type);
 			try {
 				finder.find();
-			} catch (IOException e) {
+			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
 			return finder.field;
