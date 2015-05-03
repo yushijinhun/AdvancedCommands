@@ -33,7 +33,7 @@ public class DataTypeNBT extends DataType {
 			return "null";
 		}
 		NbtBase<?> nbt = (NbtBase<?>) obj;
-		return nbt.getType() + "@" + NbtFactory.fromBase(nbt).getHandle();
+		return NbtFactory.fromBase(nbt).getHandle().toString();
 	}
 
 	@Override
