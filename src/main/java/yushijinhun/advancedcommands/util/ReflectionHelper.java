@@ -248,6 +248,9 @@ public final class ReflectionHelper {
 	@Deprecated
 	public static Method craftProxiedCommandSenderGetHandlerMethod;
 
+	@Deprecated
+	public static Method parseNBTMethod;
+
 	public static void init() {
 		try {
 			getServerMethod();
@@ -271,8 +274,17 @@ public final class ReflectionHelper {
 			getCraftWorldGetTileEntityMethod();
 			getEntityGetCommandBlockLogicMethod();
 			getCraftProxiedCommandSenderGetHandlerMethod();
+			getParseNBTMethod();
 		} catch (Exception e) {
 			throw new RuntimeException("Cannot init ReflectionHelper", e);
+		}
+	}
+
+	public static Object jsonToNBT(String json) {
+		try {
+			return parseNBTMethod.invoke(null, json);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -625,6 +637,10 @@ public final class ReflectionHelper {
 		craftProxiedCommandSenderGetHandlerMethod = NormalMethodFinder.findMethod(Opcodes.ACC_PUBLIC,
 				MinecraftReflection.getCraftBukkitClass("command.ProxiedNativeCommandSender"),
 				MinecraftReflection.getMinecraftClass("ICommandListener"));
+	}
+
+	private static void getParseNBTMethod() {
+		parseNBTMethod = NormalMethodFinder.findMethod(Opcodes.ACC_STATIC + Opcodes.ACC_PUBLIC, MinecraftReflection.getMinecraftClass("MojangsonParser"), MinecraftReflection.getNBTCompoundClass(), String.class);
 	}
 
 	public static String getMethodDesc(Class<?> returnType, Class<?>... args) {

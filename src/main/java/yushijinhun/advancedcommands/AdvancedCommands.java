@@ -57,6 +57,7 @@ import yushijinhun.advancedcommands.command.function.FunctionStringFirstIndexOf;
 import yushijinhun.advancedcommands.command.function.FunctionStringLastIndexOf;
 import yushijinhun.advancedcommands.command.function.FunctionSubString;
 import yushijinhun.advancedcommands.command.function.FunctionTan;
+import yushijinhun.advancedcommands.command.function.FunctionToNBT;
 import yushijinhun.advancedcommands.command.function.FunctionValueOfNBT;
 import yushijinhun.advancedcommands.command.function.FunctionWhile;
 import yushijinhun.advancedcommands.command.function.FunctionWriteNBT;
@@ -269,6 +270,7 @@ public final class AdvancedCommands extends JavaPlugin implements CommandContext
 		functions.register(new FunctionRandom());
 		functions.register(new FunctionGetTime());
 		functions.register(new FunctionGetFullTime());
+		functions.register(new FunctionToNBT());
 	}
 
 	private void registerDataTypes() {
