@@ -8,10 +8,12 @@ public class NBTSourceInfo {
 
 	private final String parm;
 	private final NBTSource source;
+	private final boolean merge;
 
-	public NBTSourceInfo(String parm, NBTSource source) {
+	public NBTSourceInfo(String parm, NBTSource source, boolean merge) {
 		this.parm = parm;
 		this.source = source;
+		this.merge = merge;
 	}
 
 	public String getParm() {
@@ -27,10 +29,15 @@ public class NBTSourceInfo {
 	}
 
 	public void set(NbtCompound nbt, CommandSender commandSender) {
-		source.set(parm, nbt, commandSender);
+		source.set(parm, nbt, commandSender, merge);
 	}
 
 	public static NBTSourceInfo parseNBTInfo(String str, CommandContext commandContext) {
+		boolean merge = false;
+		if (str.charAt(0) == '&') {
+			merge = true;
+			str = str.substring(1);
+		}
 		String[] strs = str.split("@", 2);
 		if (strs.length < 2) {
 			throw new IllegalArgumentException("Arguments length too short");
@@ -39,6 +46,6 @@ public class NBTSourceInfo {
 		if (source == null) {
 			throw new IllegalArgumentException("Unknow nbt source");
 		}
-		return new NBTSourceInfo(strs[1], source);
+		return new NBTSourceInfo(strs[1], source, merge);
 	}
 }

@@ -7,5 +7,5 @@ public interface NBTSource {
 
 	NbtCompound get(String id, CommandSender commandSender);
 
-	void set(String id, NbtCompound nbt, CommandSender commandSender);
+	void set(String id, NbtCompound nbt, CommandSender commandSender, boolean merge);
 }

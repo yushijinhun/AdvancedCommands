@@ -22,8 +22,16 @@ public class NBTSourceEntity implements NBTSource {
 	}
 
 	@Override
-	public void set(String id, NbtCompound nbt, CommandSender commandSender) {
-		ReflectionHelper.entityRead(getEntity(id), NbtFactory.fromBase(nbt).getHandle());
+	public void set(String id, NbtCompound argNbt, CommandSender commandSender, boolean merge) {
+		NbtCompound nbt = (NbtCompound) argNbt.deepClone();
+		NbtCompound src = get(id, commandSender);
+		nbt.put(src.getValue("UUIDMost"));
+		nbt.put(src.getValue("UUIDLeast"));
+		Object nmsNBT = NbtFactory.fromBase(nbt).getHandle();
+		if (merge) {
+			ReflectionHelper.mergeCompound(nmsNBT, NbtFactory.fromBase(src).getHandle());
+		}
+		ReflectionHelper.entityRead(getEntity(id), nmsNBT);
 	}
 
 	private Object getEntity(String id) {

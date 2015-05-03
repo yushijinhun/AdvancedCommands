@@ -251,6 +251,9 @@ public final class ReflectionHelper {
 	@Deprecated
 	public static Method parseNBTMethod;
 
+	@Deprecated
+	public static Method mergeCompoundMethod;
+
 	public static void init() {
 		try {
 			getServerMethod();
@@ -275,15 +278,24 @@ public final class ReflectionHelper {
 			getEntityGetCommandBlockLogicMethod();
 			getCraftProxiedCommandSenderGetHandlerMethod();
 			getParseNBTMethod();
+			getMergeCompoundMethod();
 		} catch (Exception e) {
 			throw new RuntimeException("Cannot init ReflectionHelper", e);
+		}
+	}
+
+	public static void mergeCompound(Object merged, Object merging) {
+		try {
+			mergeCompoundMethod.invoke(merged, merging);
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			throw new RuntimeException(e);
 		}
 	}
 
 	public static Object jsonToNBT(String json) {
 		try {
 			return parseNBTMethod.invoke(null, json);
-		} catch (Exception e) {
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -291,7 +303,7 @@ public final class ReflectionHelper {
 	public static Object toNMSWorld(World world) {
 		try {
 			return craftWorldNMSWorldField.get(world);
-		} catch (Exception e) {
+		} catch (IllegalArgumentException | IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -641,6 +653,10 @@ public final class ReflectionHelper {
 
 	private static void getParseNBTMethod() {
 		parseNBTMethod = NormalMethodFinder.findMethod(Opcodes.ACC_STATIC + Opcodes.ACC_PUBLIC, MinecraftReflection.getMinecraftClass("MojangsonParser"), MinecraftReflection.getNBTCompoundClass(), String.class);
+	}
+
+	private static void getMergeCompoundMethod() {
+		mergeCompoundMethod = NormalMethodFinder.findMethod(Opcodes.ACC_PUBLIC, MinecraftReflection.getNBTCompoundClass(), void.class, MinecraftReflection.getNBTCompoundClass());
 	}
 
 	public static String getMethodDesc(Class<?> returnType, Class<?>... args) {

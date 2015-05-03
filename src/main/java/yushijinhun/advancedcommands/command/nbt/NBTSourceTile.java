@@ -25,10 +25,20 @@ public class NBTSourceTile implements NBTSource {
 	}
 
 	@Override
-	public void set(String id, NbtCompound nbt, CommandSender commandSender) {
+	public void set(String id, NbtCompound argNbt, CommandSender commandSender, boolean merge) {
+		NbtCompound nbt = (NbtCompound) argNbt.deepClone();
+		NbtCompound src = get(id, commandSender);
+		nbt.put(src.getValue("x"));
+		nbt.put(src.getValue("y"));
+		nbt.put(src.getValue("z"));
+		nbt.put(src.getValue("id"));
 		Block block = parseId(id, commandSender);
 		Object tileEntity = getTileEntity(block);
-		ReflectionHelper.tileRead(tileEntity, NbtFactory.fromBase(nbt).getHandle());
+		Object nmsNBT = NbtFactory.fromBase(nbt).getHandle();
+		if (merge) {
+			ReflectionHelper.mergeCompound(nmsNBT, NbtFactory.fromBase(nbt).getHandle());
+		}
+		ReflectionHelper.tileRead(tileEntity, nmsNBT);
 		ReflectionHelper.notifyBlock(ReflectionHelper.toNMSWorld(block.getWorld()), block.getX(), block.getY(), block.getZ());
 	}
 
