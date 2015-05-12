@@ -18,13 +18,27 @@ public class DataTypeNBT extends DataType {
 	}
 
 	@Override
-	public Object getDefaultValue() {
-		return null;
+	public Object cloneValue(Object value) {
+		return ((NbtBase<?>) value).deepClone();
 	}
 
 	@Override
 	public Object doCast(Object src, DataType srcType) {
 		throw new ClassCastException();
+	}
+
+	@Override
+	public Object getDefaultValue() {
+		return null;
+	}
+
+	@Override
+	public Object readValue(DataInput in, CommandContext commandContext) throws IOException {
+		byte[] bytes = new byte[in.readInt()];
+		in.readFully(bytes);
+		ByteArrayInputStream memoryIn = new ByteArrayInputStream(bytes);
+		NbtCompound comp = NbtFactory.fromNMSCompound(ReflectionHelper.nbtRead(memoryIn));
+		return comp.getValue("data");
 	}
 
 	@Override
@@ -37,11 +51,6 @@ public class DataTypeNBT extends DataType {
 	}
 
 	@Override
-	public Object cloneValue(Object value) {
-		return ((NbtBase<?>) value).deepClone();
-	}
-
-	@Override
 	public void writeValue(Object value, DataOutput out, CommandContext commandContext) throws IOException {
 		NbtCompound comp = NbtFactory.ofCompound("");
 		comp.put("data", (NbtBase<?>) value);
@@ -50,14 +59,5 @@ public class DataTypeNBT extends DataType {
 		byte[] bytes = memoryOut.toByteArray();
 		out.writeInt(bytes.length);
 		out.write(bytes);
-	}
-
-	@Override
-	public Object readValue(DataInput in, CommandContext commandContext) throws IOException {
-		byte[] bytes = new byte[in.readInt()];
-		in.readFully(bytes);
-		ByteArrayInputStream memoryIn = new ByteArrayInputStream(bytes);
-		NbtCompound comp = NbtFactory.fromNMSCompound(ReflectionHelper.nbtRead(memoryIn));
-		return comp.getValue("data");
 	}
 }

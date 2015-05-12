@@ -13,8 +13,7 @@ public class FunctionWhile extends Function {
 		throwArgsLengthExceptionIf(args.length != 2);
 		checkType(args, 0, "string");
 		String bool = (String) args[0].getValue();
-		while ((Boolean) context.getCommandContext().getExpressionHandler().handleExpression(bool, context.getCommandSender())
-				.getValue()) {
+		while ((Boolean) context.getCommandContext().getExpressionHandler().handleExpression(bool, context.getCommandSender()).getValue()) {
 			ShellHelper.execute(args[1], context);
 		}
 		return null;

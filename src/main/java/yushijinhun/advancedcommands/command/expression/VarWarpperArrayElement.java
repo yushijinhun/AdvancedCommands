@@ -18,6 +18,28 @@ public class VarWarpperArrayElement implements IVarWarpper {
 	}
 
 	@Override
+	public void changed() {
+		var.changed();
+	}
+
+	@Override
+	public Var get() {
+		Var[] array = getVarArray();
+		if (index < array.length) {
+			return array[index];
+		}
+		throw new IndexOutOfBoundsException(String.format("Index out of bounds: %d", index));
+	}
+
+	private Var[] getVarArray() {
+		Object val = var.get().getValue();
+		if (val instanceof Var[]) {
+			return (Var[]) val;
+		}
+		throw new IllegalArgumentException("Cannot get an element of a non-array var");
+	}
+
+	@Override
 	public void set(Var var) {
 		if (canWrite()) {
 			Var[] array = getVarArray();
@@ -33,29 +55,7 @@ public class VarWarpperArrayElement implements IVarWarpper {
 	}
 
 	@Override
-	public Var get() {
-		Var[] array = getVarArray();
-		if (index < array.length) {
-			return array[index];
-		}
-		throw new IndexOutOfBoundsException(String.format("Index out of bounds: %d", index));
-	}
-
-	@Override
-	public void changed() {
-		var.changed();
-	}
-
-	@Override
 	public String toString() {
 		return var + "[" + index + "]";
-	}
-
-	private Var[] getVarArray() {
-		Object val = this.var.get().getValue();
-		if (val instanceof Var[]) {
-			return (Var[]) val;
-		}
-		throw new IllegalArgumentException("Cannot get an element of a non-array var");
 	}
 }

@@ -17,5 +17,4 @@ public class FunctionToNBT extends Function {
 		return new Var(context.getCommandContext().getDataTypes().get("nbt"), NbtFactory.fromNMS(ReflectionHelper.jsonToNBT((String) args[0].getValue()), ""));
 	}
 
-
 }

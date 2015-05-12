@@ -16,15 +16,15 @@ public class FunctionContext {
 		this.commandContext = commandContext;
 	}
 
+	public CommandContext getCommandContext() {
+		return commandContext;
+	}
+
 	public CommandSender getCommandSender() {
 		return commandSender;
 	}
 
 	public IVarWarpper[] getRawArgs() {
 		return rawArgs;
-	}
-
-	public CommandContext getCommandContext() {
-		return commandContext;
 	}
 }

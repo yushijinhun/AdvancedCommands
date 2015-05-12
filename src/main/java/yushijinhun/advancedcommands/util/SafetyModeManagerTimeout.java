@@ -29,6 +29,24 @@ public class SafetyModeManagerTimeout extends SafetyModeManager {
 		this.logger = logger;
 	}
 
+	@Override
+	public void checkSecurity() {
+		if (Thread.interrupted()) {
+			logger.warning("Expression handling interrupted because thread has interrupted!");
+			throw new Error("interrupted");
+		}
+	}
+
+	private void createThread() {
+		pool.execute(new Runnable() { // to create a thread in the pool
+
+			@Override
+			public void run() {
+
+			}
+		});
+	}
+
 	@SuppressWarnings("deprecation")
 	@Override
 	public Var executeExpression(final ExpressionTask task) {
@@ -55,8 +73,7 @@ public class SafetyModeManagerTimeout extends SafetyModeManager {
 		} catch (ExecutionException e) {
 			throw new RuntimeException(e);
 		} catch (TimeoutException e) {
-			logger.warning(String.format("Expression %s time out, cancelling\n%s", task.toString(),
-					ExceptionHelper.exceptionToString(e)));
+			logger.warning(String.format("Expression %s time out, cancelling\n%s", task.toString(), ExceptionHelper.exceptionToString(e)));
 			future.cancel(true);
 			Thread thread = runningThread;
 			if (thread != null) {
@@ -82,17 +99,16 @@ public class SafetyModeManagerTimeout extends SafetyModeManager {
 		}
 	}
 
+	public long getCancelwaittime() {
+		return cancelWaitTime;
+	}
+
 	public long getTimeout() {
 		return timeout;
 	}
 
-	public void setTimeout(long timeout) {
-		this.timeout = timeout;
-	}
-
 	private void newPool() {
-		pool = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(),
-				new ThreadFactory() {
+		pool = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(), new ThreadFactory() {
 
 			@Override
 			public Thread newThread(Runnable r) {
@@ -110,30 +126,12 @@ public class SafetyModeManagerTimeout extends SafetyModeManager {
 		createThread();
 	}
 
-	@Override
-	public void checkSecurity() {
-		if (Thread.interrupted()) {
-			logger.warning("Expression handling interrupted because thread has interrupted!");
-			throw new Error("interrupted");
-		}
-	}
-
-	public long getCancelwaittime() {
-		return cancelWaitTime;
-	}
-
 	public void setCancelWaitTime(long cancelWaitTime) {
 		this.cancelWaitTime = cancelWaitTime;
 	}
 
-	private void createThread() {
-		pool.execute(new Runnable() { // to create a thread in the pool
-
-			@Override
-			public void run() {
-
-			}
-		});
+	public void setTimeout(long timeout) {
+		this.timeout = timeout;
 	}
 
 	@Override

@@ -11,8 +11,7 @@ public class TabCompleterVarTable implements TabCompleter {
 	private final String[] args = { "save", "load", "load!" };
 
 	@Override
-	public List<String> onTabComplete(CommandSender paramCommandSender, Command paramCommand, String paramString,
-			String[] paramArrayOfString) {
+	public List<String> onTabComplete(CommandSender paramCommandSender, Command paramCommand, String paramString, String[] paramArrayOfString) {
 		List<String> result = new ArrayList<>();
 		String uncompleted = paramArrayOfString[paramArrayOfString.length - 1];
 		for (String arg : args) {

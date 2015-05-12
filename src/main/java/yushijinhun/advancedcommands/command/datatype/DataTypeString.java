@@ -12,23 +12,23 @@ public class DataTypeString extends DataType {
 	}
 
 	@Override
-	public Object getDefaultValue() {
-		return "";
-	}
-
-	@Override
 	public Object doCast(Object src, DataType srcType) {
 		return srcType.valueToString(src);
 	}
 
 	@Override
-	public void writeValue(Object value, DataOutput out, CommandContext commandContext) throws IOException {
-		out.writeUTF((String) value);
+	public Object getDefaultValue() {
+		return "";
 	}
 
 	@Override
 	public Object readValue(DataInput in, CommandContext commandContext) throws IOException {
 		return in.readUTF();
+	}
+
+	@Override
+	public void writeValue(Object value, DataOutput out, CommandContext commandContext) throws IOException {
+		out.writeUTF((String) value);
 	}
 
 }

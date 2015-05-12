@@ -11,12 +11,12 @@ public class ExpressionHandlingException extends RuntimeException {
 		super(message);
 	}
 
-	public ExpressionHandlingException(Throwable cause) {
-		super(cause);
-	}
-
 	public ExpressionHandlingException(String message, Throwable cause) {
 		super(message, cause);
+	}
+
+	public ExpressionHandlingException(Throwable cause) {
+		super(cause);
 	}
 
 }

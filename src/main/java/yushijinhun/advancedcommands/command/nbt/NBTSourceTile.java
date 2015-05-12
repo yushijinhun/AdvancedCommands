@@ -25,6 +25,42 @@ public class NBTSourceTile implements NBTSource {
 	}
 
 	@Override
+	public String getName() {
+		return "tile";
+	}
+
+	private Object getTileEntity(Block block) {
+		Object tileEntity = ReflectionHelper.getTileEntity(block);
+		if (tileEntity == null) {
+			throw new IllegalArgumentException(String.format("No TileEntity found at %s", block));
+		}
+		return tileEntity;
+	}
+
+	private Block parseId(String id, CommandSender commandSender) {
+		String[] spilted = id.split(",");
+		if ((spilted.length < 3) || (spilted.length > 4)) {
+			throw new IllegalArgumentException("Wrong arguments length");
+		}
+		int x = Integer.parseInt(spilted[0]);
+		int y = Integer.parseInt(spilted[1]);
+		int z = Integer.parseInt(spilted[2]);
+		World world;
+		if (spilted.length > 3) {
+			world = Bukkit.getWorld(spilted[3]);
+			if (world == null) {
+				throw new IllegalArgumentException(String.format("World %s not found", spilted[3]));
+			}
+		} else {
+			world = CommandHelper.getWorldByCommandSender(commandSender);
+			if (world == null) {
+				throw new IllegalArgumentException(String.format("Cannot get world from CommandSender %s", commandSender));
+			}
+		}
+		return world.getBlockAt(x, y, z);
+	}
+
+	@Override
 	public void set(String id, NbtCompound argNbt, CommandSender commandSender, boolean merge) {
 		NbtCompound nbt = (NbtCompound) argNbt.deepClone();
 		NbtCompound src = get(id, commandSender);
@@ -45,37 +81,5 @@ public class NBTSourceTile implements NBTSource {
 	@Override
 	public String toString() {
 		return "tile";
-	}
-
-	private Block parseId(String id, CommandSender commandSender) {
-		String[] spilted = id.split(",");
-		if ((spilted.length < 3) || (spilted.length > 4)) {
-			throw new IllegalArgumentException("Wrong arguments length");
-		}
-		int x = Integer.parseInt(spilted[0]);
-		int y = Integer.parseInt(spilted[1]);
-		int z = Integer.parseInt(spilted[2]);
-		World world;
-		if (spilted.length > 3) {
-			world = Bukkit.getWorld(spilted[3]);
-			if (world == null) {
-				throw new IllegalArgumentException(String.format("World %s not found", spilted[3]));
-			}
-		} else {
-			world = CommandHelper.getWorldByCommandSender(commandSender);
-			if (world == null) {
-				throw new IllegalArgumentException(String.format("Cannot get world from CommandSender %s",
-						commandSender));
-			}
-		}
-		return world.getBlockAt(x, y, z);
-	}
-
-	private Object getTileEntity(Block block) {
-		Object tileEntity = ReflectionHelper.getTileEntity(block);
-		if (tileEntity == null) {
-			throw new IllegalArgumentException(String.format("No TileEntity found at %s", block));
-		}
-		return tileEntity;
 	}
 }

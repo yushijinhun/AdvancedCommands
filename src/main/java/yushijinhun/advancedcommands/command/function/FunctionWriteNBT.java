@@ -15,8 +15,7 @@ public class FunctionWriteNBT extends Function {
 		throwArgsLengthExceptionIf(args.length != 2);
 		checkType(args, 0, "string");
 		checkType(args, 1, "nbt");
-		NBTSourceInfo.parseNBTInfo((String) args[0].getValue(), context.getCommandContext()).set(
-				(NbtCompound) args[1].getValue(), context.getCommandSender());
+		NBTSourceInfo.parseNBTInfo((String) args[0].getValue(), context.getCommandContext()).set((NbtCompound) args[1].getValue(), context.getCommandSender());
 		return null;
 	}
 

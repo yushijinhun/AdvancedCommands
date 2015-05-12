@@ -20,12 +20,6 @@ public class TabCompleterExp implements TabCompleter {
 		this.commandContext = commandContext;
 	}
 
-	@Override
-	public List<String> onTabComplete(CommandSender paramCommandSender, Command paramCommand, String paramString,
-			String[] paramArrayOfString) {
-		return completeWords(paramArrayOfString[paramArrayOfString.length - 1]);
-	}
-
 	private List<String> completeWords(String exp) {
 		List<String> matches = new ArrayList<>();
 		Matcher matcher = wordPattern.matcher(exp);
@@ -46,8 +40,13 @@ public class TabCompleterExp implements TabCompleter {
 		for (String function : commandContext.getFunctions().namesSet()) {
 			words.add(function + "(");
 		}
-		words.addAll(commandContext.getNbtHandler().nbtTypes);
+		words.addAll(commandContext.getNbtHandler().getNBTTypes());
 		words.addAll(commandContext.getDataTypes().namesSet());
 		return words;
+	}
+
+	@Override
+	public List<String> onTabComplete(CommandSender paramCommandSender, Command paramCommand, String paramString, String[] paramArrayOfString) {
+		return completeWords(paramArrayOfString[paramArrayOfString.length - 1]);
 	}
 }

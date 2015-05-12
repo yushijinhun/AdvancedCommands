@@ -18,8 +18,7 @@ public class FunctionSelectEntity extends Function {
 
 		Var[] result = new Var[nmsentities.size()];
 		for (int i = 0; i < result.length; i++) {
-			result[i] = new Var(context.getCommandContext().getDataTypes().get("string"), ReflectionHelper.getEntityUUID(nmsentities
-					.get(i)).toString());
+			result[i] = new Var(context.getCommandContext().getDataTypes().get("string"), ReflectionHelper.getEntityUUID(nmsentities.get(i)).toString());
 		}
 
 		return new Var(context.getCommandContext().getDataTypes().get("array"), result);

@@ -21,6 +21,19 @@ public class NBTSourceEntity implements NBTSource {
 		return NbtFactory.fromNMSCompound(nmsnbt);
 	}
 
+	private Object getEntity(String id) {
+		Object entity = ReflectionHelper.getEntityByUUID(UUID.fromString(id));
+		if (entity == null) {
+			throw new IllegalArgumentException(String.format("Entity %s not found", id));
+		}
+		return entity;
+	}
+
+	@Override
+	public String getName() {
+		return "entity";
+	}
+
 	@Override
 	public void set(String id, NbtCompound argNbt, CommandSender commandSender, boolean merge) {
 		NbtCompound nbt = (NbtCompound) argNbt.deepClone();
@@ -32,14 +45,6 @@ public class NBTSourceEntity implements NBTSource {
 			ReflectionHelper.mergeCompound(nmsNBT, NbtFactory.fromBase(src).getHandle());
 		}
 		ReflectionHelper.entityRead(getEntity(id), nmsNBT);
-	}
-
-	private Object getEntity(String id) {
-		Object entity = ReflectionHelper.getEntityByUUID(UUID.fromString(id));
-		if (entity == null) {
-			throw new IllegalArgumentException(String.format("Entity %s not found", id));
-		}
-		return entity;
 	}
 
 	@Override

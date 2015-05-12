@@ -12,22 +12,22 @@ public class ExpressionTask implements Callable<Var> {
 	private CommandContext commandContext;
 
 	public ExpressionTask(String experssion, CommandSender commandSender, CommandContext commandContext) {
-		this.expression = experssion;
+		expression = experssion;
 		this.commandSender = commandSender;
 		this.commandContext = commandContext;
 	}
 
-	public String getExperssion() {
-		return expression;
+	@Override
+	public Var call() {
+		return commandContext.getExpressionHandler().handleExpression(expression, commandSender);
 	}
 
 	public CommandSender getCommandSender() {
 		return commandSender;
 	}
 
-	@Override
-	public Var call() {
-		return commandContext.getExpressionHandler().handleExpression(expression, commandSender);
+	public String getExperssion() {
+		return expression;
 	}
 
 	@Override

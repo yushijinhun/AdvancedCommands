@@ -9,7 +9,15 @@ import yushijinhun.advancedcommands.command.datatype.DataType;
 
 public class Var implements Cloneable {
 
+	public static Var parse(DataInput in, CommandContext commandContext) throws IOException {
+		boolean isnull = in.readBoolean();
+		DataType type = commandContext.getDataTypes().get(in.readUTF());
+		Object value = isnull ? null : type.readValue(in, commandContext);
+		return new Var(type, value);
+	}
+
 	private final DataType type;
+
 	private Object value;
 
 	public Var(DataType type) {
@@ -21,14 +29,13 @@ public class Var implements Cloneable {
 		this.value = value;
 	}
 
-	@Override
-	public String toString() {
-		return type + "@" + type.valueToString(value);
+	public Var castTo(DataType dest) {
+		return new Var(dest, dest.cast(value, type));
 	}
 
 	@Override
-	public int hashCode() {
-		return type.hashCode() ^ value.hashCode();
+	public Var clone() {
+		return new Var(type, type.cloneValue(value));
 	}
 
 	@Override
@@ -43,25 +50,26 @@ public class Var implements Cloneable {
 		return false;
 	}
 
-	@Override
-	public Var clone() {
-		return new Var(type, type.cloneValue(value));
+	public DataType getType() {
+		return type;
 	}
 
 	public Object getValue() {
 		return value;
 	}
 
+	@Override
+	public int hashCode() {
+		return type.hashCode() ^ value.hashCode();
+	}
+
 	public void setValue(Object value) {
 		this.value = value;
 	}
 
-	public DataType getType() {
-		return type;
-	}
-
-	public Var castTo(DataType dest) {
-		return new Var(dest, dest.cast(value, type));
+	@Override
+	public String toString() {
+		return type + "@" + type.valueToString(value);
 	}
 
 	public void write(DataOutput out, CommandContext commandContext) throws IOException {
@@ -70,12 +78,5 @@ public class Var implements Cloneable {
 		if (value != null) {
 			type.writeValue(value, out, commandContext);
 		}
-	}
-
-	public static Var parse(DataInput in, CommandContext commandContext) throws IOException {
-		boolean isnull = in.readBoolean();
-		DataType type = commandContext.getDataTypes().get(in.readUTF());
-		Object value = isnull ? null : type.readValue(in, commandContext);
-		return new Var(type, value);
 	}
 }

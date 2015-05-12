@@ -19,8 +19,8 @@ public class VarWarpperVar implements IVarWarpper {
 	}
 
 	@Override
-	public void set(Var var) {
-		commandContext.getVarTable().set(name, var);
+	public void changed() {
+		commandContext.getVarTable().markDirty();
 	}
 
 	@Override
@@ -29,8 +29,8 @@ public class VarWarpperVar implements IVarWarpper {
 	}
 
 	@Override
-	public void changed() {
-		commandContext.getVarTable().markDirty();
+	public void set(Var var) {
+		commandContext.getVarTable().set(name, var);
 	}
 
 	@Override

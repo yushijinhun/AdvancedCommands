@@ -12,11 +12,6 @@ public class DataTypeFloat extends DataType {
 	}
 
 	@Override
-	public Object getDefaultValue() {
-		return 0f;
-	}
-
-	@Override
 	public Object doCast(Object src, DataType srcType) {
 		if (src instanceof Number) {
 			return ((Number) src).floatValue();
@@ -28,13 +23,18 @@ public class DataTypeFloat extends DataType {
 	}
 
 	@Override
-	public void writeValue(Object value, DataOutput out, CommandContext commandContext) throws IOException {
-		out.writeFloat((Float) value);
+	public Object getDefaultValue() {
+		return 0f;
 	}
 
 	@Override
 	public Object readValue(DataInput in, CommandContext commandContext) throws IOException {
 		return in.readFloat();
+	}
+
+	@Override
+	public void writeValue(Object value, DataOutput out, CommandContext commandContext) throws IOException {
+		out.writeFloat((Float) value);
 	}
 
 }

@@ -23,13 +23,11 @@ public abstract class BasicCommand implements CommandExecutor {
 	}
 
 	@Override
-	public boolean onCommand(CommandSender paramCommandSender, Command paramCommand, String paramString,
-			String[] paramArrayOfString) {
+	public boolean onCommand(CommandSender paramCommandSender, Command paramCommand, String paramString, String[] paramArrayOfString) {
 		try {
 			doExecute(paramCommandSender, paramArrayOfString);
 		} catch (Throwable e) {
-			paramCommandSender.sendMessage(ChatColor.RED
-					+ ExceptionHelper.getExceptionMessage(e, getErrorMessageHead()));
+			paramCommandSender.sendMessage(ChatColor.RED + ExceptionHelper.getExceptionMessage(e, getErrorMessageHead()));
 			throw new CommandException(e.getMessage() == null ? "" : e.getMessage(), e);
 		}
 		return true;

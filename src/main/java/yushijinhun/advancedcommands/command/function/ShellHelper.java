@@ -6,6 +6,11 @@ import yushijinhun.advancedcommands.util.SafetyModeManager;
 
 public final class ShellHelper {
 
+	public static void execute(String command, FunctionContext context) {
+		SafetyModeManager.getManager().checkSecurity();
+		Bukkit.dispatchCommand(context.getCommandSender(), command);
+	}
+
 	public static void execute(Var var, FunctionContext context) {
 		SafetyModeManager.getManager().checkSecurity();
 		if (var.getValue() instanceof String) {
@@ -17,10 +22,5 @@ public final class ShellHelper {
 		} else {
 			throw new IllegalArgumentException("Invalid type " + var);
 		}
-	}
-
-	public static void execute(String command, FunctionContext context) {
-		SafetyModeManager.getManager().checkSecurity();
-		Bukkit.dispatchCommand(context.getCommandSender(), command);
 	}
 }

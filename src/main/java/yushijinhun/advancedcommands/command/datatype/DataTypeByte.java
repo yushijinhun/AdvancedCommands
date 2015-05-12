@@ -12,11 +12,6 @@ public class DataTypeByte extends DataType {
 	}
 
 	@Override
-	public Object getDefaultValue() {
-		return Byte.valueOf((byte) 0);
-	}
-
-	@Override
 	public Object doCast(Object src, DataType srcType) {
 		if (src instanceof Number) {
 			return ((Number) src).byteValue();
@@ -28,13 +23,18 @@ public class DataTypeByte extends DataType {
 	}
 
 	@Override
-	public void writeValue(Object value, DataOutput out, CommandContext commandContext) throws IOException {
-		out.writeByte((Byte) value);
+	public Object getDefaultValue() {
+		return Byte.valueOf((byte) 0);
 	}
 
 	@Override
 	public Object readValue(DataInput in, CommandContext commandContext) throws IOException {
 		return in.readByte();
+	}
+
+	@Override
+	public void writeValue(Object value, DataOutput out, CommandContext commandContext) throws IOException {
+		out.writeByte((Byte) value);
 	}
 
 }

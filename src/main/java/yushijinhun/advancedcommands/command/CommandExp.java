@@ -13,11 +13,6 @@ public class CommandExp extends BasicCommand {
 	}
 
 	@Override
-	protected String getErrorMessageHead() {
-		return "Failed to handle expression";
-	}
-
-	@Override
 	public void doExecute(CommandSender sender, String[] args) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < args.length; i++) {
@@ -26,8 +21,12 @@ public class CommandExp extends BasicCommand {
 			}
 			sb.append(args[i]);
 		}
-		Var result = SafetyModeManager.getManager()
-				.executeExpression(new ExpressionTask(sb.toString(), sender, plugin));
+		Var result = SafetyModeManager.getManager().executeExpression(new ExpressionTask(sb.toString(), sender, plugin.getCommandContext()));
 		sender.sendMessage("Result: " + result);
+	}
+
+	@Override
+	protected String getErrorMessageHead() {
+		return "Failed to handle expression";
 	}
 }

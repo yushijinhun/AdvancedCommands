@@ -12,11 +12,6 @@ public class DataTypeBoolean extends DataType {
 	}
 
 	@Override
-	public Object getDefaultValue() {
-		return Boolean.FALSE;
-	}
-
-	@Override
 	public Object doCast(Object src, DataType srcType) {
 		if (src instanceof String) {
 			return Boolean.valueOf((String) src);
@@ -26,13 +21,18 @@ public class DataTypeBoolean extends DataType {
 	}
 
 	@Override
-	public void writeValue(Object value, DataOutput out, CommandContext commandContext) throws IOException {
-		out.writeBoolean((Boolean) value);
+	public Object getDefaultValue() {
+		return Boolean.FALSE;
 	}
 
 	@Override
 	public Object readValue(DataInput in, CommandContext commandContext) throws IOException {
 		return in.readBoolean();
+	}
+
+	@Override
+	public void writeValue(Object value, DataOutput out, CommandContext commandContext) throws IOException {
+		out.writeBoolean((Boolean) value);
 	}
 
 }

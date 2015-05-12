@@ -14,9 +14,15 @@ public class Caches<K, V> {
 		cachesRef = new SoftReference<Map<K, V>>(createCaches());
 	}
 
-	public int size() {
+	public void clear() {
 		Map<K, V> caches = cachesRef.get();
-		return caches == null ? 0 : caches.size();
+		if (caches != null) {
+			caches.clear();
+		}
+	}
+
+	protected Map<K, V> createCaches() {
+		return new HashMap<K, V>();
 	}
 
 	public V get(K key) {
@@ -36,14 +42,8 @@ public class Caches<K, V> {
 		return val;
 	}
 
-	public void clear() {
+	public int size() {
 		Map<K, V> caches = cachesRef.get();
-		if (caches != null) {
-			caches.clear();
-		}
-	}
-
-	protected Map<K, V> createCaches() {
-		return new HashMap<K, V>();
+		return caches == null ? 0 : caches.size();
 	}
 }

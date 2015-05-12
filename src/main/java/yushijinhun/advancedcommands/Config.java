@@ -17,6 +17,15 @@ public final class Config {
 		this.plugin = plugin;
 	}
 
+	public void afterLoadConfig() {
+		if (safetyMode) {
+			SafetyModeManager.setManager(new SafetyModeManagerTimeout(safetyTime, cancelWaitTime, plugin.getLogger()));
+		} else {
+			SafetyModeManager.setManager(new SafetyModeManagerNo());
+		}
+		plugin.getLogger().info(String.format("Using SafetyModeManager %s", SafetyModeManager.getManager().toString()));
+	}
+
 	public void loadConfig(FileConfiguration config) {
 		safetyMode = config.getBoolean("safetyMode", safetyMode);
 		safetyTime = config.getInt("safetyTime", safetyTime);
@@ -29,14 +38,5 @@ public final class Config {
 		config.set("safetyMode", safetyMode);
 		config.set("safetyTime", safetyTime);
 		config.set("cancelWaitTime", cancelWaitTime);
-	}
-
-	public void afterLoadConfig() {
-		if (safetyMode) {
-			SafetyModeManager.setManager(new SafetyModeManagerTimeout(safetyTime, cancelWaitTime, plugin.getLogger()));
-		} else {
-			SafetyModeManager.setManager(new SafetyModeManagerNo());
-		}
-		plugin.getLogger().info(String.format("Using SafetyModeManager %s", SafetyModeManager.getManager().toString()));
 	}
 }

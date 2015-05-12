@@ -14,9 +14,7 @@ public class FunctionReplaceString extends Function {
 		checkType(args, 0, "string");
 		checkType(args, 1, "string");
 		checkType(args, 2, "string");
-		return new Var(context.getCommandContext().getDataTypes().get("string"), ((String) args[0].getValue()).replaceAll(
-				(String) args[1].getValue(),
-				(String) args[2].getValue()));
+		return new Var(context.getCommandContext().getDataTypes().get("string"), ((String) args[0].getValue()).replaceAll((String) args[1].getValue(), (String) args[2].getValue()));
 	}
 
 }

@@ -12,11 +12,6 @@ public class DataTypeShort extends DataType {
 	}
 
 	@Override
-	public Object getDefaultValue() {
-		return Short.valueOf((short) 0);
-	}
-
-	@Override
 	public Object doCast(Object src, DataType srcType) {
 		if (src instanceof Number) {
 			return ((Number) src).shortValue();
@@ -28,13 +23,18 @@ public class DataTypeShort extends DataType {
 	}
 
 	@Override
-	public void writeValue(Object value, DataOutput out, CommandContext commandContext) throws IOException {
-		out.writeShort((Short) value);
+	public Object getDefaultValue() {
+		return Short.valueOf((short) 0);
 	}
 
 	@Override
 	public Object readValue(DataInput in, CommandContext commandContext) throws IOException {
 		return in.readShort();
+	}
+
+	@Override
+	public void writeValue(Object value, DataOutput out, CommandContext commandContext) throws IOException {
+		out.writeShort((Short) value);
 	}
 
 }

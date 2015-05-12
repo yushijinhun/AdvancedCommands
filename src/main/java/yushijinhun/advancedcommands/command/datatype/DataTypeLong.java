@@ -12,11 +12,6 @@ public class DataTypeLong extends DataType {
 	}
 
 	@Override
-	public Object getDefaultValue() {
-		return 0l;
-	}
-
-	@Override
 	public Object doCast(Object src, DataType srcType) {
 		if (src instanceof Number) {
 			return ((Number) src).longValue();
@@ -28,13 +23,18 @@ public class DataTypeLong extends DataType {
 	}
 
 	@Override
-	public void writeValue(Object value, DataOutput out, CommandContext commandContext) throws IOException {
-		out.writeLong((Long) value);
+	public Object getDefaultValue() {
+		return 0l;
 	}
 
 	@Override
 	public Object readValue(DataInput in, CommandContext commandContext) throws IOException {
 		return in.readLong();
+	}
+
+	@Override
+	public void writeValue(Object value, DataOutput out, CommandContext commandContext) throws IOException {
+		out.writeLong((Long) value);
 	}
 
 }

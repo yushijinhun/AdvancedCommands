@@ -6,9 +6,9 @@ public interface IVarWarpper {
 
 	boolean canWrite();
 
-	void set(Var var);
-
 	void changed();
 
 	Var get();
+
+	void set(Var var);
 }

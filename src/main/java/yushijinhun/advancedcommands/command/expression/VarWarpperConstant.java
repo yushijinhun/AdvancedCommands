@@ -16,8 +16,7 @@ public class VarWarpperConstant implements IVarWarpper {
 	}
 
 	@Override
-	public void set(Var var) {
-		throw new IllegalStateException("Constant cannot be set");
+	public void changed() {
 	}
 
 	@Override
@@ -26,7 +25,8 @@ public class VarWarpperConstant implements IVarWarpper {
 	}
 
 	@Override
-	public void changed() {
+	public void set(Var var) {
+		throw new IllegalStateException("Constant cannot be set");
 	}
 
 	@Override

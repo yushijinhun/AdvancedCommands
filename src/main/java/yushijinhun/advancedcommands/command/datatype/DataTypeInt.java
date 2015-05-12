@@ -12,11 +12,6 @@ public class DataTypeInt extends DataType {
 	}
 
 	@Override
-	public Object getDefaultValue() {
-		return 0;
-	}
-
-	@Override
 	public Object doCast(Object src, DataType srcType) {
 		if (src instanceof Number) {
 			return ((Number) src).intValue();
@@ -28,13 +23,18 @@ public class DataTypeInt extends DataType {
 	}
 
 	@Override
-	public void writeValue(Object value, DataOutput out, CommandContext commandContext) throws IOException {
-		out.writeInt((Integer) value);
+	public Object getDefaultValue() {
+		return 0;
 	}
 
 	@Override
 	public Object readValue(DataInput in, CommandContext commandContext) throws IOException {
 		return in.readInt();
+	}
+
+	@Override
+	public void writeValue(Object value, DataOutput out, CommandContext commandContext) throws IOException {
+		out.writeInt((Integer) value);
 	}
 
 }

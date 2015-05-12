@@ -14,21 +14,6 @@ public class DataTypeArray extends DataType {
 	}
 
 	@Override
-	public Object getDefaultValue() {
-		return null;
-	}
-
-	@Override
-	public Object doCast(Object src, DataType srcType) {
-		throw new ClassCastException();
-	}
-
-	@Override
-	public String valueToString(Object obj) {
-		return Arrays.toString((Object[]) obj);
-	}
-
-	@Override
 	public Object cloneValue(Object value) {
 		Var[] src = (Var[]) value;
 		Var[] result = new Var[src.length];
@@ -39,12 +24,13 @@ public class DataTypeArray extends DataType {
 	}
 
 	@Override
-	public void writeValue(Object value, DataOutput out, CommandContext commandContext) throws IOException {
-		Var[] vars = (Var[]) value;
-		out.writeInt(vars.length);
-		for (Var var : vars) {
-			var.write(out, commandContext);
-		}
+	public Object doCast(Object src, DataType srcType) {
+		throw new ClassCastException();
+	}
+
+	@Override
+	public Object getDefaultValue() {
+		return null;
 	}
 
 	@Override
@@ -54,5 +40,19 @@ public class DataTypeArray extends DataType {
 			vars[i] = Var.parse(in, commandContext);
 		}
 		return vars;
+	}
+
+	@Override
+	public String valueToString(Object obj) {
+		return Arrays.toString((Object[]) obj);
+	}
+
+	@Override
+	public void writeValue(Object value, DataOutput out, CommandContext commandContext) throws IOException {
+		Var[] vars = (Var[]) value;
+		out.writeInt(vars.length);
+		for (Var var : vars) {
+			var.write(out, commandContext);
+		}
 	}
 }

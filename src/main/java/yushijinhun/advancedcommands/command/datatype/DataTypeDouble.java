@@ -12,11 +12,6 @@ public class DataTypeDouble extends DataType {
 	}
 
 	@Override
-	public Object getDefaultValue() {
-		return 0d;
-	}
-
-	@Override
 	public Object doCast(Object src, DataType srcType) {
 		if (src instanceof Number) {
 			return ((Number) src).doubleValue();
@@ -28,13 +23,18 @@ public class DataTypeDouble extends DataType {
 	}
 
 	@Override
-	public void writeValue(Object value, DataOutput out, CommandContext commandContext) throws IOException {
-		out.writeDouble((Double) value);
+	public Object getDefaultValue() {
+		return 0d;
 	}
 
 	@Override
 	public Object readValue(DataInput in, CommandContext commandContext) throws IOException {
 		return in.readDouble();
+	}
+
+	@Override
+	public void writeValue(Object value, DataOutput out, CommandContext commandContext) throws IOException {
+		out.writeDouble((Double) value);
 	}
 
 }

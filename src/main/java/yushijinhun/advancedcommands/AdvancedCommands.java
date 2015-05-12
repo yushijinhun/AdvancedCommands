@@ -10,6 +10,7 @@ import java.io.FileOutputStream;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 import yushijinhun.advancedcommands.command.CommandContext;
+import yushijinhun.advancedcommands.command.CommandContextImpl;
 import yushijinhun.advancedcommands.command.CommandExp;
 import yushijinhun.advancedcommands.command.CommandVarTable;
 import yushijinhun.advancedcommands.command.TabCompleterExp;
@@ -25,7 +26,6 @@ import yushijinhun.advancedcommands.command.datatype.DataTypeLong;
 import yushijinhun.advancedcommands.command.datatype.DataTypeNBT;
 import yushijinhun.advancedcommands.command.datatype.DataTypeShort;
 import yushijinhun.advancedcommands.command.datatype.DataTypeString;
-import yushijinhun.advancedcommands.command.expression.ExpressionHandler;
 import yushijinhun.advancedcommands.command.function.Function;
 import yushijinhun.advancedcommands.command.function.FunctionArrayOf;
 import yushijinhun.advancedcommands.command.function.FunctionCos;
@@ -61,115 +61,33 @@ import yushijinhun.advancedcommands.command.function.FunctionToNBT;
 import yushijinhun.advancedcommands.command.function.FunctionValueOfNBT;
 import yushijinhun.advancedcommands.command.function.FunctionWhile;
 import yushijinhun.advancedcommands.command.function.FunctionWriteNBT;
-import yushijinhun.advancedcommands.command.nbt.NBTHandler;
 import yushijinhun.advancedcommands.command.var.Var;
 import yushijinhun.advancedcommands.command.var.VarTable;
 import yushijinhun.advancedcommands.util.ExceptionHelper;
 import yushijinhun.advancedcommands.util.ReflectionHelper;
 import yushijinhun.advancedcommands.util.Register;
 
-public final class AdvancedCommands extends JavaPlugin implements CommandContext {
+public final class AdvancedCommands extends JavaPlugin {
 
 	private Config config;
 	private File varTableFile;
+	private CommandContext commandContext;
 
-	private Register<Function> functions;
-	private Register<DataType> dataTypes;
-	private ExpressionHandler expressionHandler;
-	private NBTHandler nbtHandler;
-	private VarTable varTable;
-
-	@Override
-	public void onEnable() {
-		ReflectionHelper.init();
-
-		config = new Config(this);
-		config.loadConfig(getConfig());
-		config.saveConfig(getConfig());
-		saveConfig();
-
-		functions = new Register<Function>("Function", getLogger());
-		dataTypes = new Register<DataType>("Datatype", getLogger());
-		expressionHandler = new ExpressionHandler(this);
-		nbtHandler = new NBTHandler(this);
-		varTable = new VarTable(this);
-
-		registerDataTypes();
-		registerFunctions();
-		registerConstants();
-
-		PluginCommand commandExp = getCommand("exp");
-		commandExp.setExecutor(new CommandExp(this));
-		commandExp.setTabCompleter(new TabCompleterExp(this));
-
-		PluginCommand commandVarTable = getCommand("varTable");
-		commandVarTable.setExecutor(new CommandVarTable(this));
-		commandVarTable.setTabCompleter(new TabCompleterVarTable());
-
-		varTableFile = new File(getDataFolder(), "ac-vars.dat");
-		try {
-			loadVarTable(false);
-		} catch (Exception e) {
-			;
-		}
-
-		getLogger().info("Enabled");
+	public CommandContext getCommandContext() {
+		return commandContext;
 	}
 
-	@Override
-	public void onDisable() {
-		try {
-			saveVarTable();
-		} catch (Exception e) {
-			;
-		}
-
-		config = null;
-		functions = null;
-		dataTypes = null;
-		expressionHandler = null;
-		nbtHandler = null;
-		varTable = null;
-		varTableFile = null;
-
-		getLogger().info("Disabled");
+	public Config getPluginConfig() {
+		return config;
 	}
 
-	@Override
-	public boolean isValidIdentifier(String name) {
-		if ((name == null) || (name.length() == 0) || name.equals("null")) {
-			return false;
-		}
-
-		for (int i = 0; i < name.length(); i++) {
-			char c = name.charAt(i);
-			if (i == 0) {
-				if (!Character.isJavaIdentifierStart(c)) {
-					return false;
-				}
-			}
-			if (!Character.isJavaIdentifierPart(c)) {
-				return false;
-			}
-		}
-
-		for (String s : dataTypes.namesSet()) {
-			if (s.equals(name)) {
-				return false;
-			}
-		}
-
-		for (String s : functions.namesSet()) {
-			if (s.equals(name)) {
-				return false;
-			}
-		}
-
-		return true;
+	public File getVarTableFile() {
+		return varTableFile;
 	}
 
 	public void loadVarTable(boolean rollback) {
 		getLogger().info("Loading the var table");
+		VarTable varTable = commandContext.getVarTable();
 		if (varTable.isDirty()) {
 			getLogger().warning("The var table is modify, and not saved. It will lose all the change!");
 		}
@@ -191,52 +109,96 @@ public final class AdvancedCommands extends JavaPlugin implements CommandContext
 		}
 	}
 
-	public void saveVarTable() {
-		getLogger().info("Saving the var table");
-		try (DataOutputStream out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(varTableFile)))) {
-			varTable.write(out);
-			varTable.markNotDirty();
-			getLogger().info("Saved the var table");
+	@Override
+	public void onDisable() {
+		try {
+			saveVarTable();
 		} catch (Exception e) {
-			getLogger().severe(String.format("Save var table file failed\n%s", ExceptionHelper.exceptionToString(e)));
-			throw new RuntimeException("Save var table file failed", e);
+			;
 		}
-	}
 
-	public Config getPluginConfig() {
-		return config;
-	}
+		config = null;
+		varTableFile = null;
+		commandContext = null;
 
-	public File getVarTableFile() {
-		return varTableFile;
-	}
-
-	@Override
-	public Register<Function> getFunctions() {
-		return functions;
+		getLogger().info("Disabled");
 	}
 
 	@Override
-	public Register<DataType> getDataTypes() {
-		return dataTypes;
+	public void onEnable() {
+		ReflectionHelper.init();
+		commandContext = new CommandContextImpl(getLogger());
+
+		config = new Config(this);
+		config.loadConfig(getConfig());
+		config.saveConfig(getConfig());
+		saveConfig();
+
+		registerDataTypes();
+		registerFunctions();
+		registerConstants();
+
+		PluginCommand commandExp = getCommand("exp");
+		commandExp.setExecutor(new CommandExp(this));
+		commandExp.setTabCompleter(new TabCompleterExp(commandContext));
+
+		PluginCommand commandVarTable = getCommand("varTable");
+		commandVarTable.setExecutor(new CommandVarTable(this));
+		commandVarTable.setTabCompleter(new TabCompleterVarTable());
+
+		varTableFile = new File(getDataFolder(), "ac-vars.dat");
+		try {
+			loadVarTable(false);
+		} catch (Exception e) {
+			;
+		}
+
+		getLogger().info("Enabled");
 	}
 
-	@Override
-	public ExpressionHandler getExpressionHandler() {
-		return expressionHandler;
+	private void registerConstants() {
+		VarTable varTable = commandContext.getVarTable();
+		Register<DataType> dataTypes = commandContext.getDataTypes();
+		varTable.putConstant("true", new Var(dataTypes.get("boolean"), Boolean.TRUE));
+		varTable.putConstant("false", new Var(dataTypes.get("boolean"), Boolean.FALSE));
+		varTable.putConstant("PI", new Var(dataTypes.get("double"), Math.PI));
+		varTable.putConstant("E", new Var(dataTypes.get("double"), Math.E));
+		varTable.putConstant("MAX_BYTE", new Var(dataTypes.get("byte"), Byte.MAX_VALUE));
+		varTable.putConstant("MIN_BYTE", new Var(dataTypes.get("byte"), Byte.MIN_VALUE));
+		varTable.putConstant("MAX_SHORT", new Var(dataTypes.get("short"), Short.MAX_VALUE));
+		varTable.putConstant("MIN_SHORT", new Var(dataTypes.get("short"), Short.MIN_VALUE));
+		varTable.putConstant("MAX_INT", new Var(dataTypes.get("int"), Integer.MAX_VALUE));
+		varTable.putConstant("MIN_INT", new Var(dataTypes.get("int"), Integer.MIN_VALUE));
+		varTable.putConstant("MAX_LONG", new Var(dataTypes.get("long"), Long.MAX_VALUE));
+		varTable.putConstant("MIN_LONG", new Var(dataTypes.get("long"), Long.MIN_VALUE));
+		varTable.putConstant("MAX_FLOAT", new Var(dataTypes.get("float"), Float.MAX_VALUE));
+		varTable.putConstant("MIN_FLOAT", new Var(dataTypes.get("float"), Float.MIN_VALUE));
+		varTable.putConstant("NaN_FLOAT", new Var(dataTypes.get("float"), Float.NaN));
+		varTable.putConstant("NEGATIVE_INFINITY_FLOAT", new Var(dataTypes.get("float"), Float.NEGATIVE_INFINITY));
+		varTable.putConstant("POSITIVE_INFINITY_FLOAT", new Var(dataTypes.get("float"), Float.POSITIVE_INFINITY));
+		varTable.putConstant("MAX_DOUBLE", new Var(dataTypes.get("double"), Double.MAX_VALUE));
+		varTable.putConstant("MIN_DOUBLE", new Var(dataTypes.get("double"), Double.MIN_VALUE));
+		varTable.putConstant("NaN_DOUBLE", new Var(dataTypes.get("double"), Double.NaN));
+		varTable.putConstant("NEGATIVE_INFINITY_DOUBLE", new Var(dataTypes.get("double"), Double.NEGATIVE_INFINITY));
+		varTable.putConstant("POSITIVE_INFINITY_DOUBLE", new Var(dataTypes.get("double"), Double.POSITIVE_INFINITY));
 	}
 
-	@Override
-	public NBTHandler getNbtHandler() {
-		return nbtHandler;
-	}
-
-	@Override
-	public VarTable getVarTable() {
-		return varTable;
+	private void registerDataTypes() {
+		Register<DataType> dataTypes = commandContext.getDataTypes();
+		dataTypes.register(new DataTypeArray());
+		dataTypes.register(new DataTypeBoolean());
+		dataTypes.register(new DataTypeByte());
+		dataTypes.register(new DataTypeShort());
+		dataTypes.register(new DataTypeInt());
+		dataTypes.register(new DataTypeLong());
+		dataTypes.register(new DataTypeFloat());
+		dataTypes.register(new DataTypeDouble());
+		dataTypes.register(new DataTypeString());
+		dataTypes.register(new DataTypeNBT());
 	}
 
 	private void registerFunctions() {
+		Register<Function> functions = commandContext.getFunctions();
 		functions.register(new FunctionSin());
 		functions.register(new FunctionTan());
 		functions.register(new FunctionCos());
@@ -273,41 +235,16 @@ public final class AdvancedCommands extends JavaPlugin implements CommandContext
 		functions.register(new FunctionToNBT());
 	}
 
-	private void registerDataTypes() {
-		dataTypes.register(new DataTypeArray());
-		dataTypes.register(new DataTypeBoolean());
-		dataTypes.register(new DataTypeByte());
-		dataTypes.register(new DataTypeShort());
-		dataTypes.register(new DataTypeInt());
-		dataTypes.register(new DataTypeLong());
-		dataTypes.register(new DataTypeFloat());
-		dataTypes.register(new DataTypeDouble());
-		dataTypes.register(new DataTypeString());
-		dataTypes.register(new DataTypeNBT());
-	}
-
-	private void registerConstants() {
-		varTable.putConstant("true", new Var(dataTypes.get("boolean"), Boolean.TRUE));
-		varTable.putConstant("false", new Var(dataTypes.get("boolean"), Boolean.FALSE));
-		varTable.putConstant("PI", new Var(dataTypes.get("double"), Math.PI));
-		varTable.putConstant("E", new Var(dataTypes.get("double"), Math.E));
-		varTable.putConstant("MAX_BYTE", new Var(dataTypes.get("byte"), Byte.MAX_VALUE));
-		varTable.putConstant("MIN_BYTE", new Var(dataTypes.get("byte"), Byte.MIN_VALUE));
-		varTable.putConstant("MAX_SHORT", new Var(dataTypes.get("short"), Short.MAX_VALUE));
-		varTable.putConstant("MIN_SHORT", new Var(dataTypes.get("short"), Short.MIN_VALUE));
-		varTable.putConstant("MAX_INT", new Var(dataTypes.get("int"), Integer.MAX_VALUE));
-		varTable.putConstant("MIN_INT", new Var(dataTypes.get("int"), Integer.MIN_VALUE));
-		varTable.putConstant("MAX_LONG", new Var(dataTypes.get("long"), Long.MAX_VALUE));
-		varTable.putConstant("MIN_LONG", new Var(dataTypes.get("long"), Long.MIN_VALUE));
-		varTable.putConstant("MAX_FLOAT", new Var(dataTypes.get("float"), Float.MAX_VALUE));
-		varTable.putConstant("MIN_FLOAT", new Var(dataTypes.get("float"), Float.MIN_VALUE));
-		varTable.putConstant("NaN_FLOAT", new Var(dataTypes.get("float"), Float.NaN));
-		varTable.putConstant("NEGATIVE_INFINITY_FLOAT", new Var(dataTypes.get("float"), Float.NEGATIVE_INFINITY));
-		varTable.putConstant("POSITIVE_INFINITY_FLOAT", new Var(dataTypes.get("float"), Float.POSITIVE_INFINITY));
-		varTable.putConstant("MAX_DOUBLE", new Var(dataTypes.get("double"), Double.MAX_VALUE));
-		varTable.putConstant("MIN_DOUBLE", new Var(dataTypes.get("double"), Double.MIN_VALUE));
-		varTable.putConstant("NaN_DOUBLE", new Var(dataTypes.get("double"), Double.NaN));
-		varTable.putConstant("NEGATIVE_INFINITY_DOUBLE", new Var(dataTypes.get("double"), Double.NEGATIVE_INFINITY));
-		varTable.putConstant("POSITIVE_INFINITY_DOUBLE", new Var(dataTypes.get("double"), Double.POSITIVE_INFINITY));
+	public void saveVarTable() {
+		getLogger().info("Saving the var table");
+		VarTable varTable = commandContext.getVarTable();
+		try (DataOutputStream out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(varTableFile)))) {
+			varTable.write(out);
+			varTable.markNotDirty();
+			getLogger().info("Saved the var table");
+		} catch (Exception e) {
+			getLogger().severe(String.format("Save var table file failed\n%s", ExceptionHelper.exceptionToString(e)));
+			throw new RuntimeException("Save var table file failed", e);
+		}
 	}
 }
