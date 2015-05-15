@@ -66,6 +66,7 @@ import yushijinhun.advancedcommands.command.var.VarTable;
 import yushijinhun.advancedcommands.util.ExceptionHelper;
 import yushijinhun.advancedcommands.util.ReflectionHelper;
 import yushijinhun.advancedcommands.util.Register;
+import yushijinhun.advancedcommands.util.SafetyModeManager;
 
 public final class AdvancedCommands extends JavaPlugin {
 
@@ -116,6 +117,8 @@ public final class AdvancedCommands extends JavaPlugin {
 		} catch (Exception e) {
 			;
 		}
+
+		SafetyModeManager.getManager().shutdown();
 
 		config = null;
 		varTableFile = null;

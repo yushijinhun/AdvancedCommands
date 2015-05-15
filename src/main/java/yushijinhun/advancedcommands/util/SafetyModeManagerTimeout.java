@@ -138,4 +138,9 @@ public class SafetyModeManagerTimeout extends SafetyModeManager {
 	public String toString() {
 		return super.toString() + "[timeout=" + timeout + ",cancelWaitTime=" + cancelWaitTime + "]";
 	}
+
+	@Override
+	public void shutdown() {
+		pool.shutdownNow();
+	}
 }
